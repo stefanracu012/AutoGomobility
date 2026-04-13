@@ -1,0 +1,66 @@
+[
+  {
+    "id": "1",
+    "name": "Mercedes E-Class",
+    "category": "Economy",
+    "description": "Elegant sedan ideal for city transfers and short trips. Premium comfort at an accessible price point.",
+    "image": "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&q=80",
+    "priceLabel": "from 0.80/km",
+    "passengers": "Up to 3",
+    "luggage": "2 suitcases",
+    "features": [
+      "Climate control",
+      "Leather seats",
+      "Wi-Fi",
+      "Phone charger"
+    ]
+  },
+  {
+    "id": "2",
+    "name": "Mercedes S-Class",
+    "category": "Business",
+    "description": "The flagship sedan. Unmatched luxury, advanced technology, and a supremely smooth ride.",
+    "image": "https://images.unsplash.com/photo-1563720223185-11003d516935?w=800&q=80",
+    "priceLabel": "from 1.20/km",
+    "passengers": "Up to 3",
+    "luggage": "3 suitcases",
+    "features": [
+      "Massage seats",
+      "Ambient lighting",
+      "Premium sound",
+      "Rear entertainment"
+    ]
+  },
+  {
+    "id": "3",
+    "name": "Mercedes V-Class",
+    "category": "Luxury",
+    "description": "Spacious premium van for groups and families. First-class comfort for up to 7 passengers.",
+    "image": "https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&q=80",
+    "priceLabel": "from 1.80/km",
+    "passengers": "Up to 7",
+    "luggage": "6 suitcases",
+    "features": [
+      "Captain seats",
+      "Table console",
+      "Privacy glass",
+      "Extra legroom"
+    ]
+  },
+  {
+    "id": "4",
+    "name": "BMW X5",
+    "category": "SUV",
+    "description": "Commanding presence with superior comfort. Perfect for long-distance travel and VIP transfers.",
+    "image": "https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&q=80",
+    "priceLabel": "from 1.80/km",
+    "passengers": "Up to 4",
+    "luggage": "4 suitcases",
+    "features": [
+      "Panoramic roof",
+      "All-wheel drive",
+      "Heated seats",
+      "Adaptive cruise"
+    ]
+  }
+]

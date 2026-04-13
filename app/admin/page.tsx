@@ -1,0 +1,1202 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+interface Pricing {
+  base: number;
+  economy: number;
+  business: number;
+  luxury: number;
+  economyPerHour: number;
+  businessPerHour: number;
+  luxuryPerHour: number;
+}
+interface FleetItem {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  image: string;
+  priceLabel: string;
+  passengers?: string;
+  luggage?: string;
+  features?: string[];
+}
+interface ServiceItem {
+  id: string;
+  number: string;
+  title: string;
+  description: string;
+  tag: string;
+  highlights?: string[];
+}
+interface DestinationItem {
+  from: string;
+  to: string;
+  distance: number;
+  discount?: number;
+}
+type Tab = "pricing" | "fleet" | "services" | "destinations";
+
+// ── Shared styles ─────────────────────────────────────────────────────────────
+const INP =
+  "w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:border-[#d4af37]/50 transition-colors";
+const GOLD =
+  "px-4 py-2 rounded-xl bg-[#d4af37] text-black text-sm font-semibold hover:bg-[#c9a227] transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
+const GHOST =
+  "px-4 py-2 rounded-xl border border-white/10 text-sm text-white/60 hover:bg-white/5 hover:text-white transition-colors";
+const RED =
+  "px-3 py-2 rounded-xl text-sm text-red-400 hover:bg-red-400/10 transition-colors";
+const LBL =
+  "block text-xs font-medium text-white/40 uppercase tracking-wider mb-1.5";
+const CARD = "bg-white/[0.03] border border-white/10 rounded-2xl p-5";
+
+// ── Pricing Tab ───────────────────────────────────────────────────────────────
+function PricingTab({
+  data,
+  onSave,
+}: {
+  data: Pricing;
+  onSave: (d: Pricing) => Promise<void>;
+}) {
+  const [form, setForm] = useState(data);
+  const [saving, setSaving] = useState(false);
+
+  const set = (k: keyof Pricing, v: string) =>
+    setForm((f) => ({ ...f, [k]: parseFloat(v) || 0 }));
+
+  return (
+    <div className="max-w-2xl flex flex-col gap-6">
+      <div className={CARD}>
+        <p className="text-xs font-semibold text-[#d4af37] uppercase tracking-widest mb-5">
+          Base &amp; Per-Km Rates
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {(
+            [
+              { k: "base", label: "Base fee (€)" },
+              { k: "economy", label: "Economy / km" },
+              { k: "business", label: "Business / km" },
+              { k: "luxury", label: "Luxury / km" },
+            ] as { k: keyof Pricing; label: string }[]
+          ).map(({ k, label }) => (
+            <div key={k}>
+              <label className={LBL}>{label}</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={form[k]}
+                onChange={(e) => set(k, e.target.value)}
+                className={INP}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className={CARD}>
+        <p className="text-xs font-semibold text-[#d4af37] uppercase tracking-widest mb-5">
+          Per-Hour Rates
+        </p>
+        <div className="grid grid-cols-3 gap-4">
+          {(
+            [
+              { k: "economyPerHour", label: "Economy / hr" },
+              { k: "businessPerHour", label: "Business / hr" },
+              { k: "luxuryPerHour", label: "Luxury / hr" },
+            ] as { k: keyof Pricing; label: string }[]
+          ).map(({ k, label }) => (
+            <div key={k}>
+              <label className={LBL}>{label}</label>
+              <input
+                type="number"
+                step="0.5"
+                min="0"
+                value={form[k]}
+                onChange={(e) => set(k, e.target.value)}
+                className={INP}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <button
+        className={GOLD}
+        disabled={saving}
+        onClick={async () => {
+          setSaving(true);
+          await onSave(form);
+          setSaving(false);
+        }}
+      >
+        {saving ? "Saving…" : "Save Pricing"}
+      </button>
+    </div>
+  );
+}
+
+// ── Fleet Tab ─────────────────────────────────────────────────────────────────
+const FLEET_EMPTY = {
+  name: "",
+  category: "",
+  description: "",
+  image: "",
+  priceLabel: "",
+  passengers: "",
+  luggage: "",
+  features: "",
+};
+type FleetForm = typeof FLEET_EMPTY;
+
+function FleetFields({
+  form,
+  onChange,
+}: {
+  form: FleetForm;
+  onChange: (f: FleetForm) => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: fd,
+      });
+      const json = await res.json();
+      if (json.url) onChange({ ...form, image: json.url });
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <div>
+        <label className={LBL}>Name</label>
+        <input
+          value={form.name}
+          placeholder="Mercedes S-Class"
+          onChange={(e) => onChange({ ...form, name: e.target.value })}
+          className={INP}
+        />
+      </div>
+      <div>
+        <label className={LBL}>Category</label>
+        <input
+          value={form.category}
+          placeholder="Business"
+          onChange={(e) => onChange({ ...form, category: e.target.value })}
+          className={INP}
+        />
+      </div>
+      <div>
+        <label className={LBL}>Price Label</label>
+        <input
+          value={form.priceLabel}
+          placeholder="from 1.20/km"
+          onChange={(e) => onChange({ ...form, priceLabel: e.target.value })}
+          className={INP}
+        />
+      </div>
+      <div>
+        <label className={LBL}>Passengers</label>
+        <input
+          value={form.passengers}
+          placeholder="Up to 3"
+          onChange={(e) => onChange({ ...form, passengers: e.target.value })}
+          className={INP}
+        />
+      </div>
+      <div>
+        <label className={LBL}>Luggage</label>
+        <input
+          value={form.luggage}
+          placeholder="2 suitcases"
+          onChange={(e) => onChange({ ...form, luggage: e.target.value })}
+          className={INP}
+        />
+      </div>
+      <div className="col-span-2">
+        <label className={LBL}>Image URL</label>
+        <div className="flex gap-2">
+          <input
+            value={form.image}
+            placeholder="https://… or upload below"
+            onChange={(e) => onChange({ ...form, image: e.target.value })}
+            className={INP}
+          />
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleUpload}
+          />
+          <button
+            type="button"
+            className={GHOST + " shrink-0"}
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+          >
+            {uploading ? "…" : "Upload"}
+          </button>
+        </div>
+        {form.image && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={form.image}
+            alt=""
+            className="mt-2 h-20 w-full object-cover rounded-lg"
+          />
+        )}
+      </div>
+      <div className="col-span-2">
+        <label className={LBL}>Description</label>
+        <textarea
+          value={form.description}
+          rows={2}
+          placeholder="Description…"
+          onChange={(e) => onChange({ ...form, description: e.target.value })}
+          className={INP + " resize-none"}
+        />
+      </div>
+      <div className="col-span-2">
+        <label className={LBL}>Features (comma-separated)</label>
+        <input
+          value={form.features}
+          placeholder="Wi-Fi, Leather seats, Climate control"
+          onChange={(e) => onChange({ ...form, features: e.target.value })}
+          className={INP}
+        />
+      </div>
+    </div>
+  );
+}
+
+function FleetTab({
+  data,
+  onSave,
+}: {
+  data: FleetItem[];
+  onSave: (d: FleetItem[]) => Promise<void>;
+}) {
+  const [items, setItems] = useState(data);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<FleetForm>(FLEET_EMPTY);
+  const [adding, setAdding] = useState(false);
+  const [newForm, setNewForm] = useState<FleetForm>(FLEET_EMPTY);
+
+  const persist = (updated: FleetItem[]) => {
+    setItems(updated);
+    return onSave(updated);
+  };
+
+  return (
+    <div className="flex flex-col gap-4 max-w-3xl">
+      {items.map((item) => (
+        <div key={item.id} className={CARD}>
+          {editId === item.id ? (
+            <div className="flex flex-col gap-3">
+              <FleetFields form={editForm} onChange={setEditForm} />
+              <div className="flex gap-2">
+                <button
+                  className={GOLD}
+                  onClick={() => {
+                    persist(
+                      items.map((i) =>
+                        i.id === editId
+                          ? {
+                              ...i,
+                              ...editForm,
+                              features: editForm.features
+                                .split(",")
+                                .map((s) => s.trim())
+                                .filter(Boolean),
+                            }
+                          : i,
+                      ),
+                    );
+                    setEditId(null);
+                  }}
+                >
+                  Save
+                </button>
+                <button className={GHOST} onClick={() => setEditId(null)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              {item.image && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={item.image}
+                  alt=""
+                  className="w-20 h-14 object-cover rounded-lg shrink-0"
+                />
+              )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="font-semibold text-sm">{item.name}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-[#d4af37]/70 bg-[#d4af37]/10 px-2 py-0.5 rounded-full">
+                    {item.category}
+                  </span>
+                </div>
+                <p className="text-white/40 text-xs line-clamp-1">
+                  {item.description}
+                </p>
+                <p className="text-[#d4af37]/60 text-xs mt-0.5">
+                  {item.priceLabel}
+                </p>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <button
+                  className={GHOST}
+                  onClick={() => {
+                    setEditId(item.id);
+                    setEditForm({
+                      name: item.name,
+                      category: item.category,
+                      description: item.description,
+                      image: item.image,
+                      priceLabel: item.priceLabel,
+                      passengers: item.passengers ?? "",
+                      luggage: item.luggage ?? "",
+                      features: item.features?.join(", ") ?? "",
+                    });
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className={RED}
+                  onClick={() => persist(items.filter((i) => i.id !== item.id))}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {adding ? (
+        <div className={CARD}>
+          <p className="text-xs font-semibold text-[#d4af37] uppercase tracking-widest mb-3">
+            New Vehicle
+          </p>
+          <FleetFields form={newForm} onChange={setNewForm} />
+          <div className="flex gap-2 mt-3">
+            <button
+              className={GOLD}
+              onClick={() => {
+                persist([
+                  ...items,
+                  {
+                    id: Date.now().toString(),
+                    ...newForm,
+                    features: newForm.features
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean),
+                  },
+                ]);
+                setNewForm(FLEET_EMPTY);
+                setAdding(false);
+              }}
+            >
+              Add Vehicle
+            </button>
+            <button
+              className={GHOST}
+              onClick={() => {
+                setAdding(false);
+                setNewForm(FLEET_EMPTY);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button className={GHOST + " w-full"} onClick={() => setAdding(true)}>
+          + Add Vehicle
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── Services Tab ──────────────────────────────────────────────────────────────
+const SVC_EMPTY = { title: "", tag: "", description: "", highlights: "" };
+type SvcForm = typeof SVC_EMPTY;
+
+function ServicesTab({
+  data,
+  onSave,
+}: {
+  data: ServiceItem[];
+  onSave: (d: ServiceItem[]) => Promise<void>;
+}) {
+  const [items, setItems] = useState(data);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<SvcForm>(SVC_EMPTY);
+  const [adding, setAdding] = useState(false);
+  const [newForm, setNewForm] = useState<SvcForm>(SVC_EMPTY);
+
+  const persist = (updated: ServiceItem[]) => {
+    setItems(updated);
+    return onSave(updated);
+  };
+
+  return (
+    <div className="flex flex-col gap-4 max-w-3xl">
+      {items.map((item, idx) => (
+        <div key={item.id} className={CARD}>
+          {editId === item.id ? (
+            <div className="flex flex-col gap-3">
+              <div className="grid grid-cols-2 gap-3">
+                {(["title", "tag"] as const).map((k) => (
+                  <div key={k}>
+                    <label className={LBL}>
+                      {k === "title" ? "Title" : "Tag"}
+                    </label>
+                    <input
+                      value={editForm[k]}
+                      placeholder={
+                        k === "title" ? "Airport Transfer" : "Most popular"
+                      }
+                      onChange={(e) =>
+                        setEditForm((f) => ({ ...f, [k]: e.target.value }))
+                      }
+                      className={INP}
+                    />
+                  </div>
+                ))}
+                <div className="col-span-2">
+                  <label className={LBL}>Description</label>
+                  <textarea
+                    value={editForm.description}
+                    rows={3}
+                    onChange={(e) =>
+                      setEditForm((f) => ({
+                        ...f,
+                        description: e.target.value,
+                      }))
+                    }
+                    className={INP + " resize-none"}
+                  />
+                </div>
+                <div className="col-span-2">
+                  <label className={LBL}>Highlights (comma-separated)</label>
+                  <input
+                    value={editForm.highlights}
+                    placeholder="Feature 1, Feature 2, Feature 3"
+                    onChange={(e) =>
+                      setEditForm((f) => ({ ...f, highlights: e.target.value }))
+                    }
+                    className={INP}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  className={GOLD}
+                  onClick={() => {
+                    persist(
+                      items.map((i) =>
+                        i.id === editId
+                          ? {
+                              ...i,
+                              ...editForm,
+                              highlights: editForm.highlights
+                                .split(",")
+                                .map((s) => s.trim())
+                                .filter(Boolean),
+                            }
+                          : i,
+                      ),
+                    );
+                    setEditId(null);
+                  }}
+                >
+                  Save
+                </button>
+                <button className={GHOST} onClick={() => setEditId(null)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-start gap-4">
+              <span className="text-3xl font-bold text-white/10 w-10 shrink-0 tabular-nums">
+                {item.number || String(idx + 1).padStart(2, "0")}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-semibold text-sm">{item.title}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-[#d4af37]/70 bg-[#d4af37]/10 px-2 py-0.5 rounded-full">
+                    {item.tag}
+                  </span>
+                </div>
+                <p className="text-white/40 text-xs leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <button
+                  className={GHOST}
+                  onClick={() => {
+                    setEditId(item.id);
+                    setEditForm({
+                      title: item.title,
+                      tag: item.tag,
+                      description: item.description,
+                      highlights: item.highlights?.join(", ") ?? "",
+                    });
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className={RED}
+                  onClick={() => persist(items.filter((i) => i.id !== item.id))}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {adding ? (
+        <div className={CARD}>
+          <p className="text-xs font-semibold text-[#d4af37] uppercase tracking-widest mb-3">
+            New Service
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            {(["title", "tag"] as const).map((k) => (
+              <div key={k}>
+                <label className={LBL}>{k === "title" ? "Title" : "Tag"}</label>
+                <input
+                  value={newForm[k]}
+                  placeholder={k === "title" ? "VIP Service" : "Premium"}
+                  onChange={(e) =>
+                    setNewForm((f) => ({ ...f, [k]: e.target.value }))
+                  }
+                  className={INP}
+                />
+              </div>
+            ))}
+            <div className="col-span-2">
+              <label className={LBL}>Description</label>
+              <textarea
+                value={newForm.description}
+                rows={3}
+                onChange={(e) =>
+                  setNewForm((f) => ({ ...f, description: e.target.value }))
+                }
+                className={INP + " resize-none"}
+              />
+            </div>
+            <div className="col-span-2">
+              <label className={LBL}>Highlights (comma-separated)</label>
+              <input
+                value={newForm.highlights}
+                placeholder="Feature 1, Feature 2, Feature 3"
+                onChange={(e) =>
+                  setNewForm((f) => ({ ...f, highlights: e.target.value }))
+                }
+                className={INP}
+              />
+            </div>
+          </div>
+          <div className="flex gap-2 mt-3">
+            <button
+              className={GOLD}
+              onClick={() => {
+                const num = String(items.length + 1).padStart(2, "0");
+                persist([
+                  ...items,
+                  {
+                    id: Date.now().toString(),
+                    number: num,
+                    ...newForm,
+                    highlights: newForm.highlights
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean),
+                  },
+                ]);
+                setNewForm(SVC_EMPTY);
+                setAdding(false);
+              }}
+            >
+              Add Service
+            </button>
+            <button
+              className={GHOST}
+              onClick={() => {
+                setAdding(false);
+                setNewForm(SVC_EMPTY);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button className={GHOST + " w-full"} onClick={() => setAdding(true)}>
+          + Add Service
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── Destinations Tab ──────────────────────────────────────────────────────────
+type DestForm = {
+  from: string;
+  to: string;
+  distance: number;
+  discount: number | "";
+};
+const DEST_EMPTY: DestForm = { from: "", to: "", distance: 0, discount: "" };
+
+function toDestItem(f: DestForm): DestinationItem {
+  const item: DestinationItem = {
+    from: f.from,
+    to: f.to,
+    distance: f.distance,
+  };
+  if (f.discount !== "" && f.discount > 0) item.discount = f.discount;
+  return item;
+}
+
+function DestFields({
+  form,
+  onChange,
+}: {
+  form: DestForm;
+  onChange: (f: DestForm) => void;
+}) {
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      {(["from", "to"] as const).map((k) => (
+        <div key={k}>
+          <label className={LBL}>{k === "from" ? "From" : "To"}</label>
+          <input
+            value={form[k]}
+            placeholder={k === "from" ? "Dublin Airport" : "Cork"}
+            onChange={(e) => onChange({ ...form, [k]: e.target.value })}
+            className={INP}
+          />
+        </div>
+      ))}
+      <div>
+        <label className={LBL}>Distance (km)</label>
+        <input
+          type="number"
+          min="0"
+          value={form.distance || ""}
+          placeholder="0"
+          onChange={(e) =>
+            onChange({ ...form, distance: parseInt(e.target.value) || 0 })
+          }
+          className={INP}
+        />
+      </div>
+      <div>
+        <label className={LBL}>Discount % (optional)</label>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={form.discount}
+          placeholder="—"
+          onChange={(e) =>
+            onChange({
+              ...form,
+              discount: e.target.value === "" ? "" : parseInt(e.target.value),
+            })
+          }
+          className={INP}
+        />
+      </div>
+    </div>
+  );
+}
+
+function DestinationsTab({
+  data,
+  onSave,
+}: {
+  data: DestinationItem[];
+  onSave: (d: DestinationItem[]) => Promise<void>;
+}) {
+  const [items, setItems] = useState(data);
+  const [editIdx, setEditIdx] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState<DestForm>(DEST_EMPTY);
+  const [adding, setAdding] = useState(false);
+  const [newForm, setNewForm] = useState<DestForm>(DEST_EMPTY);
+
+  const persist = (updated: DestinationItem[]) => {
+    setItems(updated);
+    return onSave(updated);
+  };
+
+  return (
+    <div className="flex flex-col gap-4 max-w-3xl">
+      {items.map((item, idx) => (
+        <div key={idx} className={CARD}>
+          {editIdx === idx ? (
+            <div className="flex flex-col gap-3">
+              <DestFields form={editForm} onChange={setEditForm} />
+              <div className="flex gap-2">
+                <button
+                  className={GOLD}
+                  onClick={() => {
+                    const updated = [...items];
+                    updated[idx] = toDestItem(editForm);
+                    persist(updated);
+                    setEditIdx(null);
+                  }}
+                >
+                  Save
+                </button>
+                <button className={GHOST} onClick={() => setEditIdx(null)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 text-sm font-semibold mb-0.5">
+                  <span>{item.from}</span>
+                  <svg
+                    className="w-4 h-4 text-[#d4af37]/50 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                    />
+                  </svg>
+                  <span>{item.to}</span>
+                </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-white/40 text-xs">
+                    {item.distance} km
+                  </span>
+                  {item.discount && (
+                    <span className="text-[10px] font-bold text-[#d4af37] bg-[#d4af37]/10 px-2 py-0.5 rounded-full">
+                      -{item.discount}% OFF
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <button
+                  className={GHOST}
+                  onClick={() => {
+                    setEditIdx(idx);
+                    setEditForm({
+                      from: item.from,
+                      to: item.to,
+                      distance: item.distance,
+                      discount: item.discount ?? "",
+                    });
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className={RED}
+                  onClick={() => persist(items.filter((_, i) => i !== idx))}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {adding ? (
+        <div className={CARD}>
+          <p className="text-xs font-semibold text-[#d4af37] uppercase tracking-widest mb-3">
+            New Route
+          </p>
+          <DestFields form={newForm} onChange={setNewForm} />
+          <div className="flex gap-2 mt-3">
+            <button
+              className={GOLD}
+              onClick={() => {
+                persist([...items, toDestItem(newForm)]);
+                setNewForm(DEST_EMPTY);
+                setAdding(false);
+              }}
+            >
+              Add Route
+            </button>
+            <button
+              className={GHOST}
+              onClick={() => {
+                setAdding(false);
+                setNewForm(DEST_EMPTY);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button className={GHOST + " w-full"} onClick={() => setAdding(true)}>
+          + Add Route
+        </button>
+      )}
+    </div>
+  );
+}
+
+// ── Main AdminPage ────────────────────────────────────────────────────────────
+export default function AdminPage() {
+  const [authed, setAuthed] = useState<boolean | null>(null);
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [tab, setTab] = useState<Tab>("pricing");
+  const [pricing, setPricingState] = useState<Pricing | null>(null);
+  const [fleet, setFleetState] = useState<FleetItem[] | null>(null);
+  const [services, setServicesState] = useState<ServiceItem[] | null>(null);
+  const [destinations, setDestinationsState] = useState<
+    DestinationItem[] | null
+  >(null);
+  const [toast, setToast] = useState("");
+
+  const callApi = useCallback(
+    async (method: string, entity: string, body?: unknown) => {
+      const res = await fetch(`/api/admin/data?entity=${entity}`, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+      });
+      if (res.status === 401) {
+        setAuthed(false);
+        throw new Error("Session expired");
+      }
+      if (!res.ok) throw new Error(await res.text());
+      return res.json();
+    },
+    [],
+  );
+
+  const loadAll = useCallback(async () => {
+    const [p, f, s, d] = await Promise.all([
+      callApi("GET", "pricing"),
+      callApi("GET", "fleet"),
+      callApi("GET", "services"),
+      callApi("GET", "destinations"),
+    ]);
+    setPricingState(p);
+    setFleetState(f);
+    setServicesState(s);
+    setDestinationsState(d);
+  }, [callApi]);
+
+  useEffect(() => {
+    fetch("/api/admin/auth", { credentials: "include" })
+      .then((r) => r.json())
+      .then(({ ok }) => setAuthed(!!ok))
+      .catch(() => setAuthed(false));
+  }, []);
+
+  useEffect(() => {
+    if (authed) loadAll();
+  }, [authed, loadAll]);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(""), 2500);
+  };
+
+  const makeSaver =
+    <T,>(
+      entity: string,
+      setState: React.Dispatch<React.SetStateAction<T | null>>,
+    ) =>
+    async (data: T) => {
+      await callApi("PUT", entity, data);
+      setState(data);
+      showToast("Saved!");
+    };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ password }),
+    });
+    if (res.ok) {
+      setAuthed(true);
+    } else setAuthError("Incorrect password");
+  };
+
+  // ── Checking saved session
+  if (authed === null) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="w-6 h-6 rounded-full border-2 border-[#d4af37]/30 border-t-[#d4af37] animate-spin" />
+      </div>
+    );
+  }
+
+  // ── Login screen
+  if (!authed) {
+    return (
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-8">
+            <p className="text-2xl font-bold">
+              <span className="text-[#d4af37]">Lux</span>Ride
+            </p>
+            <p className="text-white/30 text-sm mt-1">Admin Panel</p>
+          </div>
+          <form
+            onSubmit={handleLogin}
+            className={CARD + " flex flex-col gap-4"}
+          >
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              autoFocus
+              onChange={(e) => setPassword(e.target.value)}
+              className={INP + " py-3 text-base"}
+            />
+            {authError && (
+              <p className="text-red-400 text-xs text-center">{authError}</p>
+            )}
+            <button type="submit" className={GOLD + " w-full py-3 text-base"}>
+              Sign In
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Dashboard
+  const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
+    {
+      key: "pricing",
+      label: "Pricing",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="12" y1="1" x2="12" y2="23" />
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+      ),
+    },
+    {
+      key: "fleet",
+      label: "Fleet",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M19 17H5a2 2 0 0 1-2-2v-1l2.68-6.26A2 2 0 0 1 7.52 6h8.96a2 2 0 0 1 1.84 1.74L21 14v1a2 2 0 0 1-2 2Z" />
+          <circle cx="7.5" cy="17" r="2" />
+          <circle cx="16.5" cy="17" r="2" />
+        </svg>
+      ),
+    },
+    {
+      key: "services",
+      label: "Services",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      ),
+    },
+    {
+      key: "destinations",
+      label: "Destinations",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+      ),
+    },
+  ];
+
+  const handleSignOut = async () => {
+    await fetch("/api/admin/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    setAuthed(false);
+    setPricingState(null);
+    setFleetState(null);
+    setServicesState(null);
+    setDestinationsState(null);
+  };
+
+  const isLoading =
+    (tab === "pricing" && !pricing) ||
+    (tab === "fleet" && !fleet) ||
+    (tab === "services" && !services) ||
+    (tab === "destinations" && !destinations);
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      {/* Toast */}
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 bg-[#d4af37] text-black text-sm font-semibold px-5 py-2.5 rounded-xl shadow-2xl flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          {toast}
+        </div>
+      )}
+
+      {/* Header + Tabs */}
+      <div className="sticky top-0 z-40 bg-[#0a0a0a]/95 backdrop-blur border-b border-white/[0.08]">
+        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+          <span className="font-bold text-sm">
+            <span className="text-[#d4af37]">Lux</span>Ride{" "}
+            <span className="text-white/30 font-normal">/ admin</span>
+          </span>
+          <button
+            onClick={handleSignOut}
+            className="text-xs text-white/30 hover:text-white transition-colors"
+          >
+            Sign out
+          </button>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 flex">
+          {TABS.map(({ key, label, icon }) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`flex items-center gap-1.5 px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+                tab === key
+                  ? "border-[#d4af37] text-[#d4af37]"
+                  : "border-transparent text-white/40 hover:text-white"
+              }`}
+            >
+              {icon}
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-5xl mx-auto px-6 py-8">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-24">
+            <div className="w-6 h-6 rounded-full border-2 border-[#d4af37]/30 border-t-[#d4af37] animate-spin" />
+          </div>
+        ) : (
+          <>
+            {tab === "pricing" && pricing && (
+              <PricingTab
+                data={pricing}
+                onSave={makeSaver("pricing", setPricingState)}
+              />
+            )}
+            {tab === "fleet" && fleet && (
+              <FleetTab
+                data={fleet}
+                onSave={makeSaver("fleet", setFleetState)}
+              />
+            )}
+            {tab === "services" && services && (
+              <ServicesTab
+                data={services}
+                onSave={makeSaver("services", setServicesState)}
+              />
+            )}
+            {tab === "destinations" && destinations && (
+              <DestinationsTab
+                data={destinations}
+                onSave={makeSaver("destinations", setDestinationsState)}
+              />
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

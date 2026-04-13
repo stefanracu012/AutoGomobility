@@ -1,0 +1,9 @@
+{
+  "base": 10,
+  "economy": 0.8,
+  "business": 1.2,
+  "luxury": 1.8,
+  "economyPerHour": 30,
+  "businessPerHour": 50,
+  "luxuryPerHour": 80
+}

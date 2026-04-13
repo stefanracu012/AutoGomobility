@@ -1,0 +1,8 @@
+[
+  { "from": "Dublin Airport", "to": "Dublin City Centre", "distance": 12, "discount": 10 },
+  { "from": "Dublin Airport", "to": "Cork", "distance": 260 },
+  { "from": "Dublin Airport", "to": "Galway", "distance": 220, "discount": 15 },
+  { "from": "Dublin City Centre", "to": "Belfast", "distance": 167 },
+  { "from": "Dublin Airport", "to": "Limerick", "distance": 200, "discount": 5 },
+  { "from": "Dublin City Centre", "to": "Killarney", "distance": 305 }
+]

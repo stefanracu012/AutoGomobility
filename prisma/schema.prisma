@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum BookingStatus {
+  PENDING
+  OFFER_SENT
+  CONFIRMED
+  REJECTED
+  CANCELLED
+}
+
+type Extra {
+  label String
+  price Float
+}
+
+model SiteSettings {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  key   String @unique
+  value Json
+}
+
+model Booking {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Client info
+  clientName  String
+  clientEmail String
+  clientPhone String
+  passengers  Int           @default(1)
+  notes       String?
+
+  // Route
+  pickup      String
+  destination String
+
+  // Offer (editable by driver)
+  vehicle     String        @default("business")
+  basePrice   Float         @default(0)
+  extras      Extra[]
+  totalPrice  Float         @default(0)
+
+  // Scheduling
+  date        String?
+  time        String?
+
+  // Status
+  status      BookingStatus @default(PENDING)
+
+  // Telegram message ID (for editing the message in-place)
+  telegramMessageId Int?
+
+  // Secure token for client confirm/reject links
+  token       String        @unique
+
+  // Driver panel token (for driver to access their panel)
+  driverToken  String?       @unique
+
+  // Live location tracking
+  driverLat    Float?
+  driverLon    Float?
+  driverOnline Boolean       @default(false)
+}

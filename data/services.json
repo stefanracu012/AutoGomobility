@@ -1,0 +1,54 @@
+[
+  {
+    "id": "1",
+    "number": "01",
+    "title": "Airport Transfer",
+    "description": "Punctual pickups and drop-offs at all major airports. Flight tracking included so we are always on time, regardless of delays.",
+    "tag": "Most popular",
+    "highlights": [
+      "Real-time flight tracking",
+      "Meet & greet with name board",
+      "Free 60 min waiting time",
+      "Fixed prices, no surge"
+    ]
+  },
+  {
+    "id": "2",
+    "number": "02",
+    "title": "Business Chauffeur",
+    "description": "Professional chauffeur service for executives and business travelers. Discreet, reliable, and always impeccably presented.",
+    "tag": "Corporate",
+    "highlights": [
+      "Professional dress code",
+      "NDA available on request",
+      "Wi-Fi & phone chargers",
+      "Flexible hourly booking"
+    ]
+  },
+  {
+    "id": "3",
+    "number": "03",
+    "title": "Long Distance Travel",
+    "description": "Comfortable intercity and cross-border rides. Sit back and relax while we handle the journey from door to door.",
+    "tag": "Cross-border",
+    "highlights": [
+      "Door-to-door service",
+      "Cross-border expertise",
+      "Complimentary water & snacks",
+      "Multiple stops available"
+    ]
+  },
+  {
+    "id": "4",
+    "number": "04",
+    "title": "VIP Service",
+    "description": "Exclusive service for special events, weddings, and high-profile occasions. Red-carpet treatment from start to finish.",
+    "tag": "Premium",
+    "highlights": [
+      "Red carpet & champagne",
+      "Wedding packages",
+      "Event coordination",
+      "Luxury fleet only"
+    ]
+  }
+]
