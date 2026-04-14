@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { CalendarPicker, TimePicker } from "@/components/DateTimePicker";
 
 const RouteMap = dynamic(() => import("@/components/RouteMap"), { ssr: false });
+import { calculatePrice, type PricingRates } from "@/lib/price";
 
 interface LocationSuggestion {
   display_name: string;
@@ -27,12 +28,18 @@ async function searchLocations(query: string): Promise<LocationSuggestion[]> {
   }
 }
 
+interface RouteResult {
+  geometry: [number, number][];
+  distanceKm: number;
+  durationMin: number;
+}
+
 async function fetchRoute(
   pickupLat: string,
   pickupLon: string,
   destLat: string,
   destLon: string,
-) {
+): Promise<RouteResult | null> {
   try {
     const res = await fetch(
       `https://router.project-osrm.org/route/v1/driving/${pickupLon},${pickupLat};${destLon},${destLat}?overview=full&geometries=geojson`,
@@ -40,9 +47,15 @@ async function fetchRoute(
     if (!res.ok) return null;
     const data = await res.json();
     if (data.routes?.length > 0) {
-      return (data.routes[0].geometry.coordinates as [number, number][]).map(
+      const route = data.routes[0];
+      const geometry = (route.geometry.coordinates as [number, number][]).map(
         ([lon, lat]) => [lat, lon] as [number, number],
       );
+      return {
+        geometry,
+        distanceKm: route.distance / 1000,
+        durationMin: Math.round(route.duration / 60),
+      };
     }
     return null;
   } catch {
@@ -92,6 +105,9 @@ export default function BookingForm() {
     lat: string;
     lon: string;
   } | null>(null);
+  const [routeInfo, setRouteInfo] = useState<{ distanceKm: number; durationMin: number } | null>(null);
+  const [livePrice, setLivePrice] = useState<number | null>(null);
+  const [pricingRates, setPricingRates] = useState<PricingRates | null>(null);
 
   const pickupRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
@@ -108,6 +124,14 @@ export default function BookingForm() {
       setPickupCoords({ lat: pickupLat, lon: pickupLon });
     if (destLat && destLon) setDestCoords({ lat: destLat, lon: destLon });
   }, [pickupLat, pickupLon, destLat, destLon]);
+
+  // Fetch pricing rates for live estimate
+  useEffect(() => {
+    fetch("/api/pricing")
+      .then((r) => r.json())
+      .then(setPricingRates)
+      .catch(() => {});
+  }, []);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -136,16 +160,41 @@ export default function BookingForm() {
       (destLat && destLon ? { lat: destLat, lon: destLon } : null);
     if (pCoords && dCoords) {
       fetchRoute(pCoords.lat, pCoords.lon, dCoords.lat, dCoords.lon).then(
-        setRouteGeometry,
+        (result) => {
+          if (result) {
+            setRouteGeometry(result.geometry);
+            setRouteInfo({ distanceKm: result.distanceKm, durationMin: result.durationMin });
+          } else {
+            setRouteGeometry(null);
+            setRouteInfo(null);
+          }
+        },
       );
+    } else {
+      setRouteGeometry(null);
+      setRouteInfo(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pickupCoords, destCoords, pickupLat, pickupLon, destLat, destLon]);
+
+  // Recalculate live price when route or vehicle changes
+  useEffect(() => {
+    if (!routeInfo) { setLivePrice(null); return; }
+    setLivePrice(
+      calculatePrice({
+        distance: routeInfo.distanceKm,
+        vehicle: form.vehicle,
+        rates: pricingRates ?? undefined,
+      }),
+    );
+  }, [routeInfo, form.vehicle, pricingRates]);
 
   // Debounced Nominatim search for pickup
   const handlePickupSearch = useCallback((value: string) => {
     setForm((f) => ({ ...f, pickup: value }));
     setPickupCoords(null);
+    setRouteInfo(null);
+    setLivePrice(null);
 
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
@@ -165,6 +214,8 @@ export default function BookingForm() {
   const handleDestSearch = useCallback((value: string) => {
     setForm((f) => ({ ...f, destination: value }));
     setDestCoords(null);
+    setRouteInfo(null);
+    setLivePrice(null);
 
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
 
@@ -208,7 +259,9 @@ export default function BookingForm() {
     setLoading(true);
     setError("");
 
-    const estimatedPrice = searchParams.get("price");
+    const estimatedPrice =
+      searchParams.get("price") ??
+      (livePrice !== null ? livePrice.toFixed(2) : undefined);
 
     try {
       const res = await fetch("/api/bookings/create", {
@@ -271,8 +324,8 @@ export default function BookingForm() {
     >
       <h2 className="text-2xl font-bold mb-6 text-center">Book Your Ride</h2>
 
-      {/* Estimated price banner */}
-      {searchParams.get("price") && (
+      {/* Estimated price banner — shows from URL params or live calculation */}
+      {(livePrice !== null || searchParams.get("price")) && (
         <div className="mb-6 rounded-2xl border border-accent/20 bg-accent/5 px-5 py-4">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div>
@@ -280,15 +333,34 @@ export default function BookingForm() {
                 Preț estimativ
               </p>
               <p className="text-3xl font-bold text-accent">
-                €{parseFloat(searchParams.get("price")!).toFixed(2)}
+                €{
+                  livePrice !== null
+                    ? livePrice.toFixed(2)
+                    : parseFloat(searchParams.get("price")!).toFixed(2)
+                }
               </p>
             </div>
-            <div className="text-xs text-white/40 leading-relaxed max-w-[240px] text-right">
-              ⚠️ This is an estimated price only.
+            {routeInfo && (
+              <div className="flex gap-5 text-sm">
+                <div className="text-center">
+                  <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">Distanță</p>
+                  <p className="font-semibold text-white">{Math.round(routeInfo.distanceKm)} km</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">Durată est.</p>
+                  <p className="font-semibold text-white">
+                    {routeInfo.durationMin >= 60
+                      ? `${Math.floor(routeInfo.durationMin / 60)}h ${routeInfo.durationMin % 60}min`
+                      : `${routeInfo.durationMin} min`}
+                  </p>
+                </div>
+              </div>
+            )}
+            <div className="text-xs text-white/40 leading-relaxed max-w-[200px] text-right">
+              Preț orientativ.
               <br />
               <span className="text-white/60">
-                The driver will send a final offer to your email before
-                confirmation.
+                Oferta finală e trimisă pe email.
               </span>
             </div>
           </div>
