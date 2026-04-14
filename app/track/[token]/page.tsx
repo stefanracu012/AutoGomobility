@@ -269,7 +269,48 @@ export default function TrackPage() {
   // Client location sharing
   const [sharing, setSharing] = useState(false);
   const [geoError, setGeoError] = useState("");
+
+  // Confirm / Decline
+  const [actionLoading, setActionLoading] = useState<"confirm" | "decline" | null>(null);
+  const [actionError, setActionError] = useState("");
   const watchIdRef = useRef<number | null>(null);
+
+  const handleConfirm = async () => {
+    if (!token || actionLoading) return;
+    setActionLoading("confirm");
+    setActionError("");
+    try {
+      const res = await fetch(`/api/bookings/confirm?token=${token}`);
+      if (res.ok || res.redirected) {
+        setData((d) => d ? { ...d, status: "CONFIRMED" } : d);
+      } else {
+        const text = await res.text();
+        setActionError(text.includes("already") ? "Already processed." : "Could not confirm. Please try again.");
+      }
+    } catch {
+      setActionError("Network error. Please try again.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDecline = async () => {
+    if (!token || actionLoading) return;
+    setActionLoading("decline");
+    setActionError("");
+    try {
+      const res = await fetch(`/api/bookings/reject?token=${token}`);
+      if (res.ok || res.redirected) {
+        setData((d) => d ? { ...d, status: "REJECTED" } : d);
+      } else {
+        setActionError("Could not decline. Please try again.");
+      }
+    } catch {
+      setActionError("Network error. Please try again.");
+    } finally {
+      setActionLoading(null);
+    }
+  };
 
   const sendClientLocation = useCallback(
     async (lat: number, lon: number) => {
@@ -426,45 +467,33 @@ export default function TrackPage() {
                 The driver has sent you a personalised offer. Please confirm or
                 decline below.
               </p>
-              <a
-                href={`/api/bookings/confirm?token=${token}`}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#d4af37] text-black font-bold text-sm hover:bg-[#c49b30] transition-colors"
+              {actionError && (
+                <p className="text-xs text-red-400 text-center">{actionError}</p>
+              )}
+              <button
+                onClick={handleConfirm}
+                disabled={!!actionLoading}
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#d4af37] text-black font-bold text-sm hover:bg-[#c49b30] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20 6 9 17l-5-5" />
-                </svg>
-                Confirm Booking
-              </a>
-              <a
-                href={`/api/bookings/reject?token=${token}`}
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-transparent border border-white/15 text-white/60 font-medium text-sm hover:bg-white/5 hover:text-white transition-colors"
+                {actionLoading === "confirm" ? (
+                  <span className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                )}
+                {actionLoading === "confirm" ? "Confirming..." : "Confirm Booking"}
+              </button>
+              <button
+                onClick={handleDecline}
+                disabled={!!actionLoading}
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-transparent border border-white/15 text-white/60 font-medium text-sm hover:bg-white/5 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-                Decline Offer
-              </a>
+                {actionLoading === "decline" ? (
+                  <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white/60 animate-spin" />
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                )}
+                {actionLoading === "decline" ? "Declining..." : "Decline Offer"}
+              </button>
             </div>
           </div>
         )}
