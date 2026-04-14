@@ -23,9 +23,7 @@ function getTransporter() {
 // ── Send offer email ─────────────────────────────────────────────────
 
 function getBaseUrl() {
-  if (process.env.BASE_URL) return process.env.BASE_URL;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return "http://localhost:3000";
+  return process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
 }
 
 export async function sendOfferEmail(booking: Booking) {

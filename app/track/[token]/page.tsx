@@ -271,7 +271,9 @@ export default function TrackPage() {
   const [geoError, setGeoError] = useState("");
 
   // Confirm / Decline
-  const [actionLoading, setActionLoading] = useState<"confirm" | "decline" | null>(null);
+  const [actionLoading, setActionLoading] = useState<
+    "confirm" | "decline" | null
+  >(null);
   const [actionError, setActionError] = useState("");
   const watchIdRef = useRef<number | null>(null);
 
@@ -282,10 +284,14 @@ export default function TrackPage() {
     try {
       const res = await fetch(`/api/bookings/confirm?token=${token}`);
       if (res.ok || res.redirected) {
-        setData((d) => d ? { ...d, status: "CONFIRMED" } : d);
+        setData((d) => (d ? { ...d, status: "CONFIRMED" } : d));
       } else {
         const text = await res.text();
-        setActionError(text.includes("already") ? "Already processed." : "Could not confirm. Please try again.");
+        setActionError(
+          text.includes("already")
+            ? "Already processed."
+            : "Could not confirm. Please try again.",
+        );
       }
     } catch {
       setActionError("Network error. Please try again.");
@@ -301,7 +307,7 @@ export default function TrackPage() {
     try {
       const res = await fetch(`/api/bookings/reject?token=${token}`);
       if (res.ok || res.redirected) {
-        setData((d) => d ? { ...d, status: "REJECTED" } : d);
+        setData((d) => (d ? { ...d, status: "REJECTED" } : d));
       } else {
         setActionError("Could not decline. Please try again.");
       }
@@ -468,7 +474,9 @@ export default function TrackPage() {
                 decline below.
               </p>
               {actionError && (
-                <p className="text-xs text-red-400 text-center">{actionError}</p>
+                <p className="text-xs text-red-400 text-center">
+                  {actionError}
+                </p>
               )}
               <button
                 onClick={handleConfirm}
@@ -478,9 +486,23 @@ export default function TrackPage() {
                 {actionLoading === "confirm" ? (
                   <span className="w-4 h-4 rounded-full border-2 border-black/30 border-t-black animate-spin" />
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
                 )}
-                {actionLoading === "confirm" ? "Confirming..." : "Confirm Booking"}
+                {actionLoading === "confirm"
+                  ? "Confirming..."
+                  : "Confirm Booking"}
               </button>
               <button
                 onClick={handleDecline}
@@ -490,7 +512,20 @@ export default function TrackPage() {
                 {actionLoading === "decline" ? (
                   <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white/60 animate-spin" />
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
                 )}
                 {actionLoading === "decline" ? "Declining..." : "Decline Offer"}
               </button>
@@ -633,15 +668,15 @@ export default function TrackPage() {
                   </p>
                   <p className="text-sm text-white/80">{data.destination}</p>
                   {data.bookingType !== "hourly" && (
-                  <a
-                    href={mapsUrl(data.destination)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 mt-1.5 text-xs text-[#d4af37]/60 hover:text-[#d4af37] transition-colors"
-                  >
-                    Open in Google Maps
-                    <IconExternalLink />
-                  </a>
+                    <a
+                      href={mapsUrl(data.destination)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-1.5 text-xs text-[#d4af37]/60 hover:text-[#d4af37] transition-colors"
+                    >
+                      Open in Google Maps
+                      <IconExternalLink />
+                    </a>
                   )}
                 </div>
               </div>
