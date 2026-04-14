@@ -1,4 +1,5 @@
-﻿import { getServices } from "@/lib/data";
+﻿import Image from "next/image";
+import { getServices } from "@/lib/data";
 
 const SERVICE_ICONS = [
   <svg
@@ -79,9 +80,21 @@ export default async function Services() {
               <span className="hidden md:block text-7xl lg:text-8xl font-bold text-white/[0.06] group-hover:text-accent/20 transition-colors duration-500 tabular-nums select-none w-28 shrink-0 text-right leading-none">
                 {service.number}
               </span>
-              <div className="w-14 h-14 md:w-16 md:h-16 shrink-0 rounded-full border border-white/10 group-hover:border-accent/40 text-white/40 group-hover:text-accent flex items-center justify-center transition-all duration-400">
-                {SERVICE_ICONS[idx % SERVICE_ICONS.length]}
-              </div>
+              {service.image ? (
+                <div className="w-14 h-14 md:w-16 md:h-16 shrink-0 rounded-full overflow-hidden relative">
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    sizes="64px"
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-14 h-14 md:w-16 md:h-16 shrink-0 rounded-full border border-white/10 group-hover:border-accent/40 text-white/40 group-hover:text-accent flex items-center justify-center transition-all duration-400">
+                  {SERVICE_ICONS[idx % SERVICE_ICONS.length]}
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="text-xl md:text-2xl lg:text-3xl font-bold group-hover:text-accent transition-colors duration-300">

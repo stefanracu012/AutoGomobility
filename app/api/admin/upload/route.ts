@@ -3,6 +3,8 @@ import { writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
+const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+
 export async function POST(req: NextRequest) {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -11,6 +13,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
+    const folder = (formData.get("folder") as string) || "fleet";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -23,6 +26,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (file.size > MAX_SIZE) {
+      return NextResponse.json(
+        { error: "File too large. Maximum size is 5 MB." },
+        { status: 400 },
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const ext = (file.name.split(".").pop() ?? "jpg").toLowerCase();
@@ -31,7 +41,7 @@ export async function POST(req: NextRequest) {
     // ── Vercel Blob (production) ─────────────────────────────────────────────
     if (process.env.BLOB_READ_WRITE_TOKEN) {
       const { put } = await import("@vercel/blob");
-      const blob = await put(`fleet/${filename}`, buffer, {
+      const blob = await put(`${folder}/${filename}`, buffer, {
         access: "public",
         contentType: file.type,
       });
@@ -39,10 +49,10 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Local filesystem (development) ────────────────────────────────────────
-    const uploadsDir = join(process.cwd(), "public", "uploads");
+    const uploadsDir = join(process.cwd(), "public", "uploads", folder);
     mkdirSync(uploadsDir, { recursive: true });
     writeFileSync(join(uploadsDir, filename), buffer);
-    return NextResponse.json({ url: `/uploads/${filename}` });
+    return NextResponse.json({ url: `/uploads/${folder}/${filename}` });
   } catch (err) {
     console.error("Upload error:", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

@@ -30,6 +30,7 @@ interface ServiceItem {
   description: string;
   tag: string;
   highlights?: string[];
+  image?: string;
 }
 interface DestinationItem {
   from: string;
@@ -441,8 +442,76 @@ function FleetTab({
 }
 
 // ── Services Tab ──────────────────────────────────────────────────────────────
-const SVC_EMPTY = { title: "", tag: "", description: "", highlights: "" };
+const SVC_EMPTY = { title: "", tag: "", description: "", highlights: "", image: "" };
 type SvcForm = typeof SVC_EMPTY;
+
+function SvcImageUpload({
+  image,
+  onChange,
+}: {
+  image: string;
+  onChange: (url: string) => void;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("folder", "services");
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: fd,
+      });
+      const json = await res.json();
+      if (json.url) onChange(json.url);
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  }
+
+  return (
+    <div className="col-span-2">
+      <label className={LBL}>Image (optional)</label>
+      <div className="flex gap-2">
+        <input
+          value={image}
+          placeholder="https://… or upload"
+          onChange={(e) => onChange(e.target.value)}
+          className={INP}
+        />
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleUpload}
+        />
+        <button
+          type="button"
+          className={GHOST + " shrink-0"}
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? "…" : "📷"}
+        </button>
+      </div>
+      {image && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={image}
+          alt=""
+          className="mt-2 h-20 w-full object-cover rounded-lg"
+        />
+      )}
+    </div>
+  );
+}
 
 function ServicesTab({
   data,
@@ -511,6 +580,10 @@ function ServicesTab({
                     className={INP}
                   />
                 </div>
+                <SvcImageUpload
+                  image={editForm.image}
+                  onChange={(url) => setEditForm((f) => ({ ...f, image: url }))}
+                />
               </div>
               <div className="flex gap-2">
                 <button
@@ -526,6 +599,7 @@ function ServicesTab({
                                 .split(",")
                                 .map((s) => s.trim())
                                 .filter(Boolean),
+                              image: editForm.image || undefined,
                             }
                           : i,
                       ),
@@ -542,9 +616,18 @@ function ServicesTab({
             </div>
           ) : (
             <div className="flex items-start gap-4">
-              <span className="text-3xl font-bold text-white/10 w-10 shrink-0 tabular-nums">
-                {item.number || String(idx + 1).padStart(2, "0")}
-              </span>
+              {item.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={item.image}
+                  alt=""
+                  className="w-10 h-10 rounded-lg object-cover shrink-0"
+                />
+              ) : (
+                <span className="text-3xl font-bold text-white/10 w-10 shrink-0 tabular-nums">
+                  {item.number || String(idx + 1).padStart(2, "0")}
+                </span>
+              )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-semibold text-sm">{item.title}</span>
@@ -566,6 +649,7 @@ function ServicesTab({
                       tag: item.tag,
                       description: item.description,
                       highlights: item.highlights?.join(", ") ?? "",
+                      image: item.image ?? "",
                     });
                   }}
                 >
@@ -624,6 +708,10 @@ function ServicesTab({
                 className={INP}
               />
             </div>
+            <SvcImageUpload
+              image={newForm.image}
+              onChange={(url) => setNewForm((f) => ({ ...f, image: url }))}
+            />
           </div>
           <div className="flex gap-2 mt-3">
             <button
@@ -640,6 +728,7 @@ function ServicesTab({
                       .split(",")
                       .map((s) => s.trim())
                       .filter(Boolean),
+                    image: newForm.image || undefined,
                   },
                 ]);
                 setNewForm(SVC_EMPTY);

@@ -49,6 +49,7 @@ export interface ServiceItem {
   description: string;
   tag: string;
   highlights?: string[];
+  image?: string;
 }
 
 export interface DestinationItem {

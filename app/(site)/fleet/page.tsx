@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { getFleet } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
@@ -40,12 +41,14 @@ export default async function FleetPage() {
                 i % 2 === 1 ? "md:flex-row-reverse" : ""
               } md:flex`}
             >
-              <div className="md:w-1/2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="md:w-1/2 relative min-h-[280px]">
+                <Image
                   src={car.image}
                   alt={car.name}
-                  className="w-full h-full object-cover min-h-[280px]"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                  priority={i < 2}
                 />
               </div>
               <div className="md:w-1/2 p-8 md:p-10 flex flex-col justify-center">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { getServices } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
@@ -100,9 +101,21 @@ export default async function ServicesPage() {
               className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 md:p-10 hover:bg-white/8 transition-all duration-300"
             >
               <div className="flex flex-col md:flex-row gap-6 md:gap-10">
-                <div className="w-16 h-16 rounded-2xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-                  {SERVICE_ICONS[idx % SERVICE_ICONS.length]}
-                </div>
+                {service.image ? (
+                  <div className="w-full md:w-40 h-32 md:h-40 relative rounded-2xl overflow-hidden shrink-0">
+                    <Image
+                      src={service.image}
+                      alt={service.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 160px"
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                    {SERVICE_ICONS[idx % SERVICE_ICONS.length]}
+                  </div>
+                )}
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold mb-3">{service.title}</h2>
                   <p className="text-muted leading-relaxed mb-5">

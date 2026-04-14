@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getFleet } from "@/lib/data";
 
 export default async function Fleet() {
@@ -39,13 +40,16 @@ export default async function Fleet() {
             <div
               className={`relative overflow-hidden ${index % 2 === 1 ? "md:order-2" : ""}`}
             >
-              <img
+              <Image
                 src={car.image}
                 alt={car.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                priority={index < 2}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
-              <span className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-accent text-xs font-semibold px-3 py-1.5 rounded-full">
+              <span className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-accent text-xs font-semibold px-3 py-1.5 rounded-full z-10">
                 {car.priceLabel}
               </span>
             </div>
