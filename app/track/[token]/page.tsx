@@ -575,12 +575,11 @@ export default function TrackPage() {
                 {geoError === "PERMISSION_DENIED" ? (
                   <>
                     <p className="font-semibold">Location access was denied.</p>
-                    <p className="text-red-400/70 text-xs leading-relaxed">
-                      To fix this, open your browser settings, find this site
-                      under Permissions → Location, and set it to{" "}
-                      <strong>Allow</strong>. Then refresh the page and try
-                      again.
-                    </p>
+                    <div className="text-red-400/70 text-xs leading-relaxed space-y-2 mt-1">
+                      <p><strong className="text-red-400">iPhone / iPad:</strong> Go to <strong>Settings → Privacy &amp; Security → Location Services</strong>, find your browser (Safari / Chrome), set it to <strong>While Using</strong>. Then refresh.</p>
+                      <p><strong className="text-red-400">Android:</strong> Tap the <strong>lock icon</strong> in the address bar → <strong>Permissions → Location → Allow</strong>. Then refresh.</p>
+                      <p><strong className="text-red-400">Desktop:</strong> Click the lock icon in the address bar → <strong>Site settings → Location → Allow</strong>. Then refresh.</p>
+                    </div>
                   </>
                 ) : (
                   <p>{geoError}</p>
