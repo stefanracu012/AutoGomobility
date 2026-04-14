@@ -13,6 +13,7 @@ enum BookingStatus {
   CONFIRMED
   REJECTED
   CANCELLED
+  COMPLETED
 }
 
 type Extra {

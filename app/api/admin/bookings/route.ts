@@ -25,7 +25,7 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Missing id or status" }, { status: 400 });
   }
 
-  const allowed = ["PENDING", "OFFER_SENT", "CONFIRMED", "REJECTED", "CANCELLED"];
+  const allowed = ["PENDING", "OFFER_SENT", "CONFIRMED", "REJECTED", "CANCELLED", "COMPLETED"];
   if (!allowed.includes(status)) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }

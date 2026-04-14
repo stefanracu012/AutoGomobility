@@ -245,6 +245,12 @@ function getStatusInfo(status: string): StatusInfo {
         icon: <IconBan className="text-gray-400" />,
         color: "text-gray-400",
       };
+    case "COMPLETED":
+      return {
+        text: "Trip completed",
+        icon: <IconCheckCircle className="text-emerald-400" />,
+        color: "text-emerald-400",
+      };
     default:
       return {
         text: status,

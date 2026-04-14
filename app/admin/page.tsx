@@ -833,6 +833,90 @@ function toDestItem(f: DestForm): DestinationItem {
   return item;
 }
 
+// ── Nominatim autocomplete input ──────────────────────────────────────────────
+
+async function searchNominatim(query: string) {
+  if (!query || query.length < 3) return [];
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`,
+      { headers: { "Accept-Language": "en" } },
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.map((r: { display_name: string }) => r.display_name as string);
+  } catch {
+    return [];
+  }
+}
+
+function NominatimField({
+  label,
+  value,
+  placeholder,
+  onSelect,
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  onSelect: (name: string) => void;
+}) {
+  const [query, setQuery] = useState(value);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [open, setOpen] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Keep internal query in sync with external value
+  useEffect(() => {
+    setQuery(value);
+  }, [value]);
+
+  const handleChange = (v: string) => {
+    setQuery(v);
+    onSelect(v); // always reflect typed text back to parent
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(async () => {
+      const results = await searchNominatim(v);
+      setSuggestions(results);
+      setOpen(results.length > 0);
+    }, 350);
+  };
+
+  return (
+    <div className="relative">
+      <label className={LBL}>{label}</label>
+      <input
+        value={query}
+        placeholder={placeholder}
+        onChange={(e) => handleChange(e.target.value)}
+        onFocus={() => suggestions.length > 0 && setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 200)}
+        className={INP}
+        autoComplete="off"
+      />
+      {open && suggestions.length > 0 && (
+        <div className="absolute z-50 left-0 right-0 mt-1 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+          {suggestions.map((s, i) => (
+            <button
+              key={i}
+              type="button"
+              className="w-full text-left px-3 py-2 text-xs text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+              onMouseDown={(e) => e.preventDefault()} // prevent onBlur
+              onClick={() => {
+                setQuery(s);
+                onSelect(s);
+                setOpen(false);
+              }}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DestFields({
   form,
   onChange,
@@ -843,15 +927,13 @@ function DestFields({
   return (
     <div className="grid grid-cols-2 gap-3">
       {(["from", "to"] as const).map((k) => (
-        <div key={k}>
-          <label className={LBL}>{k === "from" ? "From" : "To"}</label>
-          <input
-            value={form[k]}
-            placeholder={k === "from" ? "Dublin Airport" : "Cork"}
-            onChange={(e) => onChange({ ...form, [k]: e.target.value })}
-            className={INP}
-          />
-        </div>
+        <NominatimField
+          key={k}
+          label={k === "from" ? "From" : "To"}
+          value={form[k]}
+          placeholder={k === "from" ? "Dublin Airport" : "Cork"}
+          onSelect={(name) => onChange({ ...form, [k]: name })}
+        />
       ))}
       <div>
         <label className={LBL}>Distance (km)</label>
@@ -1219,6 +1301,7 @@ const STATUS_BADGE: Record<string, string> = {
   CONFIRMED: "bg-green-400/10 text-green-400 border-green-400/20",
   REJECTED: "bg-red-400/10 text-red-400 border-red-400/20",
   CANCELLED: "bg-white/5 text-white/30 border-white/10",
+  COMPLETED: "bg-emerald-400/10 text-emerald-400 border-emerald-400/20",
 };
 
 const VEHICLE_MAP: Record<string, string> = {
@@ -1259,7 +1342,7 @@ function BookingsTab({
     <div className="flex flex-col gap-4">
       {/* Filter bar */}
       <div className="flex flex-wrap gap-2 items-center">
-        {["ALL", "PENDING", "OFFER_SENT", "CONFIRMED", "REJECTED", "CANCELLED"].map(
+        {["ALL", "PENDING", "OFFER_SENT", "CONFIRMED", "COMPLETED", "REJECTED", "CANCELLED"].map(
           (s) => {
             const count = s === "ALL" ? data.length : data.filter((b) => b.status === s).length;
             return (
@@ -1407,13 +1490,22 @@ function BookingsTab({
                 <div className="flex-1" />
 
                 {/* Status actions */}
-                {b.status !== "CANCELLED" && b.status !== "REJECTED" && (
+                {b.status !== "CANCELLED" && b.status !== "REJECTED" && b.status !== "COMPLETED" && (
                   <button
                     onClick={() => updateStatus(b.id, "CANCELLED")}
                     disabled={updating === b.id}
                     className="text-xs text-red-400/50 hover:text-red-400 transition-colors disabled:opacity-30"
                   >
                     Cancel
+                  </button>
+                )}
+                {b.status === "CONFIRMED" && (
+                  <button
+                    onClick={() => updateStatus(b.id, "COMPLETED")}
+                    disabled={updating === b.id}
+                    className="text-xs px-3 py-1 rounded-lg bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 hover:bg-emerald-400/20 transition-colors disabled:opacity-30"
+                  >
+                    Complete
                   </button>
                 )}
                 {b.status === "PENDING" && (

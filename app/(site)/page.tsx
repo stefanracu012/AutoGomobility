@@ -5,6 +5,8 @@ import Destinations from "@/components/Destinations";
 import Image from "next/image";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <>
