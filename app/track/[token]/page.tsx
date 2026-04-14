@@ -294,10 +294,16 @@ export default function TrackPage() {
         sendClientLocation(lat, lon);
       },
       (err) => {
-        setGeoError(`GPS error: ${err.message}`);
+        if (err.code === 1) {
+          setGeoError("PERMISSION_DENIED");
+        } else if (err.code === 2) {
+          setGeoError("Location unavailable. Make sure GPS is enabled on your device.");
+        } else {
+          setGeoError("Location request timed out. Please try again.");
+        }
         setSharing(false);
       },
-      { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 },
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 },
     );
   };
 
@@ -497,8 +503,19 @@ export default function TrackPage() {
           </div>
           <div className="px-5 py-4 space-y-3">
             {geoError && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400">
-                {geoError}
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400 space-y-1">
+                {geoError === "PERMISSION_DENIED" ? (
+                  <>
+                    <p className="font-semibold">Location access was denied.</p>
+                    <p className="text-red-400/70 text-xs leading-relaxed">
+                      To fix this, open your browser settings, find this site under
+                      Permissions → Location, and set it to <strong>Allow</strong>.
+                      Then refresh the page and try again.
+                    </p>
+                  </>
+                ) : (
+                  <p>{geoError}</p>
+                )}
               </div>
             )}
             {!sharing ? (
