@@ -22,8 +22,14 @@ function getTransporter() {
 
 // ── Send offer email ─────────────────────────────────────────────────
 
+function getBaseUrl() {
+  if (process.env.BASE_URL) return process.env.BASE_URL;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+}
+
 export async function sendOfferEmail(booking: Booking) {
-  const baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
+  const baseUrl = getBaseUrl();
   const confirmUrl = `${baseUrl}/api/bookings/confirm?token=${booking.token}`;
   const rejectUrl = `${baseUrl}/api/bookings/reject?token=${booking.token}`;
   const trackUrl = `${baseUrl}/track/${booking.token}`;

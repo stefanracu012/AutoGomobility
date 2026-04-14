@@ -46,7 +46,8 @@ function formatBooking(b: Booking): string {
       ? extras.map((e, i) => `  ${i + 1}. ${e.label} — €${e.price.toFixed(2)}`).join("\n")
       : "  None";
 
-  const baseUrl = process.env.BASE_URL ?? "http://localhost:3000";
+  const baseUrl = process.env.BASE_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
   const driverUrl = `${baseUrl}/driver/${b.driverToken}`;
 
   return [
