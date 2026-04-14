@@ -625,10 +625,10 @@ export default function TrackPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() => window.location.reload()}
-                      className="mt-3 w-full py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 font-semibold text-xs hover:bg-red-500/30 transition-colors"
+                      onClick={() => { setGeoError(""); startSharing(); }}
+                      className="mt-3 w-full py-2.5 rounded-lg bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#d4af37] font-semibold text-sm hover:bg-[#d4af37]/30 transition-colors"
                     >
-                      🔄 I allowed it — Reload Page
+                      📍 Allow &amp; Share Location
                     </button>
                   </>
                 ) : (
