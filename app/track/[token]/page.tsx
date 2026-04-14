@@ -275,6 +275,7 @@ export default function TrackPage() {
     "confirm" | "decline" | null
   >(null);
   const [actionError, setActionError] = useState("");
+  const [showSharePanel, setShowSharePanel] = useState(false);
   const watchIdRef = useRef<number | null>(null);
   const hasNotifiedRef = useRef(false);
 
@@ -577,25 +578,28 @@ export default function TrackPage() {
           </div>
         </div>
 
-        {/* Share my location */}
-        <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <IconPin className="text-[#d4af37] w-5 h-5" />
-              <span className="text-sm font-semibold text-white/80 uppercase tracking-wider">
-                Share My Location
+        {/* Share my location (optional) */}
+        <div className="bg-[#111]/60 border border-white/5 rounded-2xl overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setShowSharePanel(v => !v)}
+            className="w-full px-5 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-white/40">📍 Share my exact location</span>
+              <span className="text-[10px] text-white/20 border border-white/10 rounded px-1.5 py-0.5 uppercase tracking-wider">Optional</span>
+            </div>
+            {sharing ? (
+              <span className="flex items-center gap-1.5 text-xs text-green-400 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                Live
               </span>
-            </div>
-            <div
-              className={`flex items-center gap-2 text-sm font-medium ${sharing ? "text-green-400" : "text-white/30"}`}
-            >
-              <span
-                className={`w-2 h-2 rounded-full ${sharing ? "bg-green-400 animate-pulse" : "bg-white/20"}`}
-              />
-              {sharing ? "Sharing" : "Off"}
-            </div>
-          </div>
-          <div className="px-5 py-4 space-y-3">
+            ) : (
+              <span className="text-white/20 text-xs">{showSharePanel ? "▲" : "▼"}</span>
+            )}
+          </button>
+          {(showSharePanel || sharing || !!geoError) && (
+          <div className="px-5 pb-4 space-y-3">
             {geoError && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400 space-y-1">
                 {geoError === "PERMISSION_DENIED" ? (
@@ -625,7 +629,10 @@ export default function TrackPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() => { setGeoError(""); startSharing(); }}
+                      onClick={() => {
+                        setGeoError("");
+                        startSharing();
+                      }}
                       className="mt-3 w-full py-2.5 rounded-lg bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#d4af37] font-semibold text-sm hover:bg-[#d4af37]/30 transition-colors"
                     >
                       📍 Allow &amp; Share Location
@@ -650,9 +657,9 @@ export default function TrackPage() {
             {!sharing ? (
               <button
                 onClick={startSharing}
-                className="w-full py-3 rounded-xl bg-[#d4af37] text-black font-bold text-sm hover:bg-[#c49b30] transition-colors"
+                className="w-full py-2.5 rounded-xl bg-white/10 border border-white/15 text-white/60 font-semibold text-sm hover:bg-white/15 transition-colors"
               >
-                📍 Share My Location with Driver
+                📍 Share My Location
               </button>
             ) : (
               <button
@@ -668,6 +675,7 @@ export default function TrackPage() {
               </p>
             )}
           </div>
+          )}
         </div>
 
         {/* Map */}

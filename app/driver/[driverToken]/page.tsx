@@ -548,12 +548,50 @@ export default function DriverPage() {
           </div>
         </div>
 
-        {/* Location Sharing */}
+        {/* Quick Actions — no GPS needed */}
+        <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/10">
+            <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">Quick Actions</h2>
+          </div>
+          <div className="p-4 space-y-3">
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(booking.pickup)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-[#d4af37] text-black font-bold text-base hover:bg-[#c49b30] transition-colors"
+            >
+              🗺️ Navigate to Pickup
+            </a>
+            <div className="grid grid-cols-2 gap-3">
+              <a
+                href={`https://waze.com/ul?q=${encodeURIComponent(booking.pickup)}&navigate=yes`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#33ccff]/10 border border-[#33ccff]/30 text-[#33ccff] font-semibold text-sm hover:bg-[#33ccff]/20 transition-colors"
+              >
+                🚗 Waze
+              </a>
+              <a
+                href={`https://wa.me/${booking.clientPhone.replace(/\D/g, "")}?text=${encodeURIComponent("I'm on my way to pick you up! 🚗")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-semibold text-sm hover:bg-[#25D366]/20 transition-colors"
+              >
+                💬 WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Live Location on this page */}
         <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
-            <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
-              Live Location
-            </h2>
+            <div>
+              <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
+                Live Location
+              </h2>
+              <p className="text-xs text-white/25 mt-0.5">Share on this page · requires GPS permission</p>
+            </div>
             <div
               className={`flex items-center gap-2 text-sm font-medium ${sharing ? "text-green-400" : "text-white/30"}`}
             >
@@ -593,7 +631,10 @@ export default function DriverPage() {
                       </p>
                     </div>
                     <button
-                      onClick={() => { setGeoError(""); startSharing(); }}
+                      onClick={() => {
+                        setGeoError("");
+                        startSharing();
+                      }}
                       className="mt-3 w-full py-2.5 rounded-lg bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#d4af37] font-semibold text-sm hover:bg-[#d4af37]/30 transition-colors"
                     >
                       📍 Allow &amp; Share Location
