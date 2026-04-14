@@ -442,7 +442,13 @@ function FleetTab({
 }
 
 // ── Services Tab ──────────────────────────────────────────────────────────────
-const SVC_EMPTY = { title: "", tag: "", description: "", highlights: "", image: "" };
+const SVC_EMPTY = {
+  title: "",
+  tag: "",
+  description: "",
+  highlights: "",
+  image: "",
+};
 type SvcForm = typeof SVC_EMPTY;
 
 function SvcImageUpload({

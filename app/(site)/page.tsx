@@ -2,6 +2,7 @@ import Hero from "@/components/Hero";
 import Fleet from "@/components/Fleet";
 import Services from "@/components/Services";
 import Destinations from "@/components/Destinations";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -16,10 +17,13 @@ export default function Home() {
       <section className="relative h-screen overflow-hidden flex">
         {/* Left - Full bleed image */}
         <div className="w-[50vw] h-screen shrink-0 relative">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1200&q=80"
             alt="Professional chauffeur"
-            className="w-full h-full object-cover"
+            fill
+            sizes="50vw"
+            quality={75}
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/60" />
         </div>

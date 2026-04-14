@@ -603,7 +603,10 @@ export default function DriverPage() {
                   <>
                     <p>{geoError}</p>
                     <button
-                      onClick={() => { setGeoError(""); startSharing(); }}
+                      onClick={() => {
+                        setGeoError("");
+                        startSharing();
+                      }}
                       className="mt-2 w-full py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 font-semibold text-xs hover:bg-red-500/30 transition-colors"
                     >
                       🔄 Try Again

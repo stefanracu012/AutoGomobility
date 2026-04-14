@@ -8,7 +8,7 @@ export default async function Fleet() {
     <section id="fleet" className="py-24 md:py-32 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-accent/5 rounded-full blur-[100px]" />
+      <div className="hidden md:block absolute -top-40 -right-40 w-80 h-80 bg-accent/5 rounded-full blur-[100px]" />
 
       <div className="container mx-auto px-6 relative">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
