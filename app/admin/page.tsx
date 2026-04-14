@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import Image from "next/image";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Pricing {
@@ -255,12 +256,15 @@ function FleetFields({
           </button>
         </div>
         {form.image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={form.image}
-            alt=""
-            className="mt-2 h-20 w-full object-cover rounded-lg"
-          />
+          <div className="mt-2 h-20 w-full relative rounded-lg overflow-hidden">
+            <Image
+              src={form.image}
+              alt=""
+              fill
+              sizes="400px"
+              className="object-cover"
+            />
+          </div>
         )}
       </div>
       <div className="col-span-2">
@@ -342,12 +346,15 @@ function FleetTab({
           ) : (
             <div className="flex items-center gap-4">
               {item.image && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={item.image}
-                  alt=""
-                  className="w-20 h-14 object-cover rounded-lg shrink-0"
-                />
+                <div className="w-20 h-14 relative rounded-lg overflow-hidden shrink-0">
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
@@ -508,12 +515,15 @@ function SvcImageUpload({
         </button>
       </div>
       {image && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={image}
-          alt=""
-          className="mt-2 h-20 w-full object-cover rounded-lg"
-        />
+        <div className="mt-2 h-20 w-full relative rounded-lg overflow-hidden">
+          <Image
+            src={image}
+            alt=""
+            fill
+            sizes="400px"
+            className="object-cover"
+          />
+        </div>
       )}
     </div>
   );
@@ -623,12 +633,15 @@ function ServicesTab({
           ) : (
             <div className="flex items-start gap-4">
               {item.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={item.image}
-                  alt=""
-                  className="w-10 h-10 rounded-lg object-cover shrink-0"
-                />
+                <div className="w-10 h-10 relative rounded-lg overflow-hidden shrink-0">
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="40px"
+                    className="object-cover"
+                  />
+                </div>
               ) : (
                 <span className="text-3xl font-bold text-white/10 w-10 shrink-0 tabular-nums">
                   {item.number || String(idx + 1).padStart(2, "0")}
