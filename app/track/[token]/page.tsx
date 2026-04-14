@@ -276,6 +276,7 @@ export default function TrackPage() {
   >(null);
   const [actionError, setActionError] = useState("");
   const watchIdRef = useRef<number | null>(null);
+  const hasNotifiedRef = useRef(false);
 
   const handleConfirm = async () => {
     if (!token || actionLoading) return;
@@ -320,6 +321,15 @@ export default function TrackPage() {
 
   const sendClientLocation = useCallback(
     async (lat: number, lon: number) => {
+      // Notify driver once when client first successfully shares location
+      if (!hasNotifiedRef.current) {
+        hasNotifiedRef.current = true;
+        fetch("/api/client/notify-started", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        }).catch(() => {}); // best-effort, don't block
+      }
       await fetch("/api/client/location", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

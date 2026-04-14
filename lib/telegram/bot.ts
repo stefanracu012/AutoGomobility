@@ -168,6 +168,35 @@ async function editBookingMessage(
   }
 }
 
+// ── Notify driver that client started sharing location ───────────────
+
+export async function notifyClientLocationStarted(
+  clientName: string,
+  pickup: string,
+  bookingId: string,
+) {
+  const bot = getBot();
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!chatId) return;
+
+  const baseUrl =
+    process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
+
+  const text = [
+    `📍 <b>Client started sharing location</b>`,
+    ``,
+    `👤 ${clientName}`,
+    `🚖 Booking #${bookingId.slice(-6).toUpperCase()}`,
+    `📌 Pickup: ${pickup}`,
+    ``,
+    `<a href="${baseUrl}/driver/${bookingId}">Open Driver Panel →</a>`,
+  ].join("\n");
+
+  await bot.telegram.sendMessage(Number(chatId), text, {
+    parse_mode: "HTML",
+  });
+}
+
 // ── Notify driver of client response ─────────────────────────────────
 
 export async function notifyDriverStatus(
