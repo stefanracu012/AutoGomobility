@@ -376,16 +376,33 @@ export default function DriverPage() {
       (err) => {
         if (err.code === 1) {
           setGeoError("PERMISSION_DENIED");
+          setSharing(false);
         } else if (err.code === 2) {
           setGeoError(
             "Location unavailable. Make sure GPS is enabled on your device.",
           );
+          setSharing(false);
         } else {
-          setGeoError("Location request timed out. Please try again.");
+          // TIMEOUT: GPS fix took too long — retry with network-based location (WiFi/cell, much faster)
+          if (watchIdRef.current !== null) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
+          }
+          watchIdRef.current = navigator.geolocation.watchPosition(
+            (pos) => {
+              const { latitude: lat, longitude: lon } = pos.coords;
+              setPosition({ lat, lon });
+              sendLocation(lat, lon);
+            },
+            () => {
+              setGeoError("Location request timed out. Please try again.");
+              setSharing(false);
+            },
+            { enableHighAccuracy: false, maximumAge: 10000, timeout: 30000 },
+          );
         }
-        setSharing(false);
       },
-      { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 },
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 30000 },
     );
   };
 
@@ -553,9 +570,27 @@ export default function DriverPage() {
                   <>
                     <p className="font-semibold">Location access was denied.</p>
                     <div className="text-red-400/70 text-xs leading-relaxed space-y-2 mt-1">
-                      <p><strong className="text-red-400">iPhone / iPad:</strong> Go to <strong>Settings → Privacy &amp; Security → Location Services</strong>, find your browser (Safari / Chrome), set it to <strong>While Using</strong>. Then refresh.</p>
-                      <p><strong className="text-red-400">Android:</strong> Tap the <strong>lock icon</strong> in the address bar → <strong>Permissions → Location → Allow</strong>. Then refresh.</p>
-                      <p><strong className="text-red-400">Desktop:</strong> Click the lock icon in the address bar → <strong>Site settings → Location → Allow</strong>. Then refresh.</p>
+                      <p>
+                        <strong className="text-red-400">iPhone / iPad:</strong>{" "}
+                        Go to{" "}
+                        <strong>
+                          Settings → Privacy &amp; Security → Location Services
+                        </strong>
+                        , find your browser (Safari / Chrome), set it to{" "}
+                        <strong>While Using</strong>. Then refresh.
+                      </p>
+                      <p>
+                        <strong className="text-red-400">Android:</strong> Tap
+                        the <strong>lock icon</strong> in the address bar →{" "}
+                        <strong>Permissions → Location → Allow</strong>. Then
+                        refresh.
+                      </p>
+                      <p>
+                        <strong className="text-red-400">Desktop:</strong> Click
+                        the lock icon in the address bar →{" "}
+                        <strong>Site settings → Location → Allow</strong>. Then
+                        refresh.
+                      </p>
                     </div>
                   </>
                 ) : (
