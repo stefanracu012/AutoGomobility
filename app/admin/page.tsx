@@ -46,7 +46,31 @@ interface LocationItem {
   lat: string;
   lon: string;
 }
-type Tab = "pricing" | "fleet" | "services" | "destinations" | "locations";
+interface BookingAdmin {
+  id: string;
+  createdAt: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  passengers: number;
+  notes: string | null;
+  pickup: string;
+  destination: string;
+  vehicle: string;
+  basePrice: number;
+  totalPrice: number;
+  extras: { label: string; price: number }[];
+  date: string | null;
+  time: string | null;
+  bookingType: string | null;
+  hours: number | null;
+  status: string;
+  token: string;
+  driverToken: string | null;
+  driverOnline: boolean;
+  clientOnline: boolean;
+}
+type Tab = "bookings" | "pricing" | "fleet" | "services" | "destinations" | "locations";
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
 const INP =
@@ -1187,13 +1211,237 @@ function LocFields({
   );
 }
 
+// ── Bookings Tab ──────────────────────────────────────────────────────────────
+
+const STATUS_BADGE: Record<string, string> = {
+  PENDING: "bg-yellow-400/10 text-yellow-400 border-yellow-400/20",
+  OFFER_SENT: "bg-blue-400/10 text-blue-400 border-blue-400/20",
+  CONFIRMED: "bg-green-400/10 text-green-400 border-green-400/20",
+  REJECTED: "bg-red-400/10 text-red-400 border-red-400/20",
+  CANCELLED: "bg-white/5 text-white/30 border-white/10",
+};
+
+const VEHICLE_MAP: Record<string, string> = {
+  economy: "Economy",
+  business: "Business",
+  luxury: "Luxury",
+};
+
+function BookingsTab({
+  data,
+  onRefresh,
+}: {
+  data: BookingAdmin[];
+  onRefresh: () => Promise<void>;
+}) {
+  const [filter, setFilter] = useState<string>("ALL");
+  const [updating, setUpdating] = useState<string | null>(null);
+
+  const filtered = filter === "ALL" ? data : data.filter((b) => b.status === filter);
+
+  const updateStatus = async (id: string, status: string) => {
+    setUpdating(id);
+    try {
+      await fetch("/api/admin/bookings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ id, status }),
+      });
+      await onRefresh();
+    } catch { /* ignore */ }
+    setUpdating(null);
+  };
+
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Filter bar */}
+      <div className="flex flex-wrap gap-2 items-center">
+        {["ALL", "PENDING", "OFFER_SENT", "CONFIRMED", "REJECTED", "CANCELLED"].map(
+          (s) => {
+            const count = s === "ALL" ? data.length : data.filter((b) => b.status === s).length;
+            return (
+              <button
+                key={s}
+                onClick={() => setFilter(s)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+                  filter === s
+                    ? "bg-[#d4af37]/20 text-[#d4af37] border-[#d4af37]/30"
+                    : "bg-white/[0.03] text-white/40 border-white/10 hover:text-white"
+                }`}
+              >
+                {s === "ALL" ? "All" : s.replace("_", " ")} ({count})
+              </button>
+            );
+          },
+        )}
+      </div>
+
+      {/* Bookings list */}
+      {filtered.length === 0 ? (
+        <div className="text-center py-16 text-white/20 text-sm">
+          No bookings found
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {filtered.map((b) => (
+            <div key={b.id} className={CARD + " !p-0 overflow-hidden"}>
+              {/* Header row */}
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${STATUS_BADGE[b.status] ?? "text-white/40"}`}
+                  >
+                    {b.status.replace("_", " ")}
+                  </span>
+                  <span className="text-xs text-white/20">
+                    #{b.id.slice(-6).toUpperCase()}
+                  </span>
+                  <span className="text-xs text-white/20">
+                    {new Date(b.createdAt).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+                <span className="text-sm font-bold text-[#d4af37]">
+                  €{b.totalPrice.toFixed(2)}
+                </span>
+              </div>
+
+              {/* Body */}
+              <div className="px-5 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
+                {/* Client */}
+                <div>
+                  <span className="text-white/30 text-xs uppercase tracking-wider">Client</span>
+                  <p className="text-white/80 font-medium">{b.clientName}</p>
+                  <p className="text-white/40 text-xs">{b.clientEmail}</p>
+                  <p className="text-white/40 text-xs">{b.clientPhone}</p>
+                </div>
+
+                {/* Route */}
+                <div>
+                  <span className="text-white/30 text-xs uppercase tracking-wider">Route</span>
+                  <p className="text-white/80 text-xs mt-0.5">
+                    <span className="text-green-400/70">●</span> {b.pickup}
+                  </p>
+                  <p className="text-white/80 text-xs">
+                    <span className="text-[#d4af37]/70">●</span> {b.destination}
+                  </p>
+                </div>
+
+                {/* Details */}
+                <div>
+                  <span className="text-white/30 text-xs uppercase tracking-wider">Details</span>
+                  <p className="text-white/60 text-xs mt-0.5">
+                    {VEHICLE_MAP[b.vehicle] ?? b.vehicle} · {b.passengers} pax
+                    {b.bookingType === "hourly" && b.hours ? ` · ${b.hours}h hourly` : ""}
+                  </p>
+                  {b.date && (
+                    <p className="text-white/60 text-xs">
+                      {b.date}{b.time ? ` · ${b.time}` : ""}
+                    </p>
+                  )}
+                  {b.notes && (
+                    <p className="text-white/40 text-xs italic mt-0.5 truncate max-w-[250px]">
+                      {b.notes}
+                    </p>
+                  )}
+                </div>
+
+                {/* Pricing */}
+                <div>
+                  <span className="text-white/30 text-xs uppercase tracking-wider">Pricing</span>
+                  <p className="text-white/60 text-xs mt-0.5">
+                    Base: €{b.basePrice.toFixed(2)}
+                  </p>
+                  {b.extras?.length > 0 && (
+                    <p className="text-white/40 text-xs">
+                      Extras: {b.extras.map((e) => `${e.label} €${e.price.toFixed(2)}`).join(", ")}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Footer — links + actions */}
+              <div className="px-5 py-3 border-t border-white/5 flex flex-wrap items-center gap-2">
+                {/* Track link */}
+                <a
+                  href={`${baseUrl}/track/${b.token}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-[#d4af37]/60 hover:text-[#d4af37] transition-colors"
+                >
+                  Track page ↗
+                </a>
+
+                {/* Driver link */}
+                {b.driverToken && (
+                  <a
+                    href={`${baseUrl}/driver/${b.driverToken}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-400/60 hover:text-blue-400 transition-colors"
+                  >
+                    Driver panel ↗
+                  </a>
+                )}
+
+                {/* Live indicators */}
+                {b.driverOnline && (
+                  <span className="text-[10px] text-green-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    Driver live
+                  </span>
+                )}
+                {b.clientOnline && (
+                  <span className="text-[10px] text-green-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    Client live
+                  </span>
+                )}
+
+                <div className="flex-1" />
+
+                {/* Status actions */}
+                {b.status !== "CANCELLED" && b.status !== "REJECTED" && (
+                  <button
+                    onClick={() => updateStatus(b.id, "CANCELLED")}
+                    disabled={updating === b.id}
+                    className="text-xs text-red-400/50 hover:text-red-400 transition-colors disabled:opacity-30"
+                  >
+                    Cancel
+                  </button>
+                )}
+                {b.status === "PENDING" && (
+                  <button
+                    onClick={() => updateStatus(b.id, "CONFIRMED")}
+                    disabled={updating === b.id}
+                    className="text-xs px-3 py-1 rounded-lg bg-green-400/10 text-green-400 border border-green-400/20 hover:bg-green-400/20 transition-colors disabled:opacity-30"
+                  >
+                    Confirm
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main AdminPage ────────────────────────────────────────────────────────────
 export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
-  const [tab, setTab] = useState<Tab>("pricing");
+  const [tab, setTab] = useState<Tab>("bookings");
+  const [bookings, setBookings] = useState<BookingAdmin[] | null>(null);
   const [pricing, setPricingState] = useState<Pricing | null>(null);
   const [fleet, setFleetState] = useState<FleetItem[] | null>(null);
   const [services, setServicesState] = useState<ServiceItem[] | null>(null);
@@ -1234,6 +1482,11 @@ export default function AdminPage() {
     setServicesState(s);
     setDestinationsState(d);
     setLocationsState(l);
+    // Bookings use a separate endpoint
+    fetch("/api/admin/bookings", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((b: BookingAdmin[]) => setBookings(b))
+      .catch(() => setBookings([]));
   }, [callApi]);
 
   useEffect(() => {
@@ -1331,6 +1584,26 @@ export default function AdminPage() {
 
   // ── Dashboard
   const TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
+    {
+      key: "bookings",
+      label: "Bookings",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z" />
+          <path d="M15 3v4a1 1 0 0 0 1 1h4" />
+        </svg>
+      ),
+    },
     {
       key: "pricing",
       label: "Pricing",
@@ -1443,9 +1716,11 @@ export default function AdminPage() {
     setServicesState(null);
     setDestinationsState(null);
     setLocationsState(null);
+    setBookings(null);
   };
 
   const isLoading =
+    (tab === "bookings" && !bookings) ||
     (tab === "pricing" && !pricing) ||
     (tab === "fleet" && !fleet) ||
     (tab === "services" && !services) ||
@@ -1488,12 +1763,12 @@ export default function AdminPage() {
             Sign out
           </button>
         </div>
-        <div className="max-w-5xl mx-auto px-6 flex">
+        <div className="max-w-5xl mx-auto px-6 flex overflow-x-auto scrollbar-hide">
           {TABS.map(({ key, label, icon }) => (
             <button
               key={key}
               onClick={() => setTab(key)}
-              className={`flex items-center gap-1.5 px-5 py-3 text-sm font-medium border-b-2 transition-all ${
+              className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 transition-all whitespace-nowrap ${
                 tab === key
                   ? "border-[#d4af37] text-[#d4af37]"
                   : "border-transparent text-white/40 hover:text-white"
@@ -1514,6 +1789,15 @@ export default function AdminPage() {
           </div>
         ) : (
           <>
+            {tab === "bookings" && bookings && (
+              <BookingsTab
+                data={bookings}
+                onRefresh={async () => {
+                  const r = await fetch("/api/admin/bookings", { credentials: "include" });
+                  if (r.ok) setBookings(await r.json());
+                }}
+              />
+            )}
             {tab === "pricing" && pricing && (
               <PricingTab
                 data={pricing}
