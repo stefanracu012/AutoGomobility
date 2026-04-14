@@ -105,7 +105,10 @@ export default function BookingForm() {
     lat: string;
     lon: string;
   } | null>(null);
-  const [routeInfo, setRouteInfo] = useState<{ distanceKm: number; durationMin: number } | null>(null);
+  const [routeInfo, setRouteInfo] = useState<{
+    distanceKm: number;
+    durationMin: number;
+  } | null>(null);
   const [livePrice, setLivePrice] = useState<number | null>(null);
   const [pricingRates, setPricingRates] = useState<PricingRates | null>(null);
 
@@ -163,7 +166,10 @@ export default function BookingForm() {
         (result) => {
           if (result) {
             setRouteGeometry(result.geometry);
-            setRouteInfo({ distanceKm: result.distanceKm, durationMin: result.durationMin });
+            setRouteInfo({
+              distanceKm: result.distanceKm,
+              durationMin: result.durationMin,
+            });
           } else {
             setRouteGeometry(null);
             setRouteInfo(null);
@@ -179,7 +185,10 @@ export default function BookingForm() {
 
   // Recalculate live price when route or vehicle changes
   useEffect(() => {
-    if (!routeInfo) { setLivePrice(null); return; }
+    if (!routeInfo) {
+      setLivePrice(null);
+      return;
+    }
     setLivePrice(
       calculatePrice({
         distance: routeInfo.distanceKm,
@@ -333,21 +342,26 @@ export default function BookingForm() {
                 Preț estimativ
               </p>
               <p className="text-3xl font-bold text-accent">
-                €{
-                  livePrice !== null
-                    ? livePrice.toFixed(2)
-                    : parseFloat(searchParams.get("price")!).toFixed(2)
-                }
+                €
+                {livePrice !== null
+                  ? livePrice.toFixed(2)
+                  : parseFloat(searchParams.get("price")!).toFixed(2)}
               </p>
             </div>
             {routeInfo && (
               <div className="flex gap-5 text-sm">
                 <div className="text-center">
-                  <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">Distanță</p>
-                  <p className="font-semibold text-white">{Math.round(routeInfo.distanceKm)} km</p>
+                  <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">
+                    Distanță
+                  </p>
+                  <p className="font-semibold text-white">
+                    {Math.round(routeInfo.distanceKm)} km
+                  </p>
                 </div>
                 <div className="text-center">
-                  <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">Durată est.</p>
+                  <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">
+                    Durată est.
+                  </p>
                   <p className="font-semibold text-white">
                     {routeInfo.durationMin >= 60
                       ? `${Math.floor(routeInfo.durationMin / 60)}h ${routeInfo.durationMin % 60}min`

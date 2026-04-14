@@ -7,7 +7,8 @@ import { notifyDriverStatus } from "@/lib/telegram/bot";
 import { sendStatusEmail } from "@/lib/services/email.service";
 
 export async function GET(req: NextRequest) {
-  const token = req.nextUrl.searchParams.get("token");
+  const { searchParams } = new URL(req.url);
+  const token = searchParams.get("token");
 
   if (!token) {
     return new NextResponse(errorPage("Missing token"), {

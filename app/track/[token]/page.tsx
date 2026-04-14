@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback, type ReactNode } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  type ReactNode,
+} from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
@@ -215,7 +221,7 @@ function getStatusInfo(status: string): StatusInfo {
       };
     case "OFFER_SENT":
       return {
-        text: "Offer sent — check your email",
+        text: "Offer sent — confirm or decline below",
         icon: <IconMail className="text-blue-400" />,
         color: "text-blue-400",
       };
@@ -396,6 +402,62 @@ export default function TrackPage() {
             )}
           </div>
         </div>
+
+        {/* Confirm / Decline — shown when offer is waiting for client response */}
+        {data.status === "OFFER_SENT" && (
+          <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/10">
+              <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">
+                Your Response
+              </p>
+            </div>
+            <div className="p-5 space-y-3">
+              <p className="text-sm text-white/60 mb-4">
+                The driver has sent you a personalised offer. Please confirm or
+                decline below.
+              </p>
+              <a
+                href={`/api/bookings/confirm?token=${token}`}
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#d4af37] text-black font-bold text-sm hover:bg-[#c49b30] transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+                Confirm Booking
+              </a>
+              <a
+                href={`/api/bookings/reject?token=${token}`}
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-transparent border border-white/15 text-white/60 font-medium text-sm hover:bg-white/5 hover:text-white transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+                Decline Offer
+              </a>
+            </div>
+          </div>
+        )}
 
         {/* Driver status */}
         <div className="bg-[#111] border border-white/10 rounded-2xl px-5 py-4 flex items-center justify-between">
