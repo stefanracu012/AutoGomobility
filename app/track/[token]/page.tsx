@@ -599,24 +599,38 @@ export default function TrackPage() {
                           Settings → Privacy &amp; Security → Location Services
                         </strong>
                         , find your browser (Safari / Chrome), set it to{" "}
-                        <strong>While Using</strong>. Then refresh.
+                        <strong>While Using</strong>. Then tap below.
                       </p>
                       <p>
                         <strong className="text-red-400">Android:</strong> Tap
                         the <strong>lock icon</strong> in the address bar →{" "}
                         <strong>Permissions → Location → Allow</strong>. Then
-                        refresh.
+                        tap below.
                       </p>
                       <p>
                         <strong className="text-red-400">Desktop:</strong> Click
                         the lock icon in the address bar →{" "}
                         <strong>Site settings → Location → Allow</strong>. Then
-                        refresh.
+                        click below.
                       </p>
                     </div>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="mt-3 w-full py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 font-semibold text-xs hover:bg-red-500/30 transition-colors"
+                    >
+                      🔄 I allowed it — Reload Page
+                    </button>
                   </>
                 ) : (
-                  <p>{geoError}</p>
+                  <>
+                    <p>{geoError}</p>
+                    <button
+                      onClick={() => { setGeoError(""); startSharing(); }}
+                      className="mt-2 w-full py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 font-semibold text-xs hover:bg-red-500/30 transition-colors"
+                    >
+                      🔄 Try Again
+                    </button>
+                  </>
                 )}
               </div>
             )}
