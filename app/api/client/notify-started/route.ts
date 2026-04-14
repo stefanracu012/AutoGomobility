@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
   try {
     const booking = await prisma.booking.findUnique({
-      where: { trackToken: token },
+      where: { token },
       select: { id: true, clientName: true, pickup: true },
     });
 
