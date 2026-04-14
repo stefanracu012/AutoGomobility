@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, type ReactNode } from "react";
+import { useEffect, useState, useRef, useCallback, type ReactNode } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
@@ -258,6 +258,70 @@ export default function TrackPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Client location sharing
+  const [sharing, setSharing] = useState(false);
+  const [geoError, setGeoError] = useState("");
+  const watchIdRef = useRef<number | null>(null);
+
+  const sendClientLocation = useCallback(
+    async (lat: number, lon: number) => {
+      await fetch("/api/client/location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, lat, lon }),
+      });
+    },
+    [token],
+  );
+
+  const startSharing = () => {
+    if (!navigator.geolocation) {
+      setGeoError("Geolocation is not supported by your browser.");
+      return;
+    }
+    setGeoError("");
+    setSharing(true);
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (pos) => {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        sendClientLocation(lat, lon);
+      },
+      (err) => {
+        setGeoError(`GPS error: ${err.message}`);
+        setSharing(false);
+      },
+      { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 },
+    );
+  };
+
+  const stopSharing = () => {
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+    setSharing(false);
+    fetch("/api/client/location", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, offline: true }),
+    });
+  };
+
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        fetch("/api/client/location", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, offline: true }),
+        });
+      }
+    };
+  }, [token]);
+
   const poll = async () => {
     const res = await fetch(`/api/track?token=${token}`);
     if (!res.ok) {
@@ -348,6 +412,53 @@ export default function TrackPage() {
               className={`w-2 h-2 rounded-full ${data.online ? "bg-green-400 animate-pulse" : "bg-white/20"}`}
             />
             {data.online ? "Live" : "Offline"}
+          </div>
+        </div>
+
+        {/* Share my location */}
+        <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+          <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <IconPin className="text-[#d4af37] w-5 h-5" />
+              <span className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+                Share My Location
+              </span>
+            </div>
+            <div
+              className={`flex items-center gap-2 text-sm font-medium ${sharing ? "text-green-400" : "text-white/30"}`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${sharing ? "bg-green-400 animate-pulse" : "bg-white/20"}`}
+              />
+              {sharing ? "Sharing" : "Off"}
+            </div>
+          </div>
+          <div className="px-5 py-4 space-y-3">
+            {geoError && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400">
+                {geoError}
+              </div>
+            )}
+            {!sharing ? (
+              <button
+                onClick={startSharing}
+                className="w-full py-3 rounded-xl bg-[#d4af37] text-black font-bold text-sm hover:bg-[#c49b30] transition-colors"
+              >
+                📍 Share My Location with Driver
+              </button>
+            ) : (
+              <button
+                onClick={stopSharing}
+                className="w-full py-3 rounded-xl bg-white/10 border border-white/20 text-white font-bold text-sm hover:bg-white/20 transition-colors"
+              >
+                🔴 Stop Sharing
+              </button>
+            )}
+            {sharing && (
+              <p className="text-center text-xs text-white/30">
+                Your location is being sent to the driver in real-time
+              </p>
+            )}
           </div>
         </div>
 

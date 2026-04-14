@@ -68,4 +68,9 @@ model Booking {
   driverLat    Float?
   driverLon    Float?
   driverOnline Boolean       @default(false)
+
+  // Client location sharing (client → driver)
+  clientLat    Float?
+  clientLon    Float?
+  clientOnline Boolean       @default(false)
 }

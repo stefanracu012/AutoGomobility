@@ -20,6 +20,9 @@ interface BookingInfo {
   status: string;
   totalPrice: number;
   driverOnline: boolean;
+  clientLat: number | null;
+  clientLon: number | null;
+  clientOnline: boolean;
 }
 
 const VEHICLE_LABELS: Record<string, string> = {
@@ -50,19 +53,25 @@ export default function DriverPage() {
 
   const watchIdRef = useRef<number | null>(null);
 
-  // Load booking info
+  // Load booking info and keep polling for client location updates
   useEffect(() => {
-    fetch(`/api/driver/booking?token=${driverToken}`)
-      .then((r) => {
-        if (!r.ok) {
-          setNotFound(true);
-          return null;
-        }
-        return r.json();
-      })
-      .then((data) => {
-        if (data) setBooking(data);
-      });
+    const fetchBooking = () => {
+      fetch(`/api/driver/booking?token=${driverToken}`)
+        .then((r) => {
+          if (!r.ok) {
+            setNotFound(true);
+            return null;
+          }
+          return r.json();
+        })
+        .then((data) => {
+          if (data) setBooking(data);
+        });
+    };
+
+    fetchBooking();
+    const id = setInterval(fetchBooking, 5000);
+    return () => clearInterval(id);
   }, [driverToken]);
 
   const sendLocation = useCallback(
@@ -271,13 +280,42 @@ export default function DriverPage() {
         {/* Map */}
         {sharing && position && (
           <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/10">
+            <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
               <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
-                Your Position
+                Live Map
               </h2>
+              {booking.clientOnline && (
+                <div className="flex items-center gap-2 text-xs text-green-400 font-medium">
+                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  Client sharing location
+                </div>
+              )}
             </div>
             <div style={{ height: 320 }}>
-              <TrackMap lat={position.lat} lon={position.lon} />
+              <TrackMap
+                lat={position.lat}
+                lon={position.lon}
+                clientLat={booking.clientOnline ? booking.clientLat : null}
+                clientLon={booking.clientOnline ? booking.clientLon : null}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Client location (when client is sharing but driver map is not visible) */}
+        {!sharing && booking.clientOnline && booking.clientLat != null && booking.clientLon != null && (
+          <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
+              <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
+                Client Location
+              </h2>
+              <div className="flex items-center gap-2 text-xs text-green-400 font-medium">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                Live
+              </div>
+            </div>
+            <div style={{ height: 280 }}>
+              <TrackMap lat={booking.clientLat} lon={booking.clientLon} />
             </div>
           </div>
         )}
