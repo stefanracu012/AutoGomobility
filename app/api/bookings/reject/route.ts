@@ -53,14 +53,8 @@ export async function GET(req: NextRequest) {
       console.error("Failed to send rejection email:", err);
     }
 
-    return new NextResponse(
-      resultPage(
-        "declined",
-        "Ofertă refuzată",
-        `Rezervarea ta de la <strong>${updated.pickup}</strong> la <strong>${updated.destination}</strong> a fost anulată. Poți face o nouă rezervare oricând.`,
-      ),
-      { headers: { "Content-Type": "text/html" } },
-    );
+    const base = process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
+    return NextResponse.redirect(`${base}/booking`, 302);
   } catch (err) {
     console.error("Error rejecting booking:", err);
     return new NextResponse(errorPage("Nu am putut procesa refuzul. Încearcă din nou."), {

@@ -26,11 +26,15 @@ export async function GET(req: NextRequest) {
   }
 
   if (booking.status !== "OFFER_SENT") {
+    if (booking.status === "CONFIRMED") {
+      const base = process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
+      return NextResponse.redirect(`${base}/track/${token}`, 302);
+    }
     return new NextResponse(
       resultPage(
         "info",
         "Deja procesat",
-        `Această rezervare a fost deja ${booking.status === "CONFIRMED" ? "confirmată" : booking.status === "REJECTED" ? "refuzată" : "procesată"}.`,
+        `Această rezervare a fost deja ${booking.status === "REJECTED" ? "refuzată" : "procesată"}.`,
       ),
       { headers: { "Content-Type": "text/html" } },
     );
@@ -53,14 +57,8 @@ export async function GET(req: NextRequest) {
       console.error("Failed to send confirmation email:", err);
     }
 
-    return new NextResponse(
-      resultPage(
-        "success",
-        "Rezervare confirmată",
-        `Mulțumim, ${updated.clientName}! Cursa ta de la <strong>${updated.pickup}</strong> la <strong>${updated.destination}</strong> a fost confirmată. Ne vedem curând!`,
-      ),
-      { headers: { "Content-Type": "text/html" } },
-    );
+    const base = process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
+    return NextResponse.redirect(`${base}/track/${token}`, 302);
   } catch (err) {
     console.error("Error confirming booking:", err);
     return new NextResponse(errorPage("Nu am putut confirma rezervarea. Încearcă din nou."), {
