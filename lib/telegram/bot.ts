@@ -60,7 +60,9 @@ function formatBooking(b: Booking): string {
     `👥 ${b.passengers} passenger${b.passengers > 1 ? "s" : ""}`,
     ``,
     `📍 <b>From:</b> ${b.pickup}`,
-    `🏁 <b>To:</b> ${b.destination}`,
+    b.bookingType === "hourly"
+      ? `⏱ <b>Hourly:</b> ${b.hours ?? "?"} hour${(b.hours ?? 0) !== 1 ? "s" : ""}`
+      : `🏁 <b>To:</b> ${b.destination}`,
     `📅 <b>Date:</b> ${b.date ?? "—"}`,
     `🕐 <b>Time:</b> ${b.time ?? "—"}`,
     ``,

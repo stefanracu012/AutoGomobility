@@ -56,6 +56,7 @@ export interface DestinationItem {
   to: string;
   distance: number;
   discount?: number;
+  price?: number;
 }
 
 export interface Pricing {

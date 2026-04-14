@@ -41,13 +41,15 @@ export default async function Destinations() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {routes.map((route) => {
-            const price = calculatePrice({
-              distance: route.distance,
-              vehicle: "business",
-              rates: pricing,
-            });
+            const basePrice = route.price
+              ? route.price
+              : calculatePrice({
+                  distance: route.distance,
+                  vehicle: "business",
+                  rates: pricing,
+                });
             const discountedPrice = route.discount
-              ? price * (1 - route.discount / 100)
+              ? basePrice * (1 - route.discount / 100)
               : null;
 
             return (
@@ -105,7 +107,7 @@ export default async function Destinations() {
                     {discountedPrice ? (
                       <>
                         <span className="text-sm text-muted line-through block">
-                          &euro;{price.toFixed(0)}
+                          &euro;{basePrice.toFixed(0)}
                         </span>
                         <span className="text-3xl font-bold text-accent">
                           &euro;{discountedPrice.toFixed(0)}
@@ -113,7 +115,7 @@ export default async function Destinations() {
                       </>
                     ) : (
                       <span className="text-3xl font-bold text-accent">
-                        &euro;{price.toFixed(0)}
+                        &euro;{basePrice.toFixed(0)}
                       </span>
                     )}
                   </div>

@@ -52,6 +52,10 @@ model Booking {
   date        String?
   time        String?
 
+  // Booking type
+  bookingType String?   // "transfer" | "hourly"
+  hours       Int?
+
   // Status
   status      BookingStatus @default(PENDING)
 

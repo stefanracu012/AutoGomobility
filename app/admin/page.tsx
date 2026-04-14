@@ -36,6 +36,7 @@ interface DestinationItem {
   to: string;
   distance: number;
   discount?: number;
+  price?: number;
 }
 type Tab = "pricing" | "fleet" | "services" | "destinations";
 
@@ -673,8 +674,9 @@ type DestForm = {
   to: string;
   distance: number;
   discount: number | "";
+  price: number | "";
 };
-const DEST_EMPTY: DestForm = { from: "", to: "", distance: 0, discount: "" };
+const DEST_EMPTY: DestForm = { from: "", to: "", distance: 0, discount: "", price: "" };
 
 function toDestItem(f: DestForm): DestinationItem {
   const item: DestinationItem = {
@@ -683,6 +685,7 @@ function toDestItem(f: DestForm): DestinationItem {
     distance: f.distance,
   };
   if (f.discount !== "" && f.discount > 0) item.discount = f.discount;
+  if (f.price !== "" && f.price > 0) item.price = f.price;
   return item;
 }
 
@@ -731,6 +734,23 @@ function DestFields({
             onChange({
               ...form,
               discount: e.target.value === "" ? "" : parseInt(e.target.value),
+            })
+          }
+          className={INP}
+        />
+      </div>
+      <div>
+        <label className={LBL}>Fixed Price € (optional)</label>
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          value={form.price}
+          placeholder="auto-calculated"
+          onChange={(e) =>
+            onChange({
+              ...form,
+              price: e.target.value === "" ? "" : parseFloat(e.target.value),
             })
           }
           className={INP}
@@ -823,6 +843,7 @@ function DestinationsTab({
                       to: item.to,
                       distance: item.distance,
                       discount: item.discount ?? "",
+                      price: item.price ?? "",
                     });
                   }}
                 >
@@ -880,6 +901,7 @@ function DestinationsTab({
 // ── Main AdminPage ────────────────────────────────────────────────────────────
 export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [tab, setTab] = useState<Tab>("pricing");
@@ -955,11 +977,11 @@ export default function AdminPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ email, password }),
     });
     if (res.ok) {
       setAuthed(true);
-    } else setAuthError("Incorrect password");
+    } else setAuthError("Incorrect email or password");
   };
 
   // ── Checking saved session
@@ -987,10 +1009,19 @@ export default function AdminPage() {
             className={CARD + " flex flex-col gap-4"}
           >
             <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              autoFocus
+              autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
+              className={INP + " py-3 text-base"}
+            />
+            <input
               type="password"
               placeholder="Password"
               value={password}
-              autoFocus
+              autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
               className={INP + " py-3 text-base"}
             />

@@ -22,6 +22,8 @@ export interface CreateBookingInput {
   date?: string;
   time?: string;
   basePrice?: number;
+  bookingType?: string;
+  hours?: number;
 }
 
 // ── Create ───────────────────────────────────────────────────────────
@@ -44,6 +46,8 @@ export async function createBooking(input: CreateBookingInput) {
       vehicle: input.vehicle ?? "business",
       date: input.date ?? null,
       time: input.time ?? null,
+      bookingType: input.bookingType ?? "transfer",
+      hours: input.hours ?? null,
       basePrice,
       extras: [],
       totalPrice: basePrice,

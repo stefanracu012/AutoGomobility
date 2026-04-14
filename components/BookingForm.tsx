@@ -111,6 +111,8 @@ export default function BookingForm() {
   } | null>(null);
   const [livePrice, setLivePrice] = useState<number | null>(null);
   const [pricingRates, setPricingRates] = useState<PricingRates | null>(null);
+  const [bookingType, setBookingType] = useState<"transfer" | "hourly">("transfer");
+  const [hours, setHours] = useState(2);
 
   const pickupRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
@@ -185,6 +187,17 @@ export default function BookingForm() {
 
   // Recalculate live price when route or vehicle changes
   useEffect(() => {
+    if (bookingType === "hourly") {
+      setLivePrice(
+        calculatePrice({
+          distance: 0,
+          vehicle: form.vehicle,
+          hours,
+          rates: pricingRates ?? undefined,
+        }),
+      );
+      return;
+    }
     if (!routeInfo) {
       setLivePrice(null);
       return;
@@ -196,7 +209,7 @@ export default function BookingForm() {
         rates: pricingRates ?? undefined,
       }),
     );
-  }, [routeInfo, form.vehicle, pricingRates]);
+  }, [routeInfo, form.vehicle, pricingRates, bookingType, hours]);
 
   // Debounced Nominatim search for pickup
   const handlePickupSearch = useCallback((value: string) => {
@@ -276,7 +289,13 @@ export default function BookingForm() {
       const res = await fetch("/api/bookings/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, price: estimatedPrice ?? undefined }),
+        body: JSON.stringify({
+        ...form,
+        destination: bookingType === "hourly" ? "Hourly Service" : form.destination,
+        price: estimatedPrice ?? undefined,
+        bookingType,
+        hours: bookingType === "hourly" ? hours : undefined,
+      }),
       });
 
       if (!res.ok) throw new Error("Failed to submit booking");
@@ -333,6 +352,38 @@ export default function BookingForm() {
     >
       <h2 className="text-2xl font-bold mb-6 text-center">Book Your Ride</h2>
 
+      {/* Booking type toggle */}
+      <div className="flex mb-6 rounded-2xl border border-white/10 bg-white/[0.03] p-1 gap-1">
+        <button
+          type="button"
+          onClick={() => setBookingType("transfer")}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            bookingType === "transfer"
+              ? "bg-accent text-black shadow-lg"
+              : "text-white/50 hover:text-white"
+          }`}
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+          </svg>
+          Transfer
+        </button>
+        <button
+          type="button"
+          onClick={() => setBookingType("hourly")}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+            bookingType === "hourly"
+              ? "bg-accent text-black shadow-lg"
+              : "text-white/50 hover:text-white"
+          }`}
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          By the Hour
+        </button>
+      </div>
+
       {/* Estimated price banner — shows from URL params or live calculation */}
       {(livePrice !== null || searchParams.get("price")) && (
         <div className="mb-6 rounded-2xl border border-accent/20 bg-accent/5 px-5 py-4">
@@ -348,7 +399,7 @@ export default function BookingForm() {
                   : parseFloat(searchParams.get("price")!).toFixed(2)}
               </p>
             </div>
-            {routeInfo && (
+            {routeInfo && bookingType === "transfer" && (
               <div className="flex gap-5 text-sm">
                 <div className="text-center">
                   <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">
@@ -370,6 +421,16 @@ export default function BookingForm() {
                 </div>
               </div>
             )}
+            {bookingType === "hourly" && (
+              <div className="text-center">
+                <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">
+                  Duration
+                </p>
+                <p className="font-semibold text-white">
+                  {hours} hour{hours !== 1 ? "s" : ""}
+                </p>
+              </div>
+            )}
             <div className="text-xs text-white/40 leading-relaxed max-w-[200px] text-right">
               Preț orientativ.
               <br />
@@ -382,7 +443,7 @@ export default function BookingForm() {
       )}
 
       {/* Route map preview */}
-      {routeGeometry && (
+      {bookingType === "transfer" && routeGeometry && (
         <div className="mb-6 rounded-xl overflow-hidden">
           <RouteMap
             geometry={routeGeometry}
@@ -541,7 +602,7 @@ export default function BookingForm() {
         {/* Pickup */}
         <div className="flex flex-col gap-1.5" ref={pickupRef}>
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Pickup Location
+            {bookingType === "hourly" ? "Start Location" : "Pickup Location"}
           </label>
           <div className="relative">
             <input
@@ -592,7 +653,8 @@ export default function BookingForm() {
           </div>
         </div>
 
-        {/* Destination */}
+        {/* Destination (transfer only) */}
+        {bookingType === "transfer" && (
         <div className="flex flex-col gap-1.5" ref={destRef}>
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
             Destination
@@ -645,6 +707,38 @@ export default function BookingForm() {
             )}
           </div>
         </div>
+        )}
+
+        {/* Hours (hourly only) */}
+        {bookingType === "hourly" && (
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-muted uppercase tracking-wider">
+              Duration (hours)
+            </label>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setHours((h) => Math.max(1, h - 1))}
+                className="w-11 h-11 rounded-xl border border-white/10 bg-white/5 text-white text-xl font-bold hover:bg-white/10 transition-colors flex items-center justify-center shrink-0"
+              >
+                −
+              </button>
+              <div className="flex-1 text-center py-3 rounded-2xl border border-white/10 bg-white/5 text-white font-bold text-lg">
+                {hours} hour{hours !== 1 ? "s" : ""}
+              </div>
+              <button
+                type="button"
+                onClick={() => setHours((h) => Math.min(24, h + 1))}
+                className="w-11 h-11 rounded-xl border border-white/10 bg-white/5 text-white text-xl font-bold hover:bg-white/10 transition-colors flex items-center justify-center shrink-0"
+              >
+                +
+              </button>
+            </div>
+            <p className="text-xs text-white/30 text-center">
+              Minimum 1 hour · Maximum 24 hours
+            </p>
+          </div>
+        )}
 
         {/* Notes */}
         <div className="flex flex-col gap-1.5 md:col-span-2">
