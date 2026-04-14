@@ -60,6 +60,13 @@ export interface DestinationItem {
   price?: number;
 }
 
+export interface LocationItem {
+  id: string;
+  name: string;
+  lat: string;
+  lon: string;
+}
+
 export interface Pricing {
   base: number;
   economy: number;
@@ -76,6 +83,9 @@ export const getFleet = (): Promise<FleetItem[]> => readSetting("fleet");
 export const getServices = (): Promise<ServiceItem[]> => readSetting("services");
 export const getDestinations = (): Promise<DestinationItem[]> => readSetting("destinations");
 export const getPricing = (): Promise<Pricing> => readSetting("pricing");
+export const getLocations = async (): Promise<LocationItem[]> => {
+  try { return await readSetting("locations"); } catch { return []; }
+};
 
 // ── Writers ───────────────────────────────────────────────────────────────────
 
@@ -83,3 +93,4 @@ export const setFleet = (d: FleetItem[]): Promise<void> => writeSetting("fleet",
 export const setServices = (d: ServiceItem[]): Promise<void> => writeSetting("services", d);
 export const setDestinations = (d: DestinationItem[]): Promise<void> => writeSetting("destinations", d);
 export const setPricing = (d: Pricing): Promise<void> => writeSetting("pricing", d);
+export const setLocations = (d: LocationItem[]): Promise<void> => writeSetting("locations", d);

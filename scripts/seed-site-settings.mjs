@@ -15,7 +15,7 @@ const ROOT = join(__dirname, "..");
 
 const prisma = new PrismaClient();
 
-const KEYS = ["fleet", "services", "pricing", "destinations"];
+const KEYS = ["fleet", "services", "pricing", "destinations", "locations"];
 
 async function main() {
   console.log("🌱 Seeding SiteSettings from JSON files…\n");

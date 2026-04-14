@@ -560,7 +560,8 @@ export default function DriverPage() {
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-[#d4af37] text-black font-bold text-base hover:bg-[#c49b30] transition-colors"
             >
-              🗺️ Navigate to Pickup
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              Navigate to Pickup
             </a>
             <div className="grid grid-cols-2 gap-3">
               <a
@@ -569,15 +570,17 @@ export default function DriverPage() {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#33ccff]/10 border border-[#33ccff]/30 text-[#33ccff] font-semibold text-sm hover:bg-[#33ccff]/20 transition-colors"
               >
-                🚗 Waze
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17H5a2 2 0 0 1-2-2v-1l2.68-6.26A2 2 0 0 1 7.52 6h8.96a2 2 0 0 1 1.84 1.74L21 14v1a2 2 0 0 1-2 2Z"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg>
+                Waze
               </a>
               <a
-                href={`https://wa.me/${booking.clientPhone.replace(/\D/g, "")}?text=${encodeURIComponent("I'm on my way to pick you up! 🚗")}`}
+                href={`https://wa.me/${booking.clientPhone.replace(/\D/g, "")}?text=${encodeURIComponent("I'm on my way to pick you up!")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-semibold text-sm hover:bg-[#25D366]/20 transition-colors"
               >
-                💬 WhatsApp
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                WhatsApp
               </a>
             </div>
           </div>
@@ -637,7 +640,8 @@ export default function DriverPage() {
                       }}
                       className="mt-3 w-full py-2.5 rounded-lg bg-[#d4af37]/20 border border-[#d4af37]/40 text-[#d4af37] font-semibold text-sm hover:bg-[#d4af37]/30 transition-colors"
                     >
-                      📍 Allow &amp; Share Location
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline -mt-0.5 mr-1"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                      Allow &amp; Share Location
                     </button>
                   </>
                 ) : (
@@ -650,7 +654,8 @@ export default function DriverPage() {
                       }}
                       className="mt-2 w-full py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 font-semibold text-xs hover:bg-red-500/30 transition-colors"
                     >
-                      🔄 Try Again
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline -mt-0.5 mr-1"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                      Try Again
                     </button>
                   </>
                 )}

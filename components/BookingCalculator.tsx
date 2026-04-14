@@ -80,14 +80,12 @@ function formatDuration(minutes: number): string {
   return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
 }
 
-const TOP_DESTINATIONS = [
-  { name: "Dublin Airport", lat: "53.4264", lon: "-6.2499" },
-  { name: "Cork Airport", lat: "51.8413", lon: "-8.4910" },
-  { name: "Dublin City Centre", lat: "53.3498", lon: "-6.2603" },
-  { name: "Galway City", lat: "53.2707", lon: "-9.0568" },
-  { name: "Limerick", lat: "52.6638", lon: "-8.6267" },
-  { name: "Killarney", lat: "52.0599", lon: "-9.5044" },
-];
+interface QuickLocation {
+  id: string;
+  name: string;
+  lat: string;
+  lon: string;
+}
 
 export default function BookingCalculator() {
   const [pickup, setPickup] = useState("");
@@ -99,6 +97,7 @@ export default function BookingCalculator() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [routeInfo, setRouteInfo] = useState<RouteResult | null>(null);
+  const [quickLocations, setQuickLocations] = useState<QuickLocation[]>([]);
 
   // Autocomplete states
   const [pickupSuggestions, setPickupSuggestions] = useState<
@@ -121,6 +120,14 @@ export default function BookingCalculator() {
   const pickupRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch quick locations from admin-managed settings
+  useEffect(() => {
+    fetch("/api/locations")
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: QuickLocation[]) => setQuickLocations(data))
+      .catch(() => {});
+  }, []);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -386,11 +393,11 @@ export default function BookingCalculator() {
             )}
           </div>
           {/* Top destinations chips */}
-          {!destination && (
+          {!destination && quickLocations.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-1">
-              {TOP_DESTINATIONS.map((d) => (
+              {quickLocations.map((d) => (
                 <button
-                  key={d.name}
+                  key={d.id}
                   type="button"
                   onClick={() => {
                     setDestination(d.name);

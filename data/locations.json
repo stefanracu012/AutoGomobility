@@ -1,0 +1,8 @@
+[
+  { "id": "dublin-airport", "name": "Dublin Airport", "lat": "53.4264", "lon": "-6.2499" },
+  { "id": "cork-airport", "name": "Cork Airport", "lat": "51.8413", "lon": "-8.4910" },
+  { "id": "dublin-city-centre", "name": "Dublin City Centre", "lat": "53.3498", "lon": "-6.2603" },
+  { "id": "galway-city", "name": "Galway City", "lat": "53.2707", "lon": "-9.0568" },
+  { "id": "limerick", "name": "Limerick", "lat": "52.6638", "lon": "-8.6267" },
+  { "id": "killarney", "name": "Killarney", "lat": "52.0599", "lon": "-9.5044" }
+]

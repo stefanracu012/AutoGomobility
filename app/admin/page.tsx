@@ -40,7 +40,13 @@ interface DestinationItem {
   discount?: number;
   price?: number;
 }
-type Tab = "pricing" | "fleet" | "services" | "destinations";
+interface LocationItem {
+  id: string;
+  name: string;
+  lat: string;
+  lon: string;
+}
+type Tab = "pricing" | "fleet" | "services" | "destinations" | "locations";
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
 const INP =
@@ -1012,6 +1018,175 @@ function DestinationsTab({
   );
 }
 
+// ── Locations Tab ─────────────────────────────────────────────────────────────
+type LocForm = { name: string; lat: string; lon: string };
+const LOC_EMPTY: LocForm = { name: "", lat: "", lon: "" };
+
+function LocationsTab({
+  data,
+  onSave,
+}: {
+  data: LocationItem[];
+  onSave: (d: LocationItem[]) => Promise<void>;
+}) {
+  const [items, setItems] = useState(data);
+  const [editIdx, setEditIdx] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState<LocForm>(LOC_EMPTY);
+  const [adding, setAdding] = useState(false);
+  const [newForm, setNewForm] = useState<LocForm>(LOC_EMPTY);
+
+  const persist = (updated: LocationItem[]) => {
+    setItems(updated);
+    return onSave(updated);
+  };
+
+  const toItem = (f: LocForm): LocationItem => ({
+    id: crypto.randomUUID(),
+    name: f.name,
+    lat: f.lat,
+    lon: f.lon,
+  });
+
+  return (
+    <div className="flex flex-col gap-4 max-w-3xl">
+      <p className="text-xs text-white/30 mb-1">
+        These locations appear as quick-select chips on the booking calculator.
+        Add airports, cities, or popular pickup/dropoff points.
+      </p>
+      {items.map((item, idx) => (
+        <div key={item.id} className={CARD}>
+          {editIdx === idx ? (
+            <div className="flex flex-col gap-3">
+              <LocFields form={editForm} onChange={setEditForm} />
+              <div className="flex gap-2">
+                <button
+                  className={GOLD}
+                  onClick={() => {
+                    const updated = [...items];
+                    updated[idx] = { ...item, ...editForm };
+                    persist(updated);
+                    setEditIdx(null);
+                  }}
+                >
+                  Save
+                </button>
+                <button className={GHOST} onClick={() => setEditIdx(null)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <p className="text-sm font-semibold">{item.name}</p>
+                <p className="text-xs text-white/30 mt-0.5">
+                  {item.lat}, {item.lon}
+                </p>
+              </div>
+              <div className="flex gap-1 shrink-0">
+                <button
+                  className={GHOST}
+                  onClick={() => {
+                    setEditIdx(idx);
+                    setEditForm({
+                      name: item.name,
+                      lat: item.lat,
+                      lon: item.lon,
+                    });
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className={RED}
+                  onClick={() => persist(items.filter((_, i) => i !== idx))}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+
+      {adding ? (
+        <div className={CARD}>
+          <p className="text-xs font-semibold text-[#d4af37] uppercase tracking-widest mb-3">
+            New Location
+          </p>
+          <LocFields form={newForm} onChange={setNewForm} />
+          <div className="flex gap-2 mt-3">
+            <button
+              className={GOLD}
+              disabled={!newForm.name || !newForm.lat || !newForm.lon}
+              onClick={() => {
+                persist([...items, toItem(newForm)]);
+                setNewForm(LOC_EMPTY);
+                setAdding(false);
+              }}
+            >
+              Add Location
+            </button>
+            <button
+              className={GHOST}
+              onClick={() => {
+                setAdding(false);
+                setNewForm(LOC_EMPTY);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button className={GHOST + " w-full"} onClick={() => setAdding(true)}>
+          + Add Location
+        </button>
+      )}
+    </div>
+  );
+}
+
+function LocFields({
+  form,
+  onChange,
+}: {
+  form: LocForm;
+  onChange: (f: LocForm) => void;
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div className="sm:col-span-3">
+        <label className={LBL}>Name</label>
+        <input
+          value={form.name}
+          placeholder="Dublin Airport"
+          onChange={(e) => onChange({ ...form, name: e.target.value })}
+          className={INP}
+        />
+      </div>
+      <div>
+        <label className={LBL}>Latitude</label>
+        <input
+          value={form.lat}
+          placeholder="53.4264"
+          onChange={(e) => onChange({ ...form, lat: e.target.value })}
+          className={INP}
+        />
+      </div>
+      <div>
+        <label className={LBL}>Longitude</label>
+        <input
+          value={form.lon}
+          placeholder="-6.2499"
+          onChange={(e) => onChange({ ...form, lon: e.target.value })}
+          className={INP}
+        />
+      </div>
+    </div>
+  );
+}
+
 // ── Main AdminPage ────────────────────────────────────────────────────────────
 export default function AdminPage() {
   const [authed, setAuthed] = useState<boolean | null>(null);
@@ -1025,6 +1200,7 @@ export default function AdminPage() {
   const [destinations, setDestinationsState] = useState<
     DestinationItem[] | null
   >(null);
+  const [locations, setLocationsState] = useState<LocationItem[] | null>(null);
   const [toast, setToast] = useState("");
 
   const callApi = useCallback(
@@ -1046,16 +1222,18 @@ export default function AdminPage() {
   );
 
   const loadAll = useCallback(async () => {
-    const [p, f, s, d] = await Promise.all([
+    const [p, f, s, d, l] = await Promise.all([
       callApi("GET", "pricing"),
       callApi("GET", "fleet"),
       callApi("GET", "services"),
       callApi("GET", "destinations"),
+      callApi("GET", "locations").catch(() => []),
     ]);
     setPricingState(p);
     setFleetState(f);
     setServicesState(s);
     setDestinationsState(d);
+    setLocationsState(l);
   }, [callApi]);
 
   useEffect(() => {
@@ -1233,6 +1411,25 @@ export default function AdminPage() {
         </svg>
       ),
     },
+    {
+      key: "locations",
+      label: "Locations",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polygon points="3 11 22 2 13 21 11 13 3 11" />
+        </svg>
+      ),
+    },
   ];
 
   const handleSignOut = async () => {
@@ -1245,13 +1442,15 @@ export default function AdminPage() {
     setFleetState(null);
     setServicesState(null);
     setDestinationsState(null);
+    setLocationsState(null);
   };
 
   const isLoading =
     (tab === "pricing" && !pricing) ||
     (tab === "fleet" && !fleet) ||
     (tab === "services" && !services) ||
-    (tab === "destinations" && !destinations);
+    (tab === "destinations" && !destinations) ||
+    (tab === "locations" && !locations);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -1337,6 +1536,12 @@ export default function AdminPage() {
               <DestinationsTab
                 data={destinations}
                 onSave={makeSaver("destinations", setDestinationsState)}
+              />
+            )}
+            {tab === "locations" && locations && (
+              <LocationsTab
+                data={locations}
+                onSave={makeSaver("locations", setLocationsState)}
               />
             )}
           </>
