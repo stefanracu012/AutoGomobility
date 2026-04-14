@@ -31,5 +31,7 @@ export async function GET(req: Request) {
     clientLat: booking.clientLat,
     clientLon: booking.clientLon,
     clientOnline: booking.clientOnline,
+    bookingType: booking.bookingType ?? "transfer",
+    hours: booking.hours ?? null,
   });
 }

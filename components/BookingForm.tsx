@@ -111,7 +111,9 @@ export default function BookingForm() {
   } | null>(null);
   const [livePrice, setLivePrice] = useState<number | null>(null);
   const [pricingRates, setPricingRates] = useState<PricingRates | null>(null);
-  const [bookingType, setBookingType] = useState<"transfer" | "hourly">("transfer");
+  const [bookingType, setBookingType] = useState<"transfer" | "hourly">(
+    "transfer",
+  );
   const [hours, setHours] = useState(2);
 
   const pickupRef = useRef<HTMLDivElement>(null);
@@ -290,12 +292,13 @@ export default function BookingForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-        ...form,
-        destination: bookingType === "hourly" ? "Hourly Service" : form.destination,
-        price: estimatedPrice ?? undefined,
-        bookingType,
-        hours: bookingType === "hourly" ? hours : undefined,
-      }),
+          ...form,
+          destination:
+            bookingType === "hourly" ? "Hourly Service" : form.destination,
+          price: estimatedPrice ?? undefined,
+          bookingType,
+          hours: bookingType === "hourly" ? hours : undefined,
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to submit booking");
@@ -363,8 +366,18 @@ export default function BookingForm() {
               : "text-white/50 hover:text-white"
           }`}
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+            />
           </svg>
           Transfer
         </button>
@@ -377,8 +390,18 @@ export default function BookingForm() {
               : "text-white/50 hover:text-white"
           }`}
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
           By the Hour
         </button>
@@ -655,58 +678,58 @@ export default function BookingForm() {
 
         {/* Destination (transfer only) */}
         {bookingType === "transfer" && (
-        <div className="flex flex-col gap-1.5" ref={destRef}>
-          <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Destination
-          </label>
-          <div className="relative">
-            <input
-              type="text"
-              name="destination"
-              required
-              value={form.destination}
-              onChange={(e) => handleDestSearch(e.target.value)}
-              onFocus={() =>
-                destSuggestions.length > 0 && setShowDestDropdown(true)
-              }
-              placeholder="Start typing to search..."
-              className={inputClass}
-              autoComplete="off"
-            />
-            <svg
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={1.5}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+          <div className="flex flex-col gap-1.5" ref={destRef}>
+            <label className="text-xs font-medium text-muted uppercase tracking-wider">
+              Destination
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                name="destination"
+                required
+                value={form.destination}
+                onChange={(e) => handleDestSearch(e.target.value)}
+                onFocus={() =>
+                  destSuggestions.length > 0 && setShowDestDropdown(true)
+                }
+                placeholder="Start typing to search..."
+                className={inputClass}
+                autoComplete="off"
               />
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-              />
-            </svg>
-            {showDestDropdown && destSuggestions.length > 0 && (
-              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl overflow-hidden">
-                {destSuggestions.map((s, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => selectDest(s)}
-                    className="w-full px-4 py-3 text-left text-sm text-white/80 hover:bg-white/10 transition-colors border-b border-white/5 last:border-0 cursor-pointer"
-                  >
-                    <span className="line-clamp-2">{s.display_name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+              <svg
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 pointer-events-none"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                />
+              </svg>
+              {showDestDropdown && destSuggestions.length > 0 && (
+                <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl overflow-hidden">
+                  {destSuggestions.map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => selectDest(s)}
+                      className="w-full px-4 py-3 text-left text-sm text-white/80 hover:bg-white/10 transition-colors border-b border-white/5 last:border-0 cursor-pointer"
+                    >
+                      <span className="line-clamp-2">{s.display_name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
         )}
 
         {/* Hours (hourly only) */}

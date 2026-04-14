@@ -23,6 +23,8 @@ interface BookingInfo {
   clientLat: number | null;
   clientLon: number | null;
   clientOnline: boolean;
+  bookingType: string;
+  hours: number | null;
 }
 
 const VEHICLE_LABELS: Record<string, string> = {
@@ -375,7 +377,9 @@ export default function DriverPage() {
         if (err.code === 1) {
           setGeoError("PERMISSION_DENIED");
         } else if (err.code === 2) {
-          setGeoError("Location unavailable. Make sure GPS is enabled on your device.");
+          setGeoError(
+            "Location unavailable. Make sure GPS is enabled on your device.",
+          );
         } else {
           setGeoError("Location request timed out. Please try again.");
         }
@@ -484,11 +488,19 @@ export default function DriverPage() {
               }
             />
             <Row icon={<IconPin />} label="Pickup" value={booking.pickup} />
-            <Row
-              icon={<IconFlag />}
-              label="Destination"
-              value={booking.destination}
-            />
+            {booking.bookingType === "hourly" ? (
+              <Row
+                icon={<IconClock />}
+                label="Duration"
+                value={`${booking.hours ?? "?"} hour${(booking.hours ?? 0) !== 1 ? "s" : ""}`}
+              />
+            ) : (
+              <Row
+                icon={<IconFlag />}
+                label="Destination"
+                value={booking.destination}
+              />
+            )}
             {booking.date && (
               <Row icon={<IconCalendar />} label="Date" value={booking.date} />
             )}
@@ -542,8 +554,9 @@ export default function DriverPage() {
                     <p className="font-semibold">Location access was denied.</p>
                     <p className="text-red-400/70 text-xs leading-relaxed">
                       Open your browser settings, find this site under
-                      Permissions → Location, and set it to <strong>Allow</strong>.
-                      Then refresh the page and try again.
+                      Permissions → Location, and set it to{" "}
+                      <strong>Allow</strong>. Then refresh the page and try
+                      again.
                     </p>
                   </>
                 ) : (

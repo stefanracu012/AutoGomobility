@@ -21,6 +21,8 @@ interface TrackData {
   clientName: string;
   status: string;
   bookingId: string;
+  bookingType: string;
+  hours: number | null;
 }
 
 // ── SVG icons ────────────────────────────────────────────────────────────────
@@ -297,7 +299,9 @@ export default function TrackPage() {
         if (err.code === 1) {
           setGeoError("PERMISSION_DENIED");
         } else if (err.code === 2) {
-          setGeoError("Location unavailable. Make sure GPS is enabled on your device.");
+          setGeoError(
+            "Location unavailable. Make sure GPS is enabled on your device.",
+          );
         } else {
           setGeoError("Location request timed out. Please try again.");
         }
@@ -508,9 +512,10 @@ export default function TrackPage() {
                   <>
                     <p className="font-semibold">Location access was denied.</p>
                     <p className="text-red-400/70 text-xs leading-relaxed">
-                      To fix this, open your browser settings, find this site under
-                      Permissions → Location, and set it to <strong>Allow</strong>.
-                      Then refresh the page and try again.
+                      To fix this, open your browser settings, find this site
+                      under Permissions → Location, and set it to{" "}
+                      <strong>Allow</strong>. Then refresh the page and try
+                      again.
                     </p>
                   </>
                 ) : (
@@ -598,6 +603,7 @@ export default function TrackPage() {
                     Destination
                   </p>
                   <p className="text-sm text-white/80">{data.destination}</p>
+                  {data.bookingType !== "hourly" && (
                   <a
                     href={mapsUrl(data.destination)}
                     target="_blank"
@@ -607,6 +613,7 @@ export default function TrackPage() {
                     Open in Google Maps
                     <IconExternalLink />
                   </a>
+                  )}
                 </div>
               </div>
             </div>

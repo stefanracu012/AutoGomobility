@@ -23,5 +23,7 @@ export async function GET(req: Request) {
     clientName: booking.clientName,
     status: booking.status,
     bookingId: booking.id,
+    bookingType: booking.bookingType ?? "transfer",
+    hours: booking.hours ?? null,
   });
 }

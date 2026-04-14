@@ -180,12 +180,16 @@ export async function notifyDriverStatus(
   if (!chatId) return;
 
   const emoji = status === "confirmed" ? "✅" : "❌";
+  const routeLine =
+    (booking as { bookingType?: string }).bookingType === "hourly"
+      ? `⏱ ${(booking as { hours?: number }).hours ?? "?"} hour hourly from ${booking.pickup}`
+      : `📍 ${booking.pickup} → ${booking.destination}`;
   const text = [
     `${emoji} <b>Client ${status === "confirmed" ? "CONFIRMED" : "REJECTED"}</b>`,
     ``,
     `🚖 Booking #${booking.id.slice(-6).toUpperCase()}`,
     `👤 ${booking.clientName}`,
-    `📍 ${booking.pickup} → ${booking.destination}`,
+    routeLine,
     `💎 €${booking.totalPrice.toFixed(2)}`,
   ].join("\n");
 

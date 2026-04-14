@@ -676,7 +676,13 @@ type DestForm = {
   discount: number | "";
   price: number | "";
 };
-const DEST_EMPTY: DestForm = { from: "", to: "", distance: 0, discount: "", price: "" };
+const DEST_EMPTY: DestForm = {
+  from: "",
+  to: "",
+  distance: 0,
+  discount: "",
+  price: "",
+};
 
 function toDestItem(f: DestForm): DestinationItem {
   const item: DestinationItem = {
