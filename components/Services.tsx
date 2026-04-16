@@ -53,7 +53,10 @@ export default async function Services() {
   const t = getDictionary(locale);
 
   return (
-    <section id="services" className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
+    <section
+      id="services"
+      className="py-16 sm:py-24 md:py-32 relative overflow-hidden"
+    >
       <div className="hidden md:block absolute -bottom-40 -left-40 w-96 h-96 bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative">

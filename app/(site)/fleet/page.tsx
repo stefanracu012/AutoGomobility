@@ -43,7 +43,7 @@ export default async function FleetPage() {
                 i % 2 === 1 ? "md:flex-row-reverse" : ""
               } md:flex`}
             >
-              <div className="md:w-1/2 relative min-h-[280px]">
+              <div className="md:w-1/2 relative min-h-[45vh] sm:min-h-[320px] md:min-h-[280px]">
                 <Image
                   src={car.image}
                   alt={car.name}

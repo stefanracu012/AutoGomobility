@@ -37,7 +37,8 @@ export default async function Destinations() {
               {t.dest.subtitle}
             </p>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
-              {t.dest.title}<span className="text-accent">{t.dest.titleAccent}</span>
+              {t.dest.title}
+              <span className="text-accent">{t.dest.titleAccent}</span>
             </h2>
           </div>
           <p className="text-muted max-w-md md:text-right">
@@ -75,7 +76,9 @@ export default async function Destinations() {
                     <span className="text-xs text-muted uppercase tracking-wider">
                       {t.dest.from}
                     </span>
-                    <span className="text-base sm:text-lg font-bold">{route.from}</span>
+                    <span className="text-base sm:text-lg font-bold">
+                      {route.from}
+                    </span>
                   </div>
                   <div className="flex-1 flex items-center justify-center">
                     <div className="flex-1 h-px bg-gradient-to-r from-white/20 via-accent/50 to-white/20" />
@@ -98,7 +101,9 @@ export default async function Destinations() {
                     <span className="text-xs text-muted uppercase tracking-wider">
                       {t.dest.to}
                     </span>
-                    <span className="text-base sm:text-lg font-bold">{route.to}</span>
+                    <span className="text-base sm:text-lg font-bold">
+                      {route.to}
+                    </span>
                   </div>
                 </div>
 

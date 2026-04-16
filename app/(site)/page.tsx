@@ -53,26 +53,28 @@ export default async function Home() {
 
             {/* Features list */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8 sm:mb-10">
-              {[t.about.feat1, t.about.feat2, t.about.feat3, t.about.feat4].map((feature) => (
-                <div key={feature} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
-                    <svg
-                      className="w-3 h-3 text-accent"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={3}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4.5 12.75l6 6 9-13.5"
-                      />
-                    </svg>
+              {[t.about.feat1, t.about.feat2, t.about.feat3, t.about.feat4].map(
+                (feature) => (
+                  <div key={feature} className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
+                      <svg
+                        className="w-3 h-3 text-accent"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.5 12.75l6 6 9-13.5"
+                        />
+                      </svg>
+                    </div>
+                    <span className="text-sm sm:text-base">{feature}</span>
                   </div>
-                  <span className="text-sm sm:text-base">{feature}</span>
-                </div>
-              ))}
+                ),
+              )}
             </div>
 
             <Link

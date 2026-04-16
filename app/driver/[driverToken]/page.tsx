@@ -380,9 +380,7 @@ export default function DriverPage() {
           setGeoError("PERMISSION_DENIED");
           setSharing(false);
         } else if (err.code === 2) {
-          setGeoError(
-            t.geo.unavailable,
-          );
+          setGeoError(t.geo.unavailable);
           setSharing(false);
         } else {
           // TIMEOUT: GPS fix took too long — retry with network-based location (WiFi/cell, much faster)
@@ -444,9 +442,7 @@ export default function DriverPage() {
           <h1 className="text-2xl font-bold text-white mb-2">
             {t.driver.notFoundTitle}
           </h1>
-          <p className="text-white/50">
-            {t.driver.notFoundDesc}
-          </p>
+          <p className="text-white/50">{t.driver.notFoundDesc}</p>
         </div>
       </div>
     );
@@ -469,7 +465,8 @@ export default function DriverPage() {
           <div>
             <h1 className="font-bold text-white">{t.driver.panel}</h1>
             <p className="text-xs text-white/40">
-              {t.driver.bookingNum}{booking.id.slice(-6).toUpperCase()}
+              {t.driver.bookingNum}
+              {booking.id.slice(-6).toUpperCase()}
             </p>
           </div>
         </div>
@@ -506,7 +503,11 @@ export default function DriverPage() {
                 </a>
               }
             />
-            <Row icon={<IconPin />} label={t.driver.pickup} value={booking.pickup} />
+            <Row
+              icon={<IconPin />}
+              label={t.driver.pickup}
+              value={booking.pickup}
+            />
             {booking.bookingType === "hourly" ? (
               <Row
                 icon={<IconClock />}
@@ -521,10 +522,18 @@ export default function DriverPage() {
               />
             )}
             {booking.date && (
-              <Row icon={<IconCalendar />} label={t.driver.date} value={booking.date} />
+              <Row
+                icon={<IconCalendar />}
+                label={t.driver.date}
+                value={booking.date}
+              />
             )}
             {booking.time && (
-              <Row icon={<IconClock />} label={t.driver.time} value={booking.time} />
+              <Row
+                icon={<IconClock />}
+                label={t.driver.time}
+                value={booking.time}
+              />
             )}
             <Row
               icon={<IconCar />}
@@ -537,7 +546,11 @@ export default function DriverPage() {
               value={`${booking.passengers}`}
             />
             {booking.notes && (
-              <Row icon={<IconNote />} label={t.driver.notes} value={booking.notes} />
+              <Row
+                icon={<IconNote />}
+                label={t.driver.notes}
+                value={booking.notes}
+              />
             )}
             {booking.totalPrice > 0 && (
               <Row
@@ -656,15 +669,21 @@ export default function DriverPage() {
                     <p className="font-semibold">{t.geo.denied}</p>
                     <div className="text-red-400/70 text-xs leading-relaxed space-y-2 mt-1">
                       <p>
-                        <strong className="text-red-400">{t.geo.iphoneLabel}</strong>{" "}
+                        <strong className="text-red-400">
+                          {t.geo.iphoneLabel}
+                        </strong>{" "}
                         {t.geo.iphoneInstr}
                       </p>
                       <p>
-                        <strong className="text-red-400">{t.geo.androidLabel}</strong>{" "}
+                        <strong className="text-red-400">
+                          {t.geo.androidLabel}
+                        </strong>{" "}
                         {t.geo.androidInstr}
                       </p>
                       <p>
-                        <strong className="text-red-400">{t.geo.desktopLabel}</strong>{" "}
+                        <strong className="text-red-400">
+                          {t.geo.desktopLabel}
+                        </strong>{" "}
                         {t.geo.desktopInstr}
                       </p>
                     </div>
@@ -721,8 +740,10 @@ export default function DriverPage() {
 
             {position && (
               <p className="text-center text-xs text-white/30">
-                {t.driver.gps} {position.lat.toFixed(5)}, {position.lon.toFixed(5)}
-                {lastSent && ` · ${t.driver.sent}${lastSent.toLocaleTimeString()}`}
+                {t.driver.gps} {position.lat.toFixed(5)},{" "}
+                {position.lon.toFixed(5)}
+                {lastSent &&
+                  ` · ${t.driver.sent}${lastSent.toLocaleTimeString()}`}
               </p>
             )}
           </div>

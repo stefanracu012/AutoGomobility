@@ -367,9 +367,7 @@ export default function TrackPage() {
           setGeoError("PERMISSION_DENIED");
           setSharing(false);
         } else if (err.code === 2) {
-          setGeoError(
-            t.geo.unavailable,
-          );
+          setGeoError(t.geo.unavailable);
           setSharing(false);
         } else {
           // TIMEOUT: GPS fix took too long — retry with network-based location (WiFi/cell, much faster)
@@ -451,9 +449,7 @@ export default function TrackPage() {
           <h1 className="text-2xl font-bold text-white mb-2">
             {t.track.notFoundTitle}
           </h1>
-          <p className="text-white/50">
-            {t.track.notFoundDesc}
-          </p>
+          <p className="text-white/50">{t.track.notFoundDesc}</p>
         </div>
       </div>
     );
@@ -476,7 +472,9 @@ export default function TrackPage() {
         </p>
         <h1 className="text-xl font-bold">{t.track.headerTitle}</h1>
         <p className="text-white/40 text-sm mt-0.5">
-          {t.track.bookingNum}{data.bookingId.slice(-6).toUpperCase()}        </p>
+          {t.track.bookingNum}
+          {data.bookingId.slice(-6).toUpperCase()}{" "}
+        </p>
       </div>
 
       <div className="max-w-2xl mx-auto p-6 space-y-5">
@@ -489,7 +487,8 @@ export default function TrackPage() {
             </p>
             {lastUpdated && (
               <p className="text-xs text-white/30 mt-0.5">
-                {t.track.updated}{lastUpdated.toLocaleTimeString()}
+                {t.track.updated}
+                {lastUpdated.toLocaleTimeString()}
               </p>
             )}
           </div>
@@ -504,9 +503,7 @@ export default function TrackPage() {
               </p>
             </div>
             <div className="p-5 space-y-3">
-              <p className="text-sm text-white/60 mb-4">
-                {t.track.offerDesc}
-              </p>
+              <p className="text-sm text-white/60 mb-4">{t.track.offerDesc}</p>
               {actionError && (
                 <p className="text-xs text-red-400 text-center">
                   {actionError}
@@ -561,7 +558,9 @@ export default function TrackPage() {
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 )}
-                {actionLoading === "decline" ? t.track.declining : t.track.declineOffer}
+                {actionLoading === "decline"
+                  ? t.track.declining
+                  : t.track.declineOffer}
               </button>
             </div>
           </div>
@@ -631,9 +630,7 @@ export default function TrackPage() {
                 <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400 space-y-1">
                   {geoError === "PERMISSION_DENIED" ? (
                     <>
-                      <p className="font-semibold">
-                        {t.geo.denied}
-                      </p>
+                      <p className="font-semibold">{t.geo.denied}</p>
                       <div className="text-red-400/70 text-xs leading-relaxed space-y-2 mt-1">
                         <p>
                           <strong className="text-red-400">
@@ -642,11 +639,15 @@ export default function TrackPage() {
                           {t.geo.iphoneInstr}
                         </p>
                         <p>
-                          <strong className="text-red-400">{t.geo.androidLabel}</strong>{" "}
+                          <strong className="text-red-400">
+                            {t.geo.androidLabel}
+                          </strong>{" "}
                           {t.geo.androidInstr}
                         </p>
                         <p>
-                          <strong className="text-red-400">{t.geo.desktopLabel}</strong>{" "}
+                          <strong className="text-red-400">
+                            {t.geo.desktopLabel}
+                          </strong>{" "}
                           {t.geo.desktopInstr}
                         </p>
                       </div>
@@ -758,9 +759,7 @@ export default function TrackPage() {
             <div className="text-center text-white/30">
               <IconPin className="mx-auto mb-2 text-white/20" />
               <p className="text-sm">{t.track.driverNotSharing}</p>
-              <p className="text-xs mt-1">
-                {t.track.autoRefresh}
-              </p>
+              <p className="text-xs mt-1">{t.track.autoRefresh}</p>
             </div>
           </div>
         )}

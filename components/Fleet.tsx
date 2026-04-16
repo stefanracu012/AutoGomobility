@@ -9,7 +9,10 @@ export default async function Fleet() {
   const t = getDictionary(locale);
 
   return (
-    <section id="fleet" className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
+    <section
+      id="fleet"
+      className="py-16 sm:py-24 md:py-32 relative overflow-hidden"
+    >
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
       <div className="hidden md:block absolute -top-40 -right-40 w-80 h-80 bg-accent/5 rounded-full blur-[100px]" />
@@ -37,11 +40,11 @@ export default async function Fleet() {
         {fleet.map((car, index) => (
           <div
             key={car.name}
-            className="group grid grid-cols-1 md:grid-cols-2 h-[50vh] min-h-[260px] bg-white/[0.03] backdrop-blur-sm border-y border-white/10 overflow-hidden hover:bg-white/[0.06] transition-all duration-500"
+            className="group grid grid-cols-1 md:grid-cols-2 h-auto md:h-[50vh] md:min-h-[260px] bg-white/[0.03] backdrop-blur-sm border-y border-white/10 overflow-hidden hover:bg-white/[0.06] transition-all duration-500"
           >
             {/* Image — alternate left/right */}
             <div
-              className={`relative overflow-hidden ${index % 2 === 1 ? "md:order-2" : ""}`}
+              className={`relative overflow-hidden h-[45vh] min-h-[220px] md:h-auto ${index % 2 === 1 ? "md:order-2" : ""}`}
             >
               <Image
                 src={car.image}

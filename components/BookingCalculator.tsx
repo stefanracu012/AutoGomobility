@@ -557,9 +557,7 @@ export default function BookingCalculator() {
             <p className="text-4xl font-bold text-accent">
               &euro;{price.toFixed(2)}
             </p>
-            <p className="text-xs text-white/40 mt-2">
-              {t.calc.priceNote}
-            </p>
+            <p className="text-xs text-white/40 mt-2">{t.calc.priceNote}</p>
           </div>
           <Link
             href={`/booking?pickup=${encodeURIComponent(pickup)}&destination=${encodeURIComponent(destination)}&vehicle=${vehicle}${passengers ? `&passengers=${encodeURIComponent(passengers)}` : ""}&price=${price.toFixed(2)}${pickupCoords ? `&pickupLat=${pickupCoords.lat}&pickupLon=${pickupCoords.lon}` : ""}${destCoords ? `&destLat=${destCoords.lat}&destLon=${destCoords.lon}` : ""}`}

@@ -332,12 +332,8 @@ export default function BookingForm() {
           </svg>
         </div>
         <h2 className="text-2xl font-bold mb-2">{t.form.successTitle}</h2>
-        <p className="text-muted mb-3">
-          {t.form.successMsg}
-        </p>
-        <p className="text-xs text-white/40">
-          {t.form.successNote}
-        </p>
+        <p className="text-muted mb-3">{t.form.successMsg}</p>
+        <p className="text-xs text-white/40">{t.form.successNote}</p>
       </div>
     );
   }
@@ -457,9 +453,7 @@ export default function BookingForm() {
             <div className="text-xs text-white/40 leading-relaxed max-w-[200px] text-right">
               {t.form.priceNote}
               <br />
-              <span className="text-white/60">
-                {t.form.finalOffer}
-              </span>
+              <span className="text-white/60">{t.form.finalOffer}</span>
             </div>
           </div>
         </div>
@@ -625,7 +619,9 @@ export default function BookingForm() {
         {/* Pickup */}
         <div className="flex flex-col gap-1.5" ref={pickupRef}>
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            {bookingType === "hourly" ? t.form.startLocation : t.form.pickupLocation}
+            {bookingType === "hourly"
+              ? t.form.startLocation
+              : t.form.pickupLocation}
           </label>
           <div className="relative">
             <input
