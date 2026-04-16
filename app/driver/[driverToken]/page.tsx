@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useTranslation } from "@/components/LanguageProvider";
 
 const TrackMap = dynamic(() => import("@/components/TrackMap"), { ssr: false });
 
@@ -314,6 +315,7 @@ function IconStopCircle() {
 
 export default function DriverPage() {
   const { driverToken } = useParams<{ driverToken: string }>();
+  const { t } = useTranslation();
 
   const [booking, setBooking] = useState<BookingInfo | null>(null);
   const [notFound, setNotFound] = useState(false);
@@ -361,7 +363,7 @@ export default function DriverPage() {
 
   const startSharing = () => {
     if (!navigator.geolocation) {
-      setGeoError("Geolocation is not supported by your browser.");
+      setGeoError(t.geo.notSupported);
       return;
     }
     setGeoError("");
@@ -379,7 +381,7 @@ export default function DriverPage() {
           setSharing(false);
         } else if (err.code === 2) {
           setGeoError(
-            "Location unavailable. Make sure GPS is enabled on your device.",
+            t.geo.unavailable,
           );
           setSharing(false);
         } else {
@@ -395,7 +397,7 @@ export default function DriverPage() {
               sendLocation(lat, lon);
             },
             () => {
-              setGeoError("Location request timed out. Please try again.");
+              setGeoError(t.geo.timeout);
               setSharing(false);
             },
             { enableHighAccuracy: false, maximumAge: 10000, timeout: 30000 },
@@ -440,10 +442,10 @@ export default function DriverPage() {
         <div className="text-center">
           <p className="text-4xl mb-4">🚫</p>
           <h1 className="text-2xl font-bold text-white mb-2">
-            Panel Not Found
+            {t.driver.notFoundTitle}
           </h1>
           <p className="text-white/50">
-            This driver panel link is invalid or expired.
+            {t.driver.notFoundDesc}
           </p>
         </div>
       </div>
@@ -465,9 +467,9 @@ export default function DriverPage() {
         <div className="flex items-center gap-3">
           <IconTaxi />
           <div>
-            <h1 className="font-bold text-white">Driver Panel</h1>
+            <h1 className="font-bold text-white">{t.driver.panel}</h1>
             <p className="text-xs text-white/40">
-              Booking #{booking.id.slice(-6).toUpperCase()}
+              {t.driver.bookingNum}{booking.id.slice(-6).toUpperCase()}
             </p>
           </div>
         </div>
@@ -483,18 +485,18 @@ export default function DriverPage() {
         <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-5 py-4 border-b border-white/10">
             <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
-              Booking Details
+              {t.driver.bookingDetails}
             </h2>
           </div>
           <div className="p-5 space-y-3">
             <Row
               icon={<IconUser />}
-              label="Client"
+              label={t.driver.client}
               value={booking.clientName}
             />
             <Row
               icon={<IconPhone />}
-              label="Phone"
+              label={t.driver.phone}
               value={
                 <a
                   href={`tel:${booking.clientPhone}`}
@@ -504,43 +506,43 @@ export default function DriverPage() {
                 </a>
               }
             />
-            <Row icon={<IconPin />} label="Pickup" value={booking.pickup} />
+            <Row icon={<IconPin />} label={t.driver.pickup} value={booking.pickup} />
             {booking.bookingType === "hourly" ? (
               <Row
                 icon={<IconClock />}
-                label="Duration"
+                label={t.driver.duration}
                 value={`${booking.hours ?? "?"} hour${(booking.hours ?? 0) !== 1 ? "s" : ""}`}
               />
             ) : (
               <Row
                 icon={<IconFlag />}
-                label="Destination"
+                label={t.driver.destination}
                 value={booking.destination}
               />
             )}
             {booking.date && (
-              <Row icon={<IconCalendar />} label="Date" value={booking.date} />
+              <Row icon={<IconCalendar />} label={t.driver.date} value={booking.date} />
             )}
             {booking.time && (
-              <Row icon={<IconClock />} label="Time" value={booking.time} />
+              <Row icon={<IconClock />} label={t.driver.time} value={booking.time} />
             )}
             <Row
               icon={<IconCar />}
-              label="Vehicle"
+              label={t.driver.vehicle}
               value={VEHICLE_LABELS[booking.vehicle] ?? booking.vehicle}
             />
             <Row
               icon={<IconUsers />}
-              label="Passengers"
+              label={t.driver.passengers}
               value={`${booking.passengers}`}
             />
             {booking.notes && (
-              <Row icon={<IconNote />} label="Notes" value={booking.notes} />
+              <Row icon={<IconNote />} label={t.driver.notes} value={booking.notes} />
             )}
             {booking.totalPrice > 0 && (
               <Row
                 icon={<IconDiamond />}
-                label="Total"
+                label={t.driver.total}
                 value={`€${booking.totalPrice.toFixed(2)}`}
                 gold
               />
@@ -552,7 +554,7 @@ export default function DriverPage() {
         <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-5 py-4 border-b border-white/10">
             <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
-              Quick Actions
+              {t.driver.quickActions}
             </h2>
           </div>
           <div className="p-4 space-y-3">
@@ -575,7 +577,7 @@ export default function DriverPage() {
               >
                 <polygon points="3 11 22 2 13 21 11 13 3 11" />
               </svg>
-              Navigate to Pickup
+              {t.driver.navigatePickup}
             </a>
             <div className="grid grid-cols-2 gap-3">
               <a
@@ -599,10 +601,10 @@ export default function DriverPage() {
                   <circle cx="7.5" cy="17" r="2" />
                   <circle cx="16.5" cy="17" r="2" />
                 </svg>
-                Waze
+                {t.driver.waze}
               </a>
               <a
-                href={`https://wa.me/${booking.clientPhone.replace(/\D/g, "")}?text=${encodeURIComponent("I'm on my way to pick you up!")}`}
+                href={`https://wa.me/${booking.clientPhone.replace(/\D/g, "")}?text=${encodeURIComponent(t.driver.whatsappMsg)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-semibold text-sm hover:bg-[#25D366]/20 transition-colors"
@@ -620,7 +622,7 @@ export default function DriverPage() {
                 >
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
-                WhatsApp
+                {t.driver.whatsapp}
               </a>
             </div>
           </div>
@@ -631,10 +633,10 @@ export default function DriverPage() {
           <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
             <div>
               <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
-                Live Location
+                {t.driver.liveLocation}
               </h2>
               <p className="text-xs text-white/25 mt-0.5">
-                Share on this page · requires GPS permission
+                {t.driver.gpsSubtitle}
               </p>
             </div>
             <div
@@ -643,7 +645,7 @@ export default function DriverPage() {
               <span
                 className={`w-2 h-2 rounded-full ${sharing ? "bg-green-400 animate-pulse" : "bg-white/20"}`}
               />
-              {sharing ? "Sharing" : "Offline"}
+              {sharing ? t.driver.sharing : t.driver.offline}
             </div>
           </div>
           <div className="p-5 space-y-4">
@@ -651,28 +653,19 @@ export default function DriverPage() {
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400 space-y-1">
                 {geoError === "PERMISSION_DENIED" ? (
                   <>
-                    <p className="font-semibold">Location access was denied.</p>
+                    <p className="font-semibold">{t.geo.denied}</p>
                     <div className="text-red-400/70 text-xs leading-relaxed space-y-2 mt-1">
                       <p>
-                        <strong className="text-red-400">iPhone / iPad:</strong>{" "}
-                        Go to{" "}
-                        <strong>
-                          Settings → Privacy &amp; Security → Location Services
-                        </strong>
-                        , find your browser (Safari / Chrome), set it to{" "}
-                        <strong>While Using</strong>. Then tap below.
+                        <strong className="text-red-400">{t.geo.iphoneLabel}</strong>{" "}
+                        {t.geo.iphoneInstr}
                       </p>
                       <p>
-                        <strong className="text-red-400">Android:</strong> Tap
-                        the <strong>lock icon</strong> in the address bar →{" "}
-                        <strong>Permissions → Location → Allow</strong>. Then
-                        tap below.
+                        <strong className="text-red-400">{t.geo.androidLabel}</strong>{" "}
+                        {t.geo.androidInstr}
                       </p>
                       <p>
-                        <strong className="text-red-400">Desktop:</strong> Click
-                        the lock icon in the address bar →{" "}
-                        <strong>Site settings → Location → Allow</strong>. Then
-                        click below.
+                        <strong className="text-red-400">{t.geo.desktopLabel}</strong>{" "}
+                        {t.geo.desktopInstr}
                       </p>
                     </div>
                   </>
@@ -701,7 +694,7 @@ export default function DriverPage() {
                         <polyline points="23 4 23 10 17 10" />
                         <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
                       </svg>
-                      Try Again
+                      {t.geo.tryAgain}
                     </button>
                   </>
                 )}
@@ -714,7 +707,7 @@ export default function DriverPage() {
                 className="w-full py-4 rounded-xl bg-[#d4af37] text-black font-bold text-lg hover:bg-[#c49b30] transition-colors flex items-center justify-center gap-2"
               >
                 <IconSignal active={false} />
-                Start Sharing Location
+                {t.driver.startSharing}
               </button>
             ) : (
               <button
@@ -722,14 +715,14 @@ export default function DriverPage() {
                 className="w-full py-4 rounded-xl bg-white/10 border border-white/20 text-white font-bold text-lg hover:bg-white/20 transition-colors flex items-center justify-center gap-2"
               >
                 <IconStopCircle />
-                Stop Sharing
+                {t.driver.stopSharing}
               </button>
             )}
 
             {position && (
               <p className="text-center text-xs text-white/30">
-                GPS: {position.lat.toFixed(5)}, {position.lon.toFixed(5)}
-                {lastSent && ` · Sent ${lastSent.toLocaleTimeString()}`}
+                {t.driver.gps} {position.lat.toFixed(5)}, {position.lon.toFixed(5)}
+                {lastSent && ` · ${t.driver.sent}${lastSent.toLocaleTimeString()}`}
               </p>
             )}
           </div>
@@ -740,12 +733,12 @@ export default function DriverPage() {
           <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
             <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
               <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
-                Live Map
+                {t.driver.liveMap}
               </h2>
               {booking.clientOnline && (
                 <div className="flex items-center gap-2 text-xs text-green-400 font-medium">
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  Client sharing location
+                  {t.driver.clientSharing}
                 </div>
               )}
             </div>
@@ -768,11 +761,11 @@ export default function DriverPage() {
             <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
               <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
                 <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
-                  Client Location
+                  {t.driver.clientLocation}
                 </h2>
                 <div className="flex items-center gap-2 text-xs text-green-400 font-medium">
                   <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  Live
+                  {t.driver.live}
                 </div>
               </div>
               <div style={{ height: 280 }}>

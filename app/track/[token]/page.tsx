@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useTranslation } from "@/components/LanguageProvider";
 
 const TrackMap = dynamic(() => import("@/components/TrackMap"), { ssr: false });
 
@@ -213,41 +214,42 @@ function IconExternalLink() {
 
 type StatusInfo = { text: string; icon: ReactNode; color: string };
 
-function getStatusInfo(status: string): StatusInfo {
+function useStatusInfo(status: string): StatusInfo {
+  const { t } = useTranslation();
   switch (status) {
     case "PENDING":
       return {
-        text: "Awaiting driver confirmation",
+        text: t.track.pending,
         icon: <IconClock className="text-yellow-400" />,
         color: "text-yellow-400",
       };
     case "OFFER_SENT":
       return {
-        text: "Offer sent — confirm or decline below",
+        text: t.track.offerSent,
         icon: <IconMail className="text-blue-400" />,
         color: "text-blue-400",
       };
     case "CONFIRMED":
       return {
-        text: "Booking confirmed!",
+        text: t.track.confirmed,
         icon: <IconCheckCircle className="text-green-400" />,
         color: "text-green-400",
       };
     case "REJECTED":
       return {
-        text: "Booking declined",
+        text: t.track.rejected,
         icon: <IconXCircle className="text-red-400" />,
         color: "text-red-400",
       };
     case "CANCELLED":
       return {
-        text: "Booking cancelled",
+        text: t.track.cancelled,
         icon: <IconBan className="text-gray-400" />,
         color: "text-gray-400",
       };
     case "COMPLETED":
       return {
-        text: "Trip completed",
+        text: t.track.completed,
         icon: <IconCheckCircle className="text-emerald-400" />,
         color: "text-emerald-400",
       };
@@ -266,6 +268,7 @@ function mapsUrl(address: string) {
 
 export default function TrackPage() {
   const { token } = useParams<{ token: string }>();
+  const { t } = useTranslation();
 
   const [data, setData] = useState<TrackData | null>(null);
   const [notFound, setNotFound] = useState(false);
@@ -297,12 +300,12 @@ export default function TrackPage() {
         const text = await res.text();
         setActionError(
           text.includes("already")
-            ? "Already processed."
-            : "Could not confirm. Please try again.",
+            ? t.track.alreadyProcessed
+            : t.track.confirmError,
         );
       }
     } catch {
-      setActionError("Network error. Please try again.");
+      setActionError(t.track.networkError);
     } finally {
       setActionLoading(null);
     }
@@ -317,10 +320,10 @@ export default function TrackPage() {
       if (res.ok || res.redirected) {
         setData((d) => (d ? { ...d, status: "REJECTED" } : d));
       } else {
-        setActionError("Could not decline. Please try again.");
+        setActionError(t.track.declineError);
       }
     } catch {
-      setActionError("Network error. Please try again.");
+      setActionError(t.track.networkError);
     } finally {
       setActionLoading(null);
     }
@@ -348,7 +351,7 @@ export default function TrackPage() {
 
   const startSharing = () => {
     if (!navigator.geolocation) {
-      setGeoError("Geolocation is not supported by your browser.");
+      setGeoError(t.geo.notSupported);
       return;
     }
     setGeoError("");
@@ -365,7 +368,7 @@ export default function TrackPage() {
           setSharing(false);
         } else if (err.code === 2) {
           setGeoError(
-            "Location unavailable. Make sure GPS is enabled on your device.",
+            t.geo.unavailable,
           );
           setSharing(false);
         } else {
@@ -380,7 +383,7 @@ export default function TrackPage() {
               sendClientLocation(lat, lon);
             },
             () => {
-              setGeoError("Location request timed out. Please try again.");
+              setGeoError(t.geo.timeout);
               setSharing(false);
             },
             { enableHighAccuracy: false, maximumAge: 10000, timeout: 30000 },
@@ -438,16 +441,18 @@ export default function TrackPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  const statusInfo = useStatusInfo(data?.status ?? "PENDING");
+
   if (notFound) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center px-6">
           <IconSearch className="text-white/20 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-white mb-2">
-            Booking Not Found
+            {t.track.notFoundTitle}
           </h1>
           <p className="text-white/50">
-            This tracking link is invalid or has expired.
+            {t.track.notFoundDesc}
           </p>
         </div>
       </div>
@@ -462,19 +467,16 @@ export default function TrackPage() {
     );
   }
 
-  const statusInfo = getStatusInfo(data.status);
-
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Header */}
       <div className="bg-[#111] border-b border-white/10 px-6 py-5 text-center">
         <p className="text-xs text-[#d4af37] font-semibold uppercase tracking-widest mb-1">
-          Premium Chauffeur Service
+          {t.track.headerSubtitle}
         </p>
-        <h1 className="text-xl font-bold">Live Tracking</h1>
+        <h1 className="text-xl font-bold">{t.track.headerTitle}</h1>
         <p className="text-white/40 text-sm mt-0.5">
-          Booking #{data.bookingId.slice(-6).toUpperCase()}
-        </p>
+          {t.track.bookingNum}{data.bookingId.slice(-6).toUpperCase()}        </p>
       </div>
 
       <div className="max-w-2xl mx-auto p-6 space-y-5">
@@ -487,7 +489,7 @@ export default function TrackPage() {
             </p>
             {lastUpdated && (
               <p className="text-xs text-white/30 mt-0.5">
-                Updated {lastUpdated.toLocaleTimeString()}
+                {t.track.updated}{lastUpdated.toLocaleTimeString()}
               </p>
             )}
           </div>
@@ -498,13 +500,12 @@ export default function TrackPage() {
           <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
             <div className="px-5 py-4 border-b border-white/10">
               <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">
-                Your Response
+                {t.track.yourResponse}
               </p>
             </div>
             <div className="p-5 space-y-3">
               <p className="text-sm text-white/60 mb-4">
-                The driver has sent you a personalised offer. Please confirm or
-                decline below.
+                {t.track.offerDesc}
               </p>
               {actionError && (
                 <p className="text-xs text-red-400 text-center">
@@ -534,8 +535,8 @@ export default function TrackPage() {
                   </svg>
                 )}
                 {actionLoading === "confirm"
-                  ? "Confirming..."
-                  : "Confirm Booking"}
+                  ? t.track.confirming
+                  : t.track.confirmBooking}
               </button>
               <button
                 onClick={handleDecline}
@@ -560,7 +561,7 @@ export default function TrackPage() {
                     <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 )}
-                {actionLoading === "decline" ? "Declining..." : "Decline Offer"}
+                {actionLoading === "decline" ? t.track.declining : t.track.declineOffer}
               </button>
             </div>
           </div>
@@ -571,7 +572,7 @@ export default function TrackPage() {
           <div className="flex items-center gap-3">
             <IconCar className="text-[#d4af37]" />
             <span className="text-sm font-medium text-white/80">
-              Driver Location
+              {t.track.driverLocation}
             </span>
           </div>
           <div
@@ -580,7 +581,7 @@ export default function TrackPage() {
             <span
               className={`w-2 h-2 rounded-full ${data.online ? "bg-green-400 animate-pulse" : "bg-white/20"}`}
             />
-            {data.online ? "Live" : "Offline"}
+            {data.online ? t.track.live : t.track.offline}
           </div>
         </div>
 
@@ -607,16 +608,16 @@ export default function TrackPage() {
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>{" "}
-                Share my exact location
+                {t.track.shareLocation}
               </span>
               <span className="text-[10px] text-white/20 border border-white/10 rounded px-1.5 py-0.5 uppercase tracking-wider">
-                Optional
+                {t.track.optional}
               </span>
             </div>
             {sharing ? (
               <span className="flex items-center gap-1.5 text-xs text-green-400 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                Live
+                {t.track.live}
               </span>
             ) : (
               <span className="text-white/20 text-xs">
@@ -631,32 +632,22 @@ export default function TrackPage() {
                   {geoError === "PERMISSION_DENIED" ? (
                     <>
                       <p className="font-semibold">
-                        Location access was denied.
+                        {t.geo.denied}
                       </p>
                       <div className="text-red-400/70 text-xs leading-relaxed space-y-2 mt-1">
                         <p>
                           <strong className="text-red-400">
-                            iPhone / iPad:
+                            {t.geo.iphoneLabel}
                           </strong>{" "}
-                          Go to{" "}
-                          <strong>
-                            Settings → Privacy &amp; Security → Location
-                            Services
-                          </strong>
-                          , find your browser (Safari / Chrome), set it to{" "}
-                          <strong>While Using</strong>. Then tap below.
+                          {t.geo.iphoneInstr}
                         </p>
                         <p>
-                          <strong className="text-red-400">Android:</strong> Tap
-                          the <strong>lock icon</strong> in the address bar →{" "}
-                          <strong>Permissions → Location → Allow</strong>. Then
-                          tap below.
+                          <strong className="text-red-400">{t.geo.androidLabel}</strong>{" "}
+                          {t.geo.androidInstr}
                         </p>
                         <p>
-                          <strong className="text-red-400">Desktop:</strong>{" "}
-                          Click the lock icon in the address bar →{" "}
-                          <strong>Site settings → Location → Allow</strong>.
-                          Then click below.
+                          <strong className="text-red-400">{t.geo.desktopLabel}</strong>{" "}
+                          {t.geo.desktopInstr}
                         </p>
                       </div>
                     </>
@@ -685,7 +676,7 @@ export default function TrackPage() {
                           <polyline points="23 4 23 10 17 10" />
                           <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
                         </svg>
-                        Try Again
+                        {t.geo.tryAgain}
                       </button>
                     </>
                   )}
@@ -711,7 +702,7 @@ export default function TrackPage() {
                     <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                     <circle cx="12" cy="10" r="3" />
                   </svg>
-                  Share My Location
+                  {t.track.shareMyLocation}
                 </button>
               ) : (
                 <button
@@ -740,12 +731,12 @@ export default function TrackPage() {
                       fill="currentColor"
                     />
                   </svg>
-                  Stop Sharing
+                  {t.track.stopSharing}
                 </button>
               )}
               {sharing && (
                 <p className="text-center text-xs text-white/30">
-                  Your location is being sent to the driver in real-time
+                  {t.track.locationSent}
                 </p>
               )}
             </div>
@@ -766,9 +757,9 @@ export default function TrackPage() {
           >
             <div className="text-center text-white/30">
               <IconPin className="mx-auto mb-2 text-white/20" />
-              <p className="text-sm">Driver hasn&apos;t started sharing yet</p>
+              <p className="text-sm">{t.track.driverNotSharing}</p>
               <p className="text-xs mt-1">
-                This page auto-refreshes every 5 seconds
+                {t.track.autoRefresh}
               </p>
             </div>
           </div>
@@ -778,7 +769,7 @@ export default function TrackPage() {
         <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-5 py-4 border-b border-white/10">
             <h2 className="text-xs font-semibold text-white/40 uppercase tracking-wider">
-              Your Journey
+              {t.track.yourJourney}
             </h2>
           </div>
           <div className="p-5 space-y-4">
@@ -791,7 +782,7 @@ export default function TrackPage() {
               <div className="flex-1 space-y-3">
                 <div>
                   <p className="text-xs text-white/40 uppercase tracking-wider mb-0.5">
-                    Pickup
+                    {t.track.pickup}
                   </p>
                   <p className="text-sm text-white/80">{data.pickup}</p>
                   <a
@@ -800,13 +791,13 @@ export default function TrackPage() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 mt-1.5 text-xs text-[#d4af37]/60 hover:text-[#d4af37] transition-colors"
                   >
-                    Open in Google Maps
+                    {t.track.openInMaps}
                     <IconExternalLink />
                   </a>
                 </div>
                 <div>
                   <p className="text-xs text-white/40 uppercase tracking-wider mb-0.5">
-                    Destination
+                    {t.track.destination}
                   </p>
                   <p className="text-sm text-white/80">{data.destination}</p>
                   {data.bookingType !== "hourly" && (
@@ -816,7 +807,7 @@ export default function TrackPage() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 mt-1.5 text-xs text-[#d4af37]/60 hover:text-[#d4af37] transition-colors"
                     >
-                      Open in Google Maps
+                      {t.track.openInMaps}
                       <IconExternalLink />
                     </a>
                   )}

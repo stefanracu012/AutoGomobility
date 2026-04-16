@@ -307,7 +307,7 @@ export default function BookingForm() {
 
       setSubmitted(true);
     } catch {
-      setError("Failed to submit your booking. Please try again.");
+      setError(t.form.submitError);
     } finally {
       setLoading(false);
     }
@@ -353,7 +353,7 @@ export default function BookingForm() {
       onSubmit={handleSubmit}
       className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl"
     >
-      <h2 className="text-2xl font-bold mb-6 text-center">Book Your Ride</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">{t.form.heading}</h2>
 
       {/* Booking type toggle */}
       <div className="flex mb-6 rounded-2xl border border-white/10 bg-white/[0.03] p-1 gap-1">
@@ -379,7 +379,7 @@ export default function BookingForm() {
               d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
             />
           </svg>
-          Transfer
+          {t.form.transfer}
         </button>
         <button
           type="button"
@@ -403,7 +403,7 @@ export default function BookingForm() {
               d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          By the Hour
+          {t.form.byTheHour}
         </button>
       </div>
 
@@ -413,7 +413,7 @@ export default function BookingForm() {
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div>
               <p className="text-xs text-white/40 uppercase tracking-wider mb-0.5">
-                Preț estimativ
+                {t.form.estPrice}
               </p>
               <p className="text-3xl font-bold text-accent">
                 €
@@ -426,7 +426,7 @@ export default function BookingForm() {
               <div className="flex gap-5 text-sm">
                 <div className="text-center">
                   <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">
-                    Distanță
+                    {t.form.distance}
                   </p>
                   <p className="font-semibold text-white">
                     {Math.round(routeInfo.distanceKm)} km
@@ -434,7 +434,7 @@ export default function BookingForm() {
                 </div>
                 <div className="text-center">
                   <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">
-                    Durată est.
+                    {t.form.estDuration}
                   </p>
                   <p className="font-semibold text-white">
                     {routeInfo.durationMin >= 60
@@ -447,18 +447,18 @@ export default function BookingForm() {
             {bookingType === "hourly" && (
               <div className="text-center">
                 <p className="text-white/40 text-xs uppercase tracking-wider mb-0.5">
-                  Duration
+                  {t.form.duration}
                 </p>
                 <p className="font-semibold text-white">
-                  {hours} hour{hours !== 1 ? "s" : ""}
+                  {hours} {hours !== 1 ? t.form.hours : t.form.hour}
                 </p>
               </div>
             )}
             <div className="text-xs text-white/40 leading-relaxed max-w-[200px] text-right">
-              Preț orientativ.
+              {t.form.priceNote}
               <br />
               <span className="text-white/60">
-                Oferta finală e trimisă pe email.
+                {t.form.finalOffer}
               </span>
             </div>
           </div>
@@ -480,7 +480,7 @@ export default function BookingForm() {
         {/* Name */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Full Name
+            {t.form.fullName}
           </label>
           <input
             type="text"
@@ -488,7 +488,7 @@ export default function BookingForm() {
             required
             value={form.name}
             onChange={handleChange}
-            placeholder="John Doe"
+            placeholder={t.form.namePh}
             className={inputClass}
           />
         </div>
@@ -496,7 +496,7 @@ export default function BookingForm() {
         {/* Email */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Email
+            {t.form.email}
           </label>
           <input
             type="email"
@@ -504,7 +504,7 @@ export default function BookingForm() {
             required
             value={form.email}
             onChange={handleChange}
-            placeholder="john@example.com"
+            placeholder={t.form.emailPh}
             className={inputClass}
           />
         </div>
@@ -512,7 +512,7 @@ export default function BookingForm() {
         {/* Phone */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Phone
+            {t.form.phone}
           </label>
           <input
             type="tel"
@@ -520,7 +520,7 @@ export default function BookingForm() {
             required
             value={form.phone}
             onChange={handleChange}
-            placeholder="+373 000 000 00"
+            placeholder={t.form.phonePh}
             className={inputClass}
           />
         </div>
@@ -528,7 +528,7 @@ export default function BookingForm() {
         {/* Date & Time — custom pickers */}
         <div className="flex flex-col gap-1.5 md:col-span-2">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Pickup Date &amp; Time
+            {t.form.pickupDateTime}
           </label>
           <div className="grid grid-cols-2 gap-0 rounded-2xl border border-white/10 bg-white/[0.03] focus-within:border-accent/30 transition-colors divide-x divide-white/10">
             <CalendarPicker
@@ -545,7 +545,7 @@ export default function BookingForm() {
         {/* Vehicle */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Vehicle
+            {t.form.vehicle}
           </label>
           <div className="relative">
             <select
@@ -555,13 +555,13 @@ export default function BookingForm() {
               className={selectClass}
             >
               <option value="economy" className="bg-[#111] text-white">
-                Economy — E-Class
+                {t.form.economyEClass}
               </option>
               <option value="business" className="bg-[#111] text-white">
-                Business — S-Class
+                {t.form.businessSClass}
               </option>
               <option value="luxury" className="bg-[#111] text-white">
-                Luxury — V-Class / SUV
+                {t.form.luxuryVClass}
               </option>
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
@@ -585,7 +585,7 @@ export default function BookingForm() {
         {/* Passengers */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Passengers
+            {t.form.passengers}
           </label>
           <div className="relative">
             <select
@@ -600,7 +600,7 @@ export default function BookingForm() {
                   value={String(n)}
                   className="bg-[#111] text-white"
                 >
-                  {n} {n === 1 ? "passenger" : "passengers"}
+                  {n} {n === 1 ? t.form.passenger : t.form.passengersWord}
                 </option>
               ))}
             </select>
@@ -625,7 +625,7 @@ export default function BookingForm() {
         {/* Pickup */}
         <div className="flex flex-col gap-1.5" ref={pickupRef}>
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            {bookingType === "hourly" ? "Start Location" : "Pickup Location"}
+            {bookingType === "hourly" ? t.form.startLocation : t.form.pickupLocation}
           </label>
           <div className="relative">
             <input
@@ -637,7 +637,7 @@ export default function BookingForm() {
               onFocus={() =>
                 pickupSuggestions.length > 0 && setShowPickupDropdown(true)
               }
-              placeholder="Start typing to search..."
+              placeholder={t.form.searchPh}
               className={inputClass}
               autoComplete="off"
             />
@@ -680,7 +680,7 @@ export default function BookingForm() {
         {bookingType === "transfer" && (
           <div className="flex flex-col gap-1.5" ref={destRef}>
             <label className="text-xs font-medium text-muted uppercase tracking-wider">
-              Destination
+              {t.form.destination}
             </label>
             <div className="relative">
               <input
@@ -692,7 +692,7 @@ export default function BookingForm() {
                 onFocus={() =>
                   destSuggestions.length > 0 && setShowDestDropdown(true)
                 }
-                placeholder="Start typing to search..."
+                placeholder={t.form.searchPh}
                 className={inputClass}
                 autoComplete="off"
               />
@@ -736,7 +736,7 @@ export default function BookingForm() {
         {bookingType === "hourly" && (
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-medium text-muted uppercase tracking-wider">
-              Duration (hours)
+              {t.form.durationHours}
             </label>
             <div className="flex items-center gap-3">
               <button
@@ -747,7 +747,7 @@ export default function BookingForm() {
                 −
               </button>
               <div className="flex-1 text-center py-3 rounded-2xl border border-white/10 bg-white/5 text-white font-bold text-lg">
-                {hours} hour{hours !== 1 ? "s" : ""}
+                {hours} {hours !== 1 ? t.form.hours : t.form.hour}
               </div>
               <button
                 type="button"
@@ -758,7 +758,7 @@ export default function BookingForm() {
               </button>
             </div>
             <p className="text-xs text-white/30 text-center">
-              Minimum 1 hour · Maximum 24 hours
+              {t.form.minMaxHours}
             </p>
           </div>
         )}
@@ -766,14 +766,14 @@ export default function BookingForm() {
         {/* Notes */}
         <div className="flex flex-col gap-1.5 md:col-span-2">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Additional Notes
+            {t.form.notes}
           </label>
           <textarea
             name="notes"
             value={form.notes}
             onChange={handleChange}
             rows={3}
-            placeholder="Special requests, luggage info, etc."
+            placeholder={t.form.notesPh}
             className={`${inputClass} resize-none`}
           />
         </div>
@@ -788,7 +788,7 @@ export default function BookingForm() {
         disabled={loading}
         className="mt-6 w-full bg-accent hover:bg-accent-hover text-black font-semibold py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 cursor-pointer"
       >
-        {loading ? "Submitting..." : "Confirm Booking"}
+        {loading ? t.form.submitting : t.form.confirmBooking}
       </button>
     </form>
   );

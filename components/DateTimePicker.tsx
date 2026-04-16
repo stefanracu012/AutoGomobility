@@ -1,22 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+import { useTranslation } from "@/components/LanguageProvider";
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
@@ -34,6 +19,7 @@ interface CalendarPickerProps {
 }
 
 export function CalendarPicker({ value, onChange }: CalendarPickerProps) {
+  const { t } = useTranslation();
   const today = new Date();
   const selected = value ? new Date(value + "T00:00:00") : null;
 
@@ -98,7 +84,7 @@ export function CalendarPicker({ value, onChange }: CalendarPickerProps) {
         month: "long",
         year: "numeric",
       })
-    : "Select date";
+    : t.datePicker.selectDate;
 
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
   const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
@@ -152,7 +138,7 @@ export function CalendarPicker({ value, onChange }: CalendarPickerProps) {
               </svg>
             </button>
             <span className="text-sm font-semibold tracking-wide">
-              {MONTHS[viewMonth]}{" "}
+              {t.datePicker.months[viewMonth]}{" "}
               <span className="text-accent">{viewYear}</span>
             </span>
             <button
@@ -178,7 +164,7 @@ export function CalendarPicker({ value, onChange }: CalendarPickerProps) {
 
           {/* Day headers */}
           <div className="grid grid-cols-7 mb-2">
-            {DAYS.map((d) => (
+            {t.datePicker.days.map((d) => (
               <div
                 key={d}
                 className="text-center text-[10px] font-bold text-white/25 uppercase tracking-widest py-1"
@@ -237,6 +223,7 @@ interface TimePickerProps {
 }
 
 export function TimePicker({ value, onChange }: TimePickerProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -290,7 +277,7 @@ export function TimePicker({ value, onChange }: TimePickerProps) {
     }
   };
 
-  const displayValue = value || "Select time";
+  const displayValue = value || t.datePicker.selectTime;
 
   return (
     <div ref={ref} className="relative flex-1">
@@ -324,7 +311,7 @@ export function TimePicker({ value, onChange }: TimePickerProps) {
       {open && (
         <div className="absolute top-full left-0 mt-2 z-50 bg-[#0f0f0f] border border-white/10 rounded-2xl p-4 shadow-2xl shadow-black/60">
           <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3 text-center">
-            Pick a time
+            {t.datePicker.pickTime}
           </p>
           <div className="flex gap-2">
             {/* Hours column */}
