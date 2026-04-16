@@ -30,31 +30,43 @@ async function writeSetting(key: string, value: unknown): Promise<void> {
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
+import type { Locale } from "@/lib/i18n/types";
+
+/** A field that can be either a plain string (legacy) or per-language object */
+export type I18nString = string | Partial<Record<Locale, string>>;
+
+/** Resolve an I18nString to the correct language, falling back to "en" then first available */
+export function txt(val: I18nString | undefined, locale: Locale): string {
+  if (!val) return "";
+  if (typeof val === "string") return val;
+  return val[locale] || val.en || Object.values(val).find(Boolean) || "";
+}
+
 export interface FleetItem {
   id: string;
-  name: string;
-  category: string;
-  description: string;
+  name: I18nString;
+  category: I18nString;
+  description: I18nString;
   image: string;
-  priceLabel: string;
-  passengers?: string;
-  luggage?: string;
+  priceLabel: I18nString;
+  passengers?: I18nString;
+  luggage?: I18nString;
   features?: string[];
 }
 
 export interface ServiceItem {
   id: string;
   number: string;
-  title: string;
-  description: string;
-  tag: string;
+  title: I18nString;
+  description: I18nString;
+  tag: I18nString;
   highlights?: string[];
   image?: string;
 }
 
 export interface DestinationItem {
-  from: string;
-  to: string;
+  from: I18nString;
+  to: I18nString;
   distance: number;
   discount?: number;
   price?: number;

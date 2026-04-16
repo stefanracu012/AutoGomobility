@@ -1,5 +1,5 @@
 import { calculatePrice } from "@/lib/price";
-import { getDestinations, getPricing } from "@/lib/data";
+import { getDestinations, getPricing, txt } from "@/lib/data";
 import Link from "next/link";
 import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
@@ -61,7 +61,7 @@ export default async function Destinations() {
 
             return (
               <Link
-                href={buildBookingUrl(route.from, route.to)}
+                href={buildBookingUrl(txt(route.from, locale), txt(route.to, locale))}
                 key={`${route.from}-${route.to}`}
                 className="group relative bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 hover:bg-white/[0.06] hover:border-accent/30 transition-all duration-500 hover:shadow-2xl hover:shadow-accent/10 block"
               >
@@ -77,7 +77,7 @@ export default async function Destinations() {
                       {t.dest.from}
                     </span>
                     <span className="text-base sm:text-lg font-bold">
-                      {route.from}
+                      {txt(route.from, locale)}
                     </span>
                   </div>
                   <div className="flex-1 flex items-center justify-center">
@@ -102,7 +102,7 @@ export default async function Destinations() {
                       {t.dest.to}
                     </span>
                     <span className="text-base sm:text-lg font-bold">
-                      {route.to}
+                      {txt(route.to, locale)}
                     </span>
                   </div>
                 </div>

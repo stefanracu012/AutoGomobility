@@ -1,5 +1,5 @@
 ﻿import Image from "next/image";
-import { getServices } from "@/lib/data";
+import { getServices, txt } from "@/lib/data";
 import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
 
@@ -89,7 +89,7 @@ export default async function Services() {
                 <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 shrink-0 rounded-full overflow-hidden relative">
                   <Image
                     src={service.image}
-                    alt={service.title}
+                    alt={txt(service.title, locale)}
                     fill
                     sizes="64px"
                     className="object-cover"
@@ -103,14 +103,14 @@ export default async function Services() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold group-hover:text-accent transition-colors duration-300">
-                    {service.title}
+                    {txt(service.title, locale)}
                   </h3>
                   <span className="hidden sm:inline-block text-[10px] font-semibold uppercase tracking-widest text-accent/70 bg-accent/10 px-2.5 py-1 rounded-full">
-                    {service.tag}
+                    {txt(service.tag, locale)}
                   </span>
                 </div>
                 <p className="text-muted leading-relaxed max-w-xl">
-                  {service.description}
+                  {txt(service.description, locale)}
                 </p>
               </div>
             </div>

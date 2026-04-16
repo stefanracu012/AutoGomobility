@@ -3,6 +3,80 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 
+// ── i18n helpers ──────────────────────────────────────────────────────────────
+type Locale = "en" | "de" | "fr" | "it" | "ru";
+const LANGS: { code: Locale; flag: string }[] = [
+  { code: "en", flag: "🇬🇧" },
+  { code: "de", flag: "🇩🇪" },
+  { code: "fr", flag: "🇫🇷" },
+  { code: "it", flag: "🇮🇹" },
+  { code: "ru", flag: "🇷🇺" },
+];
+type I18nString = string | Partial<Record<Locale, string>>;
+/** Empty i18n object */
+const mkI18n = (): Record<Locale, string> => ({ en: "", de: "", fr: "", it: "", ru: "" });
+/** Normalize legacy string or i18n object to full Record */
+function toI18nObj(val: I18nString | undefined): Record<Locale, string> {
+  if (!val) return mkI18n();
+  if (typeof val === "string") return { ...mkI18n(), en: val };
+  return { ...mkI18n(), ...val };
+}
+/** Get display string (English fallback) */
+function i18nDisplay(val: I18nString | undefined): string {
+  if (!val) return "";
+  if (typeof val === "string") return val;
+  return val.en || Object.values(val).find(Boolean) || "";
+}
+
+function I18nInput({ label, value, onChange, placeholder, textarea }: {
+  label: string;
+  value: Record<Locale, string>;
+  onChange: (v: Record<Locale, string>) => void;
+  placeholder?: string;
+  textarea?: boolean;
+}) {
+  const [lang, setLang] = useState<Locale>("en");
+  return (
+    <div>
+      <div className="flex items-center gap-1 mb-1">
+        <label className={LBL + " mb-0"}>{label}</label>
+        <div className="flex gap-0.5 ml-auto">
+          {LANGS.map((l) => (
+            <button
+              key={l.code}
+              type="button"
+              className={`text-xs px-1.5 py-0.5 rounded transition-colors ${
+                lang === l.code
+                  ? "bg-[#d4af37]/20 text-[#d4af37]"
+                  : "text-white/30 hover:text-white/60"
+              }${value[l.code] ? "" : " opacity-40"}`}
+              onClick={() => setLang(l.code)}
+            >
+              {l.flag}
+            </button>
+          ))}
+        </div>
+      </div>
+      {textarea ? (
+        <textarea
+          value={value[lang]}
+          rows={2}
+          placeholder={placeholder}
+          onChange={(e) => onChange({ ...value, [lang]: e.target.value })}
+          className={INP + " resize-none"}
+        />
+      ) : (
+        <input
+          value={value[lang]}
+          placeholder={placeholder}
+          onChange={(e) => onChange({ ...value, [lang]: e.target.value })}
+          className={INP}
+        />
+      )}
+    </div>
+  );
+}
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Pricing {
   base: number;
@@ -15,27 +89,27 @@ interface Pricing {
 }
 interface FleetItem {
   id: string;
-  name: string;
-  category: string;
-  description: string;
+  name: I18nString;
+  category: I18nString;
+  description: I18nString;
   image: string;
-  priceLabel: string;
-  passengers?: string;
-  luggage?: string;
+  priceLabel: I18nString;
+  passengers?: I18nString;
+  luggage?: I18nString;
   features?: string[];
 }
 interface ServiceItem {
   id: string;
   number: string;
-  title: string;
-  description: string;
-  tag: string;
+  title: I18nString;
+  description: I18nString;
+  tag: I18nString;
   highlights?: string[];
   image?: string;
 }
 interface DestinationItem {
-  from: string;
-  to: string;
+  from: I18nString;
+  to: I18nString;
   distance: number;
   discount?: number;
   price?: number;
@@ -179,13 +253,13 @@ function PricingTab({
 
 // ── Fleet Tab ─────────────────────────────────────────────────────────────────
 const FLEET_EMPTY = {
-  name: "",
-  category: "",
-  description: "",
+  name: mkI18n(),
+  category: mkI18n(),
+  description: mkI18n(),
   image: "",
-  priceLabel: "",
-  passengers: "",
-  luggage: "",
+  priceLabel: mkI18n(),
+  passengers: mkI18n(),
+  luggage: mkI18n(),
   features: "",
 };
 type FleetForm = typeof FLEET_EMPTY;
@@ -221,51 +295,11 @@ function FleetFields({
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      <div>
-        <label className={LBL}>Name</label>
-        <input
-          value={form.name}
-          placeholder="Mercedes S-Class"
-          onChange={(e) => onChange({ ...form, name: e.target.value })}
-          className={INP}
-        />
-      </div>
-      <div>
-        <label className={LBL}>Category</label>
-        <input
-          value={form.category}
-          placeholder="Business"
-          onChange={(e) => onChange({ ...form, category: e.target.value })}
-          className={INP}
-        />
-      </div>
-      <div>
-        <label className={LBL}>Price Label</label>
-        <input
-          value={form.priceLabel}
-          placeholder="from 1.20/km"
-          onChange={(e) => onChange({ ...form, priceLabel: e.target.value })}
-          className={INP}
-        />
-      </div>
-      <div>
-        <label className={LBL}>Passengers</label>
-        <input
-          value={form.passengers}
-          placeholder="Up to 3"
-          onChange={(e) => onChange({ ...form, passengers: e.target.value })}
-          className={INP}
-        />
-      </div>
-      <div>
-        <label className={LBL}>Luggage</label>
-        <input
-          value={form.luggage}
-          placeholder="2 suitcases"
-          onChange={(e) => onChange({ ...form, luggage: e.target.value })}
-          className={INP}
-        />
-      </div>
+      <I18nInput label="Name" value={form.name} placeholder="Mercedes S-Class" onChange={(v) => onChange({ ...form, name: v })} />
+      <I18nInput label="Category" value={form.category} placeholder="Business" onChange={(v) => onChange({ ...form, category: v })} />
+      <I18nInput label="Price Label" value={form.priceLabel} placeholder="from 1.20/km" onChange={(v) => onChange({ ...form, priceLabel: v })} />
+      <I18nInput label="Passengers" value={form.passengers} placeholder="Up to 3" onChange={(v) => onChange({ ...form, passengers: v })} />
+      <I18nInput label="Luggage" value={form.luggage} placeholder="2 suitcases" onChange={(v) => onChange({ ...form, luggage: v })} />
       <div className="col-span-2">
         <label className={LBL}>Image URL</label>
         <div className="flex gap-2">
@@ -304,14 +338,7 @@ function FleetFields({
         )}
       </div>
       <div className="col-span-2">
-        <label className={LBL}>Description</label>
-        <textarea
-          value={form.description}
-          rows={2}
-          placeholder="Description…"
-          onChange={(e) => onChange({ ...form, description: e.target.value })}
-          className={INP + " resize-none"}
-        />
+        <I18nInput label="Description" value={form.description} placeholder="Description…" textarea onChange={(v) => onChange({ ...form, description: v })} />
       </div>
       <div className="col-span-2">
         <label className={LBL}>Features (comma-separated)</label>
@@ -394,16 +421,16 @@ function FleetTab({
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="font-semibold text-sm">{item.name}</span>
+                  <span className="font-semibold text-sm">{i18nDisplay(item.name)}</span>
                   <span className="text-[10px] uppercase tracking-widest text-[#d4af37]/70 bg-[#d4af37]/10 px-2 py-0.5 rounded-full">
-                    {item.category}
+                    {i18nDisplay(item.category)}
                   </span>
                 </div>
                 <p className="text-white/40 text-xs line-clamp-1">
-                  {item.description}
+                  {i18nDisplay(item.description)}
                 </p>
                 <p className="text-[#d4af37]/60 text-xs mt-0.5">
-                  {item.priceLabel}
+                  {i18nDisplay(item.priceLabel)}
                 </p>
               </div>
               <div className="flex gap-1 shrink-0">
@@ -412,13 +439,13 @@ function FleetTab({
                   onClick={() => {
                     setEditId(item.id);
                     setEditForm({
-                      name: item.name,
-                      category: item.category,
-                      description: item.description,
+                      name: toI18nObj(item.name),
+                      category: toI18nObj(item.category),
+                      description: toI18nObj(item.description),
                       image: item.image,
-                      priceLabel: item.priceLabel,
-                      passengers: item.passengers ?? "",
-                      luggage: item.luggage ?? "",
+                      priceLabel: toI18nObj(item.priceLabel),
+                      passengers: toI18nObj(item.passengers),
+                      luggage: toI18nObj(item.luggage),
                       features: item.features?.join(", ") ?? "",
                     });
                   }}
@@ -486,9 +513,9 @@ function FleetTab({
 
 // ── Services Tab ──────────────────────────────────────────────────────────────
 const SVC_EMPTY = {
-  title: "",
-  tag: "",
-  description: "",
+  title: mkI18n(),
+  tag: mkI18n(),
+  description: mkI18n(),
   highlights: "",
   image: "",
 };
@@ -590,36 +617,10 @@ function ServicesTab({
           {editId === item.id ? (
             <div className="flex flex-col gap-3">
               <div className="grid grid-cols-2 gap-3">
-                {(["title", "tag"] as const).map((k) => (
-                  <div key={k}>
-                    <label className={LBL}>
-                      {k === "title" ? "Title" : "Tag"}
-                    </label>
-                    <input
-                      value={editForm[k]}
-                      placeholder={
-                        k === "title" ? "Airport Transfer" : "Most popular"
-                      }
-                      onChange={(e) =>
-                        setEditForm((f) => ({ ...f, [k]: e.target.value }))
-                      }
-                      className={INP}
-                    />
-                  </div>
-                ))}
+                <I18nInput label="Title" value={editForm.title} placeholder="Airport Transfer" onChange={(v) => setEditForm((f) => ({ ...f, title: v }))} />
+                <I18nInput label="Tag" value={editForm.tag} placeholder="Most popular" onChange={(v) => setEditForm((f) => ({ ...f, tag: v }))} />
                 <div className="col-span-2">
-                  <label className={LBL}>Description</label>
-                  <textarea
-                    value={editForm.description}
-                    rows={3}
-                    onChange={(e) =>
-                      setEditForm((f) => ({
-                        ...f,
-                        description: e.target.value,
-                      }))
-                    }
-                    className={INP + " resize-none"}
-                  />
+                  <I18nInput label="Description" value={editForm.description} placeholder="Description…" textarea onChange={(v) => setEditForm((f) => ({ ...f, description: v }))} />
                 </div>
                 <div className="col-span-2">
                   <label className={LBL}>Highlights (comma-separated)</label>
@@ -685,13 +686,13 @@ function ServicesTab({
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-sm">{item.title}</span>
+                  <span className="font-semibold text-sm">{i18nDisplay(item.title)}</span>
                   <span className="text-[10px] uppercase tracking-widest text-[#d4af37]/70 bg-[#d4af37]/10 px-2 py-0.5 rounded-full">
-                    {item.tag}
+                    {i18nDisplay(item.tag)}
                   </span>
                 </div>
                 <p className="text-white/40 text-xs leading-relaxed">
-                  {item.description}
+                  {i18nDisplay(item.description)}
                 </p>
               </div>
               <div className="flex gap-1 shrink-0">
@@ -700,9 +701,9 @@ function ServicesTab({
                   onClick={() => {
                     setEditId(item.id);
                     setEditForm({
-                      title: item.title,
-                      tag: item.tag,
-                      description: item.description,
+                      title: toI18nObj(item.title),
+                      tag: toI18nObj(item.tag),
+                      description: toI18nObj(item.description),
                       highlights: item.highlights?.join(", ") ?? "",
                       image: item.image ?? "",
                     });
@@ -728,29 +729,10 @@ function ServicesTab({
             New Service
           </p>
           <div className="grid grid-cols-2 gap-3">
-            {(["title", "tag"] as const).map((k) => (
-              <div key={k}>
-                <label className={LBL}>{k === "title" ? "Title" : "Tag"}</label>
-                <input
-                  value={newForm[k]}
-                  placeholder={k === "title" ? "VIP Service" : "Premium"}
-                  onChange={(e) =>
-                    setNewForm((f) => ({ ...f, [k]: e.target.value }))
-                  }
-                  className={INP}
-                />
-              </div>
-            ))}
+            <I18nInput label="Title" value={newForm.title} placeholder="VIP Service" onChange={(v) => setNewForm((f) => ({ ...f, title: v }))} />
+            <I18nInput label="Tag" value={newForm.tag} placeholder="Premium" onChange={(v) => setNewForm((f) => ({ ...f, tag: v }))} />
             <div className="col-span-2">
-              <label className={LBL}>Description</label>
-              <textarea
-                value={newForm.description}
-                rows={3}
-                onChange={(e) =>
-                  setNewForm((f) => ({ ...f, description: e.target.value }))
-                }
-                className={INP + " resize-none"}
-              />
+              <I18nInput label="Description" value={newForm.description} placeholder="Description…" textarea onChange={(v) => setNewForm((f) => ({ ...f, description: v }))} />
             </div>
             <div className="col-span-2">
               <label className={LBL}>Highlights (comma-separated)</label>
@@ -814,15 +796,15 @@ function ServicesTab({
 
 // ── Destinations Tab ──────────────────────────────────────────────────────────
 type DestForm = {
-  from: string;
-  to: string;
+  from: Record<Locale, string>;
+  to: Record<Locale, string>;
   distance: number;
   discount: number | "";
   price: number | "";
 };
 const DEST_EMPTY: DestForm = {
-  from: "",
-  to: "",
+  from: mkI18n(),
+  to: mkI18n(),
   distance: 0,
   discount: "",
   price: "",
@@ -830,8 +812,8 @@ const DEST_EMPTY: DestForm = {
 
 function toDestItem(f: DestForm): DestinationItem {
   const item: DestinationItem = {
-    from: f.from,
-    to: f.to,
+    from: f.from as unknown as I18nString,
+    to: f.to as unknown as I18nString,
     distance: f.distance,
   };
   if (f.discount !== "" && f.discount > 0) item.discount = f.discount;
@@ -932,15 +914,8 @@ function DestFields({
 }) {
   return (
     <div className="grid grid-cols-2 gap-3">
-      {(["from", "to"] as const).map((k) => (
-        <NominatimField
-          key={k}
-          label={k === "from" ? "From" : "To"}
-          value={form[k]}
-          placeholder={k === "from" ? "Dublin Airport" : "Cork"}
-          onSelect={(name) => onChange({ ...form, [k]: name })}
-        />
-      ))}
+      <I18nInput label="From" value={form.from} placeholder="Dublin Airport" onChange={(v) => onChange({ ...form, from: v })} />
+      <I18nInput label="To" value={form.to} placeholder="Cork" onChange={(v) => onChange({ ...form, to: v })} />
       <div>
         <label className={LBL}>Distance (km)</label>
         <input
@@ -1038,7 +1013,7 @@ function DestinationsTab({
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 text-sm font-semibold mb-0.5">
-                  <span>{item.from}</span>
+                  <span>{i18nDisplay(item.from)}</span>
                   <svg
                     className="w-4 h-4 text-[#d4af37]/50 shrink-0"
                     fill="none"
@@ -1052,7 +1027,7 @@ function DestinationsTab({
                       d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
                     />
                   </svg>
-                  <span>{item.to}</span>
+                  <span>{i18nDisplay(item.to)}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-white/40 text-xs">
@@ -1071,8 +1046,8 @@ function DestinationsTab({
                   onClick={() => {
                     setEditIdx(idx);
                     setEditForm({
-                      from: item.from,
-                      to: item.to,
+                      from: toI18nObj(item.from),
+                      to: toI18nObj(item.to),
                       distance: item.distance,
                       discount: item.discount ?? "",
                       price: item.price ?? "",

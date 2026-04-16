@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { getFleet } from "@/lib/data";
+import { getFleet, txt } from "@/lib/data";
 import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
 
@@ -39,7 +39,7 @@ export default async function Fleet() {
       <div className="grid grid-cols-1 gap-0">
         {fleet.map((car, index) => (
           <div
-            key={car.name}
+            key={txt(car.name, locale)}
             className="group grid grid-cols-1 md:grid-cols-2 h-auto md:h-[50vh] md:min-h-[260px] bg-white/[0.03] backdrop-blur-sm border-y border-white/10 overflow-hidden hover:bg-white/[0.06] transition-all duration-500"
           >
             {/* Image — alternate left/right */}
@@ -48,7 +48,7 @@ export default async function Fleet() {
             >
               <Image
                 src={car.image}
-                alt={car.name}
+                alt={txt(car.name, locale)}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -56,7 +56,7 @@ export default async function Fleet() {
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
               <span className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-accent text-xs font-semibold px-3 py-1.5 rounded-full z-10">
-                {car.priceLabel}
+                {txt(car.priceLabel, locale)}
               </span>
             </div>
 
@@ -65,13 +65,13 @@ export default async function Fleet() {
               className={`flex flex-col justify-center px-5 sm:px-10 md:px-20 py-6 sm:py-8 ${index % 2 === 1 ? "md:order-1" : ""}`}
             >
               <span className="inline-block text-xs font-semibold text-accent uppercase tracking-wider bg-accent/10 px-2.5 py-1 rounded-full w-fit">
-                {car.category}
+                {txt(car.category, locale)}
               </span>
               <h3 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold">
-                {car.name}
+                {txt(car.name, locale)}
               </h3>
               <p className="mt-3 text-muted leading-relaxed max-w-sm">
-                {car.description}
+                {txt(car.description, locale)}
               </p>
               <Link
                 href="/booking"

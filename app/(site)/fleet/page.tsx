@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { getFleet } from "@/lib/data";
+import { getFleet, txt } from "@/lib/data";
 import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
 
@@ -46,7 +46,7 @@ export default async function FleetPage() {
               <div className="md:w-1/2 relative min-h-[45vh] sm:min-h-[320px] md:min-h-[280px]">
                 <Image
                   src={car.image}
-                  alt={car.name}
+                  alt={txt(car.name, locale)}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
@@ -55,11 +55,11 @@ export default async function FleetPage() {
               </div>
               <div className="md:w-1/2 p-8 md:p-10 flex flex-col justify-center">
                 <span className="text-xs font-medium text-accent uppercase tracking-wider">
-                  {car.category}
+                  {txt(car.category, locale)}
                 </span>
-                <h2 className="mt-2 text-3xl font-bold">{car.name}</h2>
+                <h2 className="mt-2 text-3xl font-bold">{txt(car.name, locale)}</h2>
                 <p className="mt-3 text-muted leading-relaxed">
-                  {car.description}
+                  {txt(car.description, locale)}
                 </p>
 
                 {(car.passengers || car.luggage) && (
@@ -79,7 +79,7 @@ export default async function FleetPage() {
                             d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
                           />
                         </svg>
-                        {car.passengers}
+                        {txt(car.passengers, locale)}
                       </span>
                     )}
                     {car.luggage && (
@@ -97,7 +97,7 @@ export default async function FleetPage() {
                             d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"
                           />
                         </svg>
-                        {car.luggage}
+                        {txt(car.luggage, locale)}
                       </span>
                     )}
                   </div>
@@ -105,7 +105,7 @@ export default async function FleetPage() {
 
                 {car.priceLabel && (
                   <p className="mt-3 text-sm text-accent/70">
-                    {car.priceLabel}
+                    {txt(car.priceLabel, locale)}
                   </p>
                 )}
 

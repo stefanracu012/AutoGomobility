@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { getServices } from "@/lib/data";
+import { getServices, txt } from "@/lib/data";
 import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
 
@@ -107,7 +107,7 @@ export default async function ServicesPage() {
                   <div className="w-full md:w-40 h-32 md:h-40 relative rounded-2xl overflow-hidden shrink-0">
                     <Image
                       src={service.image}
-                      alt={service.title}
+                      alt={txt(service.title, locale)}
                       fill
                       sizes="(max-width: 768px) 100vw, 160px"
                       className="object-cover"
@@ -119,9 +119,9 @@ export default async function ServicesPage() {
                   </div>
                 )}
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold mb-3">{service.title}</h2>
+                  <h2 className="text-2xl font-bold mb-3">{txt(service.title, locale)}</h2>
                   <p className="text-muted leading-relaxed mb-5">
-                    {service.description}
+                    {txt(service.description, locale)}
                   </p>
                   {service.highlights && service.highlights.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
