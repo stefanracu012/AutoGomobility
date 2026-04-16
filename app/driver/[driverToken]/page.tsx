@@ -551,7 +551,9 @@ export default function DriverPage() {
         {/* Quick Actions — no GPS needed */}
         <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
           <div className="px-5 py-4 border-b border-white/10">
-            <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">Quick Actions</h2>
+            <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
+              Quick Actions
+            </h2>
           </div>
           <div className="p-4 space-y-3">
             <a
@@ -560,7 +562,19 @@ export default function DriverPage() {
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-4 rounded-xl bg-[#d4af37] text-black font-bold text-base hover:bg-[#c49b30] transition-colors"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polygon points="3 11 22 2 13 21 11 13 3 11" />
+              </svg>
               Navigate to Pickup
             </a>
             <div className="grid grid-cols-2 gap-3">
@@ -570,7 +584,21 @@ export default function DriverPage() {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#33ccff]/10 border border-[#33ccff]/30 text-[#33ccff] font-semibold text-sm hover:bg-[#33ccff]/20 transition-colors"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17H5a2 2 0 0 1-2-2v-1l2.68-6.26A2 2 0 0 1 7.52 6h8.96a2 2 0 0 1 1.84 1.74L21 14v1a2 2 0 0 1-2 2Z"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M19 17H5a2 2 0 0 1-2-2v-1l2.68-6.26A2 2 0 0 1 7.52 6h8.96a2 2 0 0 1 1.84 1.74L21 14v1a2 2 0 0 1-2 2Z" />
+                  <circle cx="7.5" cy="17" r="2" />
+                  <circle cx="16.5" cy="17" r="2" />
+                </svg>
                 Waze
               </a>
               <a
@@ -579,7 +607,19 @@ export default function DriverPage() {
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-semibold text-sm hover:bg-[#25D366]/20 transition-colors"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
                 WhatsApp
               </a>
             </div>
@@ -593,7 +633,9 @@ export default function DriverPage() {
               <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
                 Live Location
               </h2>
-              <p className="text-xs text-white/25 mt-0.5">Share on this page · requires GPS permission</p>
+              <p className="text-xs text-white/25 mt-0.5">
+                Share on this page · requires GPS permission
+              </p>
             </div>
             <div
               className={`flex items-center gap-2 text-sm font-medium ${sharing ? "text-green-400" : "text-white/30"}`}
@@ -644,7 +686,21 @@ export default function DriverPage() {
                       }}
                       className="mt-2 w-full py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 font-semibold text-xs hover:bg-red-500/30 transition-colors"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline -mt-0.5 mr-1"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="inline -mt-0.5 mr-1"
+                      >
+                        <polyline points="23 4 23 10 17 10" />
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                      </svg>
                       Try Again
                     </button>
                   </>

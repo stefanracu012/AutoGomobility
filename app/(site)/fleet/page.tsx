@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getFleet } from "@/lib/data";
+import { getLocale } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,8 @@ export const metadata: Metadata = {
 };
 
 export default async function FleetPage() {
-  const fleet = await getFleet();
+  const [fleet, locale] = await Promise.all([getFleet(), getLocale()]);
+  const t = getDictionary(locale);
 
   return (
     <div className="pt-24 pb-16 md:pb-24">
@@ -19,14 +22,13 @@ export default async function FleetPage() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-6 text-center">
           <p className="text-accent text-sm font-semibold uppercase tracking-[0.3em] mb-3">
-            Our Fleet
+            {t.fleetPage.subtitle}
           </p>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-            Premium Vehicles
+            {t.fleetPage.title}
           </h1>
           <p className="mt-4 text-muted max-w-xl mx-auto text-lg">
-            Every vehicle in our fleet is maintained to the highest standards,
-            ensuring a flawless experience for every journey.
+            {t.fleetPage.description}
           </p>
         </div>
       </section>

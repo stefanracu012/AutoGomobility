@@ -70,7 +70,13 @@ interface BookingAdmin {
   driverOnline: boolean;
   clientOnline: boolean;
 }
-type Tab = "bookings" | "pricing" | "fleet" | "services" | "destinations" | "locations";
+type Tab =
+  | "bookings"
+  | "pricing"
+  | "fleet"
+  | "services"
+  | "destinations"
+  | "locations";
 
 // ── Shared styles ─────────────────────────────────────────────────────────────
 const INP =
@@ -1320,7 +1326,8 @@ function BookingsTab({
   const [filter, setFilter] = useState<string>("ALL");
   const [updating, setUpdating] = useState<string | null>(null);
 
-  const filtered = filter === "ALL" ? data : data.filter((b) => b.status === filter);
+  const filtered =
+    filter === "ALL" ? data : data.filter((b) => b.status === filter);
 
   const updateStatus = async (id: string, status: string) => {
     setUpdating(id);
@@ -1332,7 +1339,9 @@ function BookingsTab({
         body: JSON.stringify({ id, status }),
       });
       await onRefresh();
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     setUpdating(null);
   };
 
@@ -1342,24 +1351,33 @@ function BookingsTab({
     <div className="flex flex-col gap-4">
       {/* Filter bar */}
       <div className="flex flex-wrap gap-2 items-center">
-        {["ALL", "PENDING", "OFFER_SENT", "CONFIRMED", "COMPLETED", "REJECTED", "CANCELLED"].map(
-          (s) => {
-            const count = s === "ALL" ? data.length : data.filter((b) => b.status === s).length;
-            return (
-              <button
-                key={s}
-                onClick={() => setFilter(s)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
-                  filter === s
-                    ? "bg-[#d4af37]/20 text-[#d4af37] border-[#d4af37]/30"
-                    : "bg-white/[0.03] text-white/40 border-white/10 hover:text-white"
-                }`}
-              >
-                {s === "ALL" ? "All" : s.replace("_", " ")} ({count})
-              </button>
-            );
-          },
-        )}
+        {[
+          "ALL",
+          "PENDING",
+          "OFFER_SENT",
+          "CONFIRMED",
+          "COMPLETED",
+          "REJECTED",
+          "CANCELLED",
+        ].map((s) => {
+          const count =
+            s === "ALL"
+              ? data.length
+              : data.filter((b) => b.status === s).length;
+          return (
+            <button
+              key={s}
+              onClick={() => setFilter(s)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+                filter === s
+                  ? "bg-[#d4af37]/20 text-[#d4af37] border-[#d4af37]/30"
+                  : "bg-white/[0.03] text-white/40 border-white/10 hover:text-white"
+              }`}
+            >
+              {s === "ALL" ? "All" : s.replace("_", " ")} ({count})
+            </button>
+          );
+        })}
       </div>
 
       {/* Bookings list */}
@@ -1399,7 +1417,9 @@ function BookingsTab({
               <div className="px-5 py-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
                 {/* Client */}
                 <div>
-                  <span className="text-white/30 text-xs uppercase tracking-wider">Client</span>
+                  <span className="text-white/30 text-xs uppercase tracking-wider">
+                    Client
+                  </span>
                   <p className="text-white/80 font-medium">{b.clientName}</p>
                   <p className="text-white/40 text-xs">{b.clientEmail}</p>
                   <p className="text-white/40 text-xs">{b.clientPhone}</p>
@@ -1407,7 +1427,9 @@ function BookingsTab({
 
                 {/* Route */}
                 <div>
-                  <span className="text-white/30 text-xs uppercase tracking-wider">Route</span>
+                  <span className="text-white/30 text-xs uppercase tracking-wider">
+                    Route
+                  </span>
                   <p className="text-white/80 text-xs mt-0.5">
                     <span className="text-green-400/70">●</span> {b.pickup}
                   </p>
@@ -1418,14 +1440,19 @@ function BookingsTab({
 
                 {/* Details */}
                 <div>
-                  <span className="text-white/30 text-xs uppercase tracking-wider">Details</span>
+                  <span className="text-white/30 text-xs uppercase tracking-wider">
+                    Details
+                  </span>
                   <p className="text-white/60 text-xs mt-0.5">
                     {VEHICLE_MAP[b.vehicle] ?? b.vehicle} · {b.passengers} pax
-                    {b.bookingType === "hourly" && b.hours ? ` · ${b.hours}h hourly` : ""}
+                    {b.bookingType === "hourly" && b.hours
+                      ? ` · ${b.hours}h hourly`
+                      : ""}
                   </p>
                   {b.date && (
                     <p className="text-white/60 text-xs">
-                      {b.date}{b.time ? ` · ${b.time}` : ""}
+                      {b.date}
+                      {b.time ? ` · ${b.time}` : ""}
                     </p>
                   )}
                   {b.notes && (
@@ -1437,13 +1464,18 @@ function BookingsTab({
 
                 {/* Pricing */}
                 <div>
-                  <span className="text-white/30 text-xs uppercase tracking-wider">Pricing</span>
+                  <span className="text-white/30 text-xs uppercase tracking-wider">
+                    Pricing
+                  </span>
                   <p className="text-white/60 text-xs mt-0.5">
                     Base: €{b.basePrice.toFixed(2)}
                   </p>
                   {b.extras?.length > 0 && (
                     <p className="text-white/40 text-xs">
-                      Extras: {b.extras.map((e) => `${e.label} €${e.price.toFixed(2)}`).join(", ")}
+                      Extras:{" "}
+                      {b.extras
+                        .map((e) => `${e.label} €${e.price.toFixed(2)}`)
+                        .join(", ")}
                     </p>
                   )}
                 </div>
@@ -1490,15 +1522,17 @@ function BookingsTab({
                 <div className="flex-1" />
 
                 {/* Status actions */}
-                {b.status !== "CANCELLED" && b.status !== "REJECTED" && b.status !== "COMPLETED" && (
-                  <button
-                    onClick={() => updateStatus(b.id, "CANCELLED")}
-                    disabled={updating === b.id}
-                    className="text-xs text-red-400/50 hover:text-red-400 transition-colors disabled:opacity-30"
-                  >
-                    Cancel
-                  </button>
-                )}
+                {b.status !== "CANCELLED" &&
+                  b.status !== "REJECTED" &&
+                  b.status !== "COMPLETED" && (
+                    <button
+                      onClick={() => updateStatus(b.id, "CANCELLED")}
+                      disabled={updating === b.id}
+                      className="text-xs text-red-400/50 hover:text-red-400 transition-colors disabled:opacity-30"
+                    >
+                      Cancel
+                    </button>
+                  )}
                 {b.status === "CONFIRMED" && (
                   <button
                     onClick={() => updateStatus(b.id, "COMPLETED")}
@@ -1885,7 +1919,9 @@ export default function AdminPage() {
               <BookingsTab
                 data={bookings}
                 onRefresh={async () => {
-                  const r = await fetch("/api/admin/bookings", { credentials: "include" });
+                  const r = await fetch("/api/admin/bookings", {
+                    credentials: "include",
+                  });
                   if (r.ok) setBookings(await r.json());
                 }}
               />

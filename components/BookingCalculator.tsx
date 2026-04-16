@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { calculatePrice } from "@/lib/price";
+import { useTranslation } from "@/components/LanguageProvider";
 
 const RouteMap = dynamic(() => import("@/components/RouteMap"), { ssr: false });
 
@@ -88,6 +89,7 @@ interface QuickLocation {
 }
 
 export default function BookingCalculator() {
+  const { t } = useTranslation();
   const [pickup, setPickup] = useState("");
   const [destination, setDestination] = useState("");
   const [vehicle, setVehicle] = useState<VehicleType>("business");
@@ -225,7 +227,7 @@ export default function BookingCalculator() {
       );
 
       if (!route) {
-        setError("Could not calculate route. Please try different locations.");
+        setError(t.calc.errRoute);
         setLoading(false);
         return;
       }
@@ -241,7 +243,7 @@ export default function BookingCalculator() {
 
       setPrice(Math.round(result * 100) / 100);
     } catch {
-      setError("Failed to calculate route. Please try again.");
+      setError(t.calc.errCalc);
     } finally {
       setLoading(false);
     }
@@ -261,39 +263,39 @@ export default function BookingCalculator() {
 
   const handleCalculate = () => {
     if (!pickup || !destination) {
-      setError("Please enter both pickup and destination locations");
+      setError(t.calc.errBoth);
       return;
     }
     if (!pickupCoords || !destCoords) {
-      setError("Please select locations from the dropdown suggestions");
+      setError(t.calc.errSelect);
       return;
     }
     calculateRoute();
   };
 
   const vehicles: { value: VehicleType; label: string; desc: string }[] = [
-    { value: "economy", label: "Economy", desc: "E-Class" },
-    { value: "business", label: "Business", desc: "S-Class" },
-    { value: "luxury", label: "Luxury", desc: "V-Class / SUV" },
+    { value: "economy", label: t.calc.economy, desc: t.calc.eClass },
+    { value: "business", label: t.calc.business, desc: t.calc.sClass },
+    { value: "luxury", label: t.calc.luxury, desc: t.calc.vClass },
   ];
 
   const inputClass =
-    "w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-base text-white placeholder:text-white/30 focus:outline-none focus:border-accent/50 transition-colors";
+    "w-full bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl px-3 py-3 sm:px-5 sm:py-4 text-sm sm:text-base text-white placeholder:text-white/30 focus:outline-none focus:border-accent/50 transition-colors";
 
   const dropdownClass =
     "absolute z-50 top-full left-0 right-0 mt-1 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl overflow-hidden";
 
   return (
-    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 md:p-8 shadow-2xl">
-      <h2 className="text-xl font-semibold mb-6 text-center">
-        Calculate Your Ride
+    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 shadow-2xl">
+      <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-center">
+        {t.calc.heading}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Pickup */}
         <div className="flex flex-col gap-1.5" ref={pickupRef}>
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Pickup Location
+            {t.calc.pickupLocation}
           </label>
           <div className="relative">
             <input
@@ -303,7 +305,7 @@ export default function BookingCalculator() {
               onFocus={() =>
                 pickupSuggestions.length > 0 && setShowPickupDropdown(true)
               }
-              placeholder="Start typing to search..."
+              placeholder={t.calc.searchPh}
               className={inputClass}
               autoComplete="off"
             />
@@ -345,7 +347,7 @@ export default function BookingCalculator() {
         {/* Destination */}
         <div className="flex flex-col gap-1.5" ref={destRef}>
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Destination
+            {t.calc.destination}
           </label>
           <div className="relative">
             <input
@@ -355,7 +357,7 @@ export default function BookingCalculator() {
               onFocus={() =>
                 destSuggestions.length > 0 && setShowDestDropdown(true)
               }
-              placeholder="Start typing to search..."
+              placeholder={t.calc.searchPh}
               className={inputClass}
               autoComplete="off"
             />
@@ -433,15 +435,15 @@ export default function BookingCalculator() {
         {/* Vehicle */}
         <div className="flex flex-col gap-1.5 md:col-span-2">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Vehicle Type
+            {t.calc.vehicleType}
           </label>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {vehicles.map((v) => (
               <button
                 key={v.value}
                 type="button"
                 onClick={() => setVehicle(v.value)}
-                className={`rounded-2xl border px-4 py-3 text-sm font-medium transition-all cursor-pointer ${
+                className={`rounded-xl sm:rounded-2xl border px-2 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                   vehicle === v.value
                     ? "border-accent bg-accent/10 text-accent"
                     : "border-white/10 bg-white/5 text-muted hover:border-white/20"
@@ -459,13 +461,13 @@ export default function BookingCalculator() {
         {/* Hours */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Hours — optional (hourly rate)
+            {t.calc.hoursLabel}
           </label>
           <input
             type="number"
             value={hours}
             onChange={(e) => setHours(e.target.value)}
-            placeholder="Leave empty for distance-based"
+            placeholder={t.calc.hoursPh}
             min="0"
             className={inputClass}
           />
@@ -474,13 +476,13 @@ export default function BookingCalculator() {
         {/* Passengers */}
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-medium text-muted uppercase tracking-wider">
-            Passengers — optional
+            {t.calc.passengersLabel}
           </label>
           <input
             type="number"
             value={passengers}
             onChange={(e) => setPassengers(e.target.value)}
-            placeholder="Number of passengers"
+            placeholder={t.calc.passengersPh}
             min="1"
             max="8"
             className={inputClass}
@@ -497,7 +499,7 @@ export default function BookingCalculator() {
         disabled={loading || !pickup || !destination}
         className="mt-6 w-full bg-accent hover:bg-accent-hover text-black font-semibold py-3.5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:hover:scale-100 cursor-pointer"
       >
-        {loading ? "Calculating..." : "Calculate Price"}
+        {loading ? t.calc.calculating : t.calc.calculatePrice}
       </button>
 
       {/* Price result */}
@@ -551,19 +553,19 @@ export default function BookingCalculator() {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-muted mb-1">Estimated Price</p>
+            <p className="text-sm text-muted mb-1">{t.calc.estimatedPrice}</p>
             <p className="text-4xl font-bold text-accent">
               &euro;{price.toFixed(2)}
             </p>
             <p className="text-xs text-white/40 mt-2">
-              * Prețul este orientativ. Șoferul va reveni cu oferta finală.
+              {t.calc.priceNote}
             </p>
           </div>
           <Link
             href={`/booking?pickup=${encodeURIComponent(pickup)}&destination=${encodeURIComponent(destination)}&vehicle=${vehicle}${passengers ? `&passengers=${encodeURIComponent(passengers)}` : ""}&price=${price.toFixed(2)}${pickupCoords ? `&pickupLat=${pickupCoords.lat}&pickupLon=${pickupCoords.lon}` : ""}${destCoords ? `&destLat=${destCoords.lat}&destLon=${destCoords.lon}` : ""}`}
             className="block mt-4 w-full bg-accent hover:bg-accent-hover text-black font-semibold py-3 rounded-2xl text-center transition-all hover:scale-[1.02]"
           >
-            Proceed to Booking
+            {t.calc.proceedToBooking}
           </Link>
         </div>
       )}

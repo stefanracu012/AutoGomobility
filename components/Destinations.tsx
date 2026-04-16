@@ -1,6 +1,8 @@
 import { calculatePrice } from "@/lib/price";
 import { getDestinations, getPricing } from "@/lib/data";
 import Link from "next/link";
+import { getLocale } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n";
 
 function buildBookingUrl(from: string, to: string) {
   const p = new URLSearchParams({
@@ -12,12 +14,17 @@ function buildBookingUrl(from: string, to: string) {
 }
 
 export default async function Destinations() {
-  const routes = await getDestinations();
-  const pricing = await getPricing();
+  const [routes, pricing, locale] = await Promise.all([
+    getDestinations(),
+    getPricing(),
+    getLocale(),
+  ]);
+  const t = getDictionary(locale);
+
   return (
     <section
       id="destinations"
-      className="py-24 md:py-32 relative overflow-hidden"
+      className="py-16 sm:py-24 md:py-32 relative overflow-hidden"
     >
       {/* Background */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
@@ -27,15 +34,14 @@ export default async function Destinations() {
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
           <div>
             <p className="text-accent text-sm font-semibold uppercase tracking-[0.3em] mb-3">
-              Popular Routes
+              {t.dest.subtitle}
             </p>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
-              Top <span className="text-accent">Destinations</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
+              {t.dest.title}<span className="text-accent">{t.dest.titleAccent}</span>
             </h2>
           </div>
           <p className="text-muted max-w-md md:text-right">
-            Fixed-price routes for the most popular destinations. No surprises,
-            just transparent pricing.
+            {t.dest.description}
           </p>
         </div>
 
@@ -56,20 +62,20 @@ export default async function Destinations() {
               <Link
                 href={buildBookingUrl(route.from, route.to)}
                 key={`${route.from}-${route.to}`}
-                className="group relative bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/[0.06] hover:border-accent/30 transition-all duration-500 hover:shadow-2xl hover:shadow-accent/10 block"
+                className="group relative bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 hover:bg-white/[0.06] hover:border-accent/30 transition-all duration-500 hover:shadow-2xl hover:shadow-accent/10 block"
               >
                 {route.discount && (
                   <span className="absolute -top-3 -right-3 bg-gradient-to-r from-accent to-accent-hover text-black text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
-                    -{route.discount}% OFF
+                    -{route.discount}% {t.dest.off}
                   </span>
                 )}
 
                 <div className="flex items-center gap-4 mb-5">
                   <div className="flex flex-col">
                     <span className="text-xs text-muted uppercase tracking-wider">
-                      From
+                      {t.dest.from}
                     </span>
-                    <span className="text-lg font-bold">{route.from}</span>
+                    <span className="text-base sm:text-lg font-bold">{route.from}</span>
                   </div>
                   <div className="flex-1 flex items-center justify-center">
                     <div className="flex-1 h-px bg-gradient-to-r from-white/20 via-accent/50 to-white/20" />
@@ -90,9 +96,9 @@ export default async function Destinations() {
                   </div>
                   <div className="flex flex-col text-right">
                     <span className="text-xs text-muted uppercase tracking-wider">
-                      To
+                      {t.dest.to}
                     </span>
-                    <span className="text-lg font-bold">{route.to}</span>
+                    <span className="text-base sm:text-lg font-bold">{route.to}</span>
                   </div>
                 </div>
 
@@ -101,7 +107,7 @@ export default async function Destinations() {
                     <p className="text-xs text-muted mb-1">
                       {route.distance} km
                     </p>
-                    <p className="text-xs text-muted">Business Class</p>
+                    <p className="text-xs text-muted">{t.dest.businessClass}</p>
                   </div>
                   <div className="text-right">
                     {discountedPrice ? (
@@ -109,12 +115,12 @@ export default async function Destinations() {
                         <span className="text-sm text-muted line-through block">
                           &euro;{basePrice.toFixed(0)}
                         </span>
-                        <span className="text-3xl font-bold text-accent">
+                        <span className="text-2xl sm:text-3xl font-bold text-accent">
                           &euro;{discountedPrice.toFixed(0)}
                         </span>
                       </>
                     ) : (
-                      <span className="text-3xl font-bold text-accent">
+                      <span className="text-2xl sm:text-3xl font-bold text-accent">
                         &euro;{basePrice.toFixed(0)}
                       </span>
                     )}
@@ -123,7 +129,7 @@ export default async function Destinations() {
 
                 {/* Hover indicator */}
                 <div className="absolute bottom-6 left-6 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-accent font-medium flex items-center gap-1">
-                  Book this route
+                  {t.dest.bookRoute}
                   <svg
                     className="w-3 h-3"
                     fill="none"

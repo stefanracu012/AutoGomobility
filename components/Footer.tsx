@@ -1,9 +1,14 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslation } from "@/components/LanguageProvider";
 
 export default function Footer() {
+  const { t } = useTranslation();
+
   return (
     <footer className="border-t border-white/5 bg-black/40">
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-6 py-8 sm:py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
@@ -11,22 +16,21 @@ export default function Footer() {
               <span className="text-accent">ELITE</span> CHAUFFEUR
             </h3>
             <p className="text-sm text-muted leading-relaxed max-w-xs">
-              Premium private chauffeur service. Comfort, safety, and precision
-              for every journey.
+              {t.footer.description}
             </p>
           </div>
 
           {/* Quick links */}
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4">
-              Quick Links
+              {t.footer.quickLinks}
             </h4>
             <ul className="flex flex-col gap-2">
               {[
-                { href: "/", label: "Home" },
-                { href: "/fleet", label: "Our Fleet" },
-                { href: "/services", label: "Services" },
-                { href: "/booking", label: "Book Now" },
+                { href: "/", label: t.footer.home },
+                { href: "/fleet", label: t.footer.ourFleet },
+                { href: "/services", label: t.footer.services },
+                { href: "/booking", label: t.footer.bookNow },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -43,7 +47,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h4 className="text-sm font-semibold uppercase tracking-wider text-muted mb-4">
-              Contact
+              {t.footer.contact}
             </h4>
             <ul className="flex flex-col gap-2 text-sm text-muted">
               <li>
@@ -67,8 +71,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-6 border-t border-white/5 text-center text-xs text-muted">
-          &copy; {new Date().getFullYear()} Elite Chauffeur. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} {t.footer.rights}
         </div>
       </div>
     </footer>

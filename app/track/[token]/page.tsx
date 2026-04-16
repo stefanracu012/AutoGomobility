@@ -588,12 +588,30 @@ export default function TrackPage() {
         <div className="bg-[#111]/60 border border-white/5 rounded-2xl overflow-hidden">
           <button
             type="button"
-            onClick={() => setShowSharePanel(v => !v)}
+            onClick={() => setShowSharePanel((v) => !v)}
             className="w-full px-5 py-3 flex items-center justify-between hover:bg-white/5 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <span className="text-sm text-white/40 inline-flex items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg> Share my exact location</span>
-              <span className="text-[10px] text-white/20 border border-white/10 rounded px-1.5 py-0.5 uppercase tracking-wider">Optional</span>
+              <span className="text-sm text-white/40 inline-flex items-center gap-1.5">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>{" "}
+                Share my exact location
+              </span>
+              <span className="text-[10px] text-white/20 border border-white/10 rounded px-1.5 py-0.5 uppercase tracking-wider">
+                Optional
+              </span>
             </div>
             {sharing ? (
               <span className="flex items-center gap-1.5 text-xs text-green-400 font-medium">
@@ -601,80 +619,136 @@ export default function TrackPage() {
                 Live
               </span>
             ) : (
-              <span className="text-white/20 text-xs">{showSharePanel ? "▲" : "▼"}</span>
+              <span className="text-white/20 text-xs">
+                {showSharePanel ? "▲" : "▼"}
+              </span>
             )}
           </button>
           {(showSharePanel || sharing || !!geoError) && (
-          <div className="px-5 pb-4 space-y-3">
-            {geoError && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400 space-y-1">
-                {geoError === "PERMISSION_DENIED" ? (
-                  <>
-                    <p className="font-semibold">Location access was denied.</p>
-                    <div className="text-red-400/70 text-xs leading-relaxed space-y-2 mt-1">
-                      <p>
-                        <strong className="text-red-400">iPhone / iPad:</strong>{" "}
-                        Go to{" "}
-                        <strong>
-                          Settings → Privacy &amp; Security → Location Services
-                        </strong>
-                        , find your browser (Safari / Chrome), set it to{" "}
-                        <strong>While Using</strong>. Then tap below.
+            <div className="px-5 pb-4 space-y-3">
+              {geoError && (
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 text-sm text-red-400 space-y-1">
+                  {geoError === "PERMISSION_DENIED" ? (
+                    <>
+                      <p className="font-semibold">
+                        Location access was denied.
                       </p>
-                      <p>
-                        <strong className="text-red-400">Android:</strong> Tap
-                        the <strong>lock icon</strong> in the address bar →{" "}
-                        <strong>Permissions → Location → Allow</strong>. Then
-                        tap below.
-                      </p>
-                      <p>
-                        <strong className="text-red-400">Desktop:</strong> Click
-                        the lock icon in the address bar →{" "}
-                        <strong>Site settings → Location → Allow</strong>. Then
-                        click below.
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p>{geoError}</p>
-                    <button
-                      onClick={() => {
-                        setGeoError("");
-                        startSharing();
-                      }}
-                      className="mt-2 w-full py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 font-semibold text-xs hover:bg-red-500/30 transition-colors"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline -mt-0.5 mr-1"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-                      Try Again
-                    </button>
-                  </>
-                )}
-              </div>
-            )}
-            {!sharing ? (
-              <button
-                onClick={startSharing}
-                className="w-full py-2.5 rounded-xl bg-white/10 border border-white/15 text-white/60 font-semibold text-sm hover:bg-white/15 transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline -mt-0.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                Share My Location
-              </button>
-            ) : (
-              <button
-                onClick={stopSharing}
-                className="w-full py-3 rounded-xl bg-white/10 border border-white/20 text-white font-bold text-sm hover:bg-white/20 transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="inline -mt-0.5 text-red-400"><circle cx="12" cy="12" r="10"/><rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor"/></svg>
-                Stop Sharing
-              </button>
-            )}
-            {sharing && (
-              <p className="text-center text-xs text-white/30">
-                Your location is being sent to the driver in real-time
-              </p>
-            )}
-          </div>
+                      <div className="text-red-400/70 text-xs leading-relaxed space-y-2 mt-1">
+                        <p>
+                          <strong className="text-red-400">
+                            iPhone / iPad:
+                          </strong>{" "}
+                          Go to{" "}
+                          <strong>
+                            Settings → Privacy &amp; Security → Location
+                            Services
+                          </strong>
+                          , find your browser (Safari / Chrome), set it to{" "}
+                          <strong>While Using</strong>. Then tap below.
+                        </p>
+                        <p>
+                          <strong className="text-red-400">Android:</strong> Tap
+                          the <strong>lock icon</strong> in the address bar →{" "}
+                          <strong>Permissions → Location → Allow</strong>. Then
+                          tap below.
+                        </p>
+                        <p>
+                          <strong className="text-red-400">Desktop:</strong>{" "}
+                          Click the lock icon in the address bar →{" "}
+                          <strong>Site settings → Location → Allow</strong>.
+                          Then click below.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p>{geoError}</p>
+                      <button
+                        onClick={() => {
+                          setGeoError("");
+                          startSharing();
+                        }}
+                        className="mt-2 w-full py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 font-semibold text-xs hover:bg-red-500/30 transition-colors"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="inline -mt-0.5 mr-1"
+                        >
+                          <polyline points="23 4 23 10 17 10" />
+                          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                        </svg>
+                        Try Again
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+              {!sharing ? (
+                <button
+                  onClick={startSharing}
+                  className="w-full py-2.5 rounded-xl bg-white/10 border border-white/15 text-white/60 font-semibold text-sm hover:bg-white/15 transition-colors"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="inline -mt-0.5"
+                  >
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  Share My Location
+                </button>
+              ) : (
+                <button
+                  onClick={stopSharing}
+                  className="w-full py-3 rounded-xl bg-white/10 border border-white/20 text-white font-bold text-sm hover:bg-white/20 transition-colors"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="inline -mt-0.5 text-red-400"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <rect
+                      x="9"
+                      y="9"
+                      width="6"
+                      height="6"
+                      rx="1"
+                      fill="currentColor"
+                    />
+                  </svg>
+                  Stop Sharing
+                </button>
+              )}
+              {sharing && (
+                <p className="text-center text-xs text-white/30">
+                  Your location is being sent to the driver in real-time
+                </p>
+              )}
+            </div>
           )}
         </div>
 

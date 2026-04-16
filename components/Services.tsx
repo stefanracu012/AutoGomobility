@@ -1,5 +1,7 @@
 ﻿import Image from "next/image";
 import { getServices } from "@/lib/data";
+import { getLocale } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n";
 
 const SERVICE_ICONS = [
   <svg
@@ -47,27 +49,27 @@ const SERVICE_ICONS = [
 ];
 
 export default async function Services() {
-  const services = await getServices();
+  const [services, locale] = await Promise.all([getServices(), getLocale()]);
+  const t = getDictionary(locale);
 
   return (
-    <section id="services" className="py-24 md:py-32 relative overflow-hidden">
+    <section id="services" className="py-16 sm:py-24 md:py-32 relative overflow-hidden">
       <div className="hidden md:block absolute -bottom-40 -left-40 w-96 h-96 bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-20">
           <div>
             <p className="text-accent text-sm font-semibold uppercase tracking-[0.3em] mb-4">
-              What We Offer
+              {t.services.subtitle}
             </p>
-            <h2 className="text-5xl md:text-6xl font-bold tracking-tight leading-none">
-              Premium
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-none">
+              {t.services.title}
               <br />
-              <span className="text-accent">Services</span>
+              <span className="text-accent">{t.services.titleAccent}</span>
             </h2>
           </div>
           <p className="text-muted max-w-sm md:text-right leading-relaxed">
-            From airport pickups to cross-border travel, we cover all your
-            transportation needs with style.
+            {t.services.description}
           </p>
         </div>
 
@@ -81,7 +83,7 @@ export default async function Services() {
                 {service.number}
               </span>
               {service.image ? (
-                <div className="w-14 h-14 md:w-16 md:h-16 shrink-0 rounded-full overflow-hidden relative">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 shrink-0 rounded-full overflow-hidden relative">
                   <Image
                     src={service.image}
                     alt={service.title}
@@ -91,13 +93,13 @@ export default async function Services() {
                   />
                 </div>
               ) : (
-                <div className="w-14 h-14 md:w-16 md:h-16 shrink-0 rounded-full border border-white/10 group-hover:border-accent/40 text-white/40 group-hover:text-accent flex items-center justify-center transition-all duration-400">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 md:w-16 md:h-16 shrink-0 rounded-full border border-white/10 group-hover:border-accent/40 text-white/40 group-hover:text-accent flex items-center justify-center transition-all duration-400">
                   {SERVICE_ICONS[idx % SERVICE_ICONS.length]}
                 </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-xl md:text-2xl lg:text-3xl font-bold group-hover:text-accent transition-colors duration-300">
+                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold group-hover:text-accent transition-colors duration-300">
                     {service.title}
                   </h3>
                   <span className="hidden sm:inline-block text-[10px] font-semibold uppercase tracking-widest text-accent/70 bg-accent/10 px-2.5 py-1 rounded-full">

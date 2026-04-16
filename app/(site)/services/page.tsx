@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getServices } from "@/lib/data";
+import { getLocale } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
@@ -72,7 +74,8 @@ const SERVICE_ICONS = [
 ];
 
 export default async function ServicesPage() {
-  const services = await getServices();
+  const [services, locale] = await Promise.all([getServices(), getLocale()]);
+  const t = getDictionary(locale);
 
   return (
     <div className="pt-24 pb-16 md:pb-24">
@@ -80,14 +83,13 @@ export default async function ServicesPage() {
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-6 text-center">
           <p className="text-accent text-sm font-semibold uppercase tracking-[0.3em] mb-3">
-            What We Offer
+            {t.servicesPage.subtitle}
           </p>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight">
-            Our Services
+            {t.servicesPage.title}
           </h1>
           <p className="mt-4 text-muted max-w-xl mx-auto text-lg">
-            Comprehensive transportation solutions for every need. Professional
-            service, premium vehicles, and attention to detail.
+            {t.servicesPage.description}
           </p>
         </div>
       </section>
@@ -158,7 +160,7 @@ export default async function ServicesPage() {
             href="/booking"
             className="inline-block bg-accent hover:bg-accent-hover text-black font-semibold px-10 py-4 rounded-2xl text-lg transition-all hover:scale-105"
           >
-            Book Your Ride Now
+            {t.servicesPage.cta}
           </Link>
         </div>
       </section>

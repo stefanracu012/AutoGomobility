@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { CalendarPicker, TimePicker } from "@/components/DateTimePicker";
+import { useTranslation } from "@/components/LanguageProvider";
 
 const RouteMap = dynamic(() => import("@/components/RouteMap"), { ssr: false });
 import { calculatePrice, type PricingRates } from "@/lib/price";
@@ -67,6 +68,7 @@ type VehicleType = "economy" | "business" | "luxury";
 
 export default function BookingForm() {
   const searchParams = useSearchParams();
+  const { t } = useTranslation();
 
   const [form, setForm] = useState({
     name: "",
@@ -329,14 +331,12 @@ export default function BookingForm() {
             />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold mb-2">Cerere trimisă!</h2>
+        <h2 className="text-2xl font-bold mb-2">{t.form.successTitle}</h2>
         <p className="text-muted mb-3">
-          Mulțumim! Cererea a fost înregistrată. Șoferul va reveni cu o ofertă
-          personalizată.
+          {t.form.successMsg}
         </p>
         <p className="text-xs text-white/40">
-          Prețul afișat anterior este orientativ — oferta finală va fi transmisă
-          pe email.
+          {t.form.successNote}
         </p>
       </div>
     );

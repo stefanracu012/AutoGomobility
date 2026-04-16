@@ -4,10 +4,15 @@ import Services from "@/components/Services";
 import Destinations from "@/components/Destinations";
 import Image from "next/image";
 import Link from "next/link";
+import { getLocale } from "@/lib/i18n/server";
+import { getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
+  const locale = await getLocale();
+  const t = getDictionary(locale);
+
   return (
     <>
       <Hero />
@@ -16,47 +21,39 @@ export default function Home() {
       <Destinations />
 
       {/* About Section */}
-      <section className="relative h-screen overflow-hidden flex">
+      <section className="relative min-h-screen md:h-screen overflow-hidden flex flex-col md:flex-row">
         {/* Left - Full bleed image */}
-        <div className="w-[50vw] h-screen shrink-0 relative">
+        <div className="w-full md:w-[50vw] h-[40vh] md:h-screen shrink-0 relative">
           <Image
             src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1200&q=80"
             alt="Professional chauffeur"
             fill
-            sizes="50vw"
+            sizes="(max-width: 768px) 100vw, 50vw"
             quality={75}
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/60" />
+          <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-transparent to-black/60" />
         </div>
 
         {/* Right - Content */}
-        <div className="flex-1 flex items-center px-16 xl:px-24 relative bg-background">
-          <div className="absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+        <div className="flex-1 flex items-center px-6 py-12 sm:px-10 md:px-16 xl:px-24 relative bg-background">
+          <div className="hidden md:block absolute top-0 left-0 w-px h-full bg-gradient-to-b from-transparent via-white/10 to-transparent" />
           <div className="max-w-lg">
             <p className="text-accent text-sm font-semibold uppercase tracking-[0.3em] mb-3">
-              About Us
+              {t.about.subtitle}
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-8">
-              Your Trusted
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 sm:mb-8">
+              {t.about.title}
               <br />
-              <span className="text-accent">Chauffeur Partner</span>
+              <span className="text-accent">{t.about.titleAccent}</span>
             </h2>
-            <p className="text-muted text-lg leading-loose mb-10">
-              Private chauffeur with years of experience, offering reliable and
-              premium transportation services. Every ride is treated with the
-              utmost professionalism, ensuring your comfort and safety from
-              pickup to destination.
+            <p className="text-muted text-base sm:text-lg leading-relaxed sm:leading-loose mb-8 sm:mb-10">
+              {t.about.description}
             </p>
 
             {/* Features list */}
-            <div className="grid grid-cols-2 gap-4 mb-10">
-              {[
-                "Professional drivers",
-                "Premium vehicles",
-                "24/7 availability",
-                "Fixed pricing",
-              ].map((feature) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8 sm:mb-10">
+              {[t.about.feat1, t.about.feat2, t.about.feat3, t.about.feat4].map((feature) => (
                 <div key={feature} className="flex items-center gap-3">
                   <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
                     <svg
@@ -73,16 +70,16 @@ export default function Home() {
                       />
                     </svg>
                   </div>
-                  <span className="text-base">{feature}</span>
+                  <span className="text-sm sm:text-base">{feature}</span>
                 </div>
               ))}
             </div>
 
             <Link
               href="/booking"
-              className="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-black font-semibold px-8 py-4 rounded-2xl transition-all hover:scale-105 hover:shadow-lg hover:shadow-accent/20"
+              className="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-black font-semibold px-6 py-3 sm:px-8 sm:py-4 rounded-2xl transition-all hover:scale-105 hover:shadow-lg hover:shadow-accent/20 text-sm sm:text-base"
             >
-              Book Your Ride
+              {t.about.cta}
               <svg
                 className="w-5 h-5"
                 fill="none"
