@@ -9,10 +9,7 @@ interface TrackMapProps {
   lon: number | null;
 }
 
-export default function TrackMap({
-  lat,
-  lon,
-}: TrackMapProps) {
+export default function TrackMap({ lat, lon }: TrackMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);

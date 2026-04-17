@@ -51,7 +51,7 @@ export async function sendOfferEmail(booking: Booking) {
     
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#d4af37 0%,#b8962e 100%);padding:16px 24px;text-align:center">
-      <h1 style="margin:0;color:#000;font-size:20px;font-weight:700">Your Ride Offer — €${booking.totalPrice.toFixed(2)}</h1>
+      <h1 style="margin:0;color:#000;font-size:20px;font-weight:700">Your Ride Offer — CHF ${booking.totalPrice.toFixed(2)}</h1>
     </div>
 
     <!-- Content -->
@@ -84,12 +84,12 @@ export async function sendOfferEmail(booking: Booking) {
         </tr>
         <tr>
           <td style="padding:6px 12px;border-bottom:1px solid #222;color:#999">Base price</td>
-          <td style="padding:6px 12px;border-bottom:1px solid #222;text-align:right">€${booking.basePrice.toFixed(2)}</td>
+          <td style="padding:6px 12px;border-bottom:1px solid #222;text-align:right">CHF ${booking.basePrice.toFixed(2)}</td>
         </tr>
         ${extrasRows}
         <tr>
           <td style="padding:10px 12px;font-size:16px;font-weight:700;color:#d4af37">Total</td>
-          <td style="padding:10px 12px;text-align:right;font-size:18px;font-weight:700;color:#d4af37">€${booking.totalPrice.toFixed(2)}</td>
+          <td style="padding:10px 12px;text-align:right;font-size:18px;font-weight:700;color:#d4af37">CHF ${booking.totalPrice.toFixed(2)}</td>
         </tr>
       </table>
 
@@ -192,7 +192,7 @@ export async function sendStatusEmail(
         <tr><td style="padding:8px 16px;color:#999;font-size:13px">Passengers</td><td style="padding:8px 16px;text-align:right;font-size:14px">${booking.passengers}</td></tr>
       </table>
 
-      ${booking.totalPrice > 0 ? `<table style="width:100%;border-collapse:collapse;margin-bottom:24px;background:#1a1a1a;border-radius:8px;overflow:hidden"><tr><td style="padding:12px 16px;font-size:16px;font-weight:700;color:#d4af37">Total</td><td style="padding:12px 16px;text-align:right;font-size:20px;font-weight:700;color:#d4af37">€${booking.totalPrice.toFixed(2)}</td></tr></table>` : ""}
+      ${booking.totalPrice > 0 ? `<table style="width:100%;border-collapse:collapse;margin-bottom:24px;background:#1a1a1a;border-radius:8px;overflow:hidden"><tr><td style="padding:12px 16px;font-size:16px;font-weight:700;color:#d4af37">Total</td><td style="padding:12px 16px;text-align:right;font-size:20px;font-weight:700;color:#d4af37">CHF ${booking.totalPrice.toFixed(2)}</td></tr></table>` : ""}
 
       ${isConfirmed ? `
       <!-- Track button -->

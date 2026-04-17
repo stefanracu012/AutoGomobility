@@ -412,7 +412,7 @@ export default function BookingForm() {
                 {t.form.estPrice}
               </p>
               <p className="text-3xl font-bold text-accent">
-                €
+                CHF
                 {livePrice !== null
                   ? livePrice.toFixed(2)
                   : parseFloat(searchParams.get("price")!).toFixed(2)}

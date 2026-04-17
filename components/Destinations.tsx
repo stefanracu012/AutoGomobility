@@ -121,15 +121,15 @@ export default async function Destinations() {
                     {discountedPrice ? (
                       <>
                         <span className="text-sm text-muted line-through block">
-                          &euro;{basePrice.toFixed(0)}
+                          CHF {basePrice.toFixed(0)}
                         </span>
                         <span className="text-2xl sm:text-3xl font-bold text-accent">
-                          &euro;{discountedPrice.toFixed(0)}
+                          CHF {discountedPrice.toFixed(0)}
                         </span>
                       </>
                     ) : (
                       <span className="text-2xl sm:text-3xl font-bold text-accent">
-                        &euro;{basePrice.toFixed(0)}
+                        CHF {basePrice.toFixed(0)}
                       </span>
                     )}
                   </div>

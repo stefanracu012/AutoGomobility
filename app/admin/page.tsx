@@ -199,7 +199,7 @@ function PricingTab({
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {(
             [
-              { k: "base", label: "Base fee (€)" },
+              { k: "base", label: "Base fee (CHF)" },
               { k: "economy", label: "Economy / km" },
               { k: "business", label: "Business / km" },
               { k: "luxury", label: "Luxury / km" },
@@ -1037,7 +1037,7 @@ function DestFields({
         />
       </div>
       <div>
-        <label className={LBL}>Fixed Price € (optional)</label>
+        <label className={LBL}>Fixed Price CHF (optional)</label>
         <input
           type="number"
           min="0"
@@ -1474,7 +1474,7 @@ function BookingsTab({
                   </span>
                 </div>
                 <span className="text-sm font-bold text-[#d4af37]">
-                  €{b.totalPrice.toFixed(2)}
+                  CHF {b.totalPrice.toFixed(2)}
                 </span>
               </div>
 
@@ -1533,13 +1533,13 @@ function BookingsTab({
                     Pricing
                   </span>
                   <p className="text-white/60 text-xs mt-0.5">
-                    Base: €{b.basePrice.toFixed(2)}
+                    Base: CHF {b.basePrice.toFixed(2)}
                   </p>
                   {b.extras?.length > 0 && (
                     <p className="text-white/40 text-xs">
                       Extras:{" "}
                       {b.extras
-                        .map((e) => `${e.label} €${e.price.toFixed(2)}`)
+                        .map((e) => `${e.label} CHF ${e.price.toFixed(2)}`)
                         .join(", ")}
                     </p>
                   )}

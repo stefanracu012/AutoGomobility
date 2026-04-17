@@ -43,7 +43,7 @@ function formatBooking(b: Booking): string {
   const extras = b.extras as Extra[];
   const extrasText =
     extras.length > 0
-      ? extras.map((e, i) => `  ${i + 1}. ${e.label} — €${e.price.toFixed(2)}`).join("\n")
+      ? extras.map((e, i) => `  ${i + 1}. ${e.label} — CHF ${e.price.toFixed(2)}`).join("\n")
       : "  None";
 
   const baseUrl = process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
@@ -66,12 +66,12 @@ function formatBooking(b: Booking): string {
     `🕐 <b>Time:</b> ${b.time ?? "—"}`,
     ``,
     `🚗 <b>Vehicle:</b> ${b.vehicle}`,
-    `💰 <b>Base price:</b> €${b.basePrice.toFixed(2)}`,
+    `💰 <b>Base price:</b> CHF ${b.basePrice.toFixed(2)}`,
     ``,
     `📋 <b>Extras:</b>`,
     extrasText,
     ``,
-    `💎 <b>Total: €${b.totalPrice.toFixed(2)}</b>`,
+    `💎 <b>Total: CHF ${b.totalPrice.toFixed(2)}</b>`,
     ``,
     `📌 <b>Status:</b> ${b.status}`,
     b.notes ? `\n📝 <b>Notes:</b> ${b.notes}` : "",
@@ -189,7 +189,7 @@ export async function notifyDriverStatus(
     `🚖 Booking #${booking.id.slice(-6).toUpperCase()}`,
     `👤 ${booking.clientName}`,
     routeLine,
-    `💎 €${booking.totalPrice.toFixed(2)}`,
+    `💎 CHF ${booking.totalPrice.toFixed(2)}`,
   ].join("\n");
 
   await bot.telegram.sendMessage(chatId, text, { parse_mode: "HTML" });
@@ -288,7 +288,7 @@ function registerHandlers(bot: Telegraf) {
     }
 
     const buttons = extras.map((e, i) =>
-      [Markup.button.callback(`🗑 ${e.label} (€${e.price.toFixed(2)})`, `exrm:${bookingId}:${i}`)],
+      [Markup.button.callback(`🗑 ${e.label} (CHF ${e.price.toFixed(2)})`, `exrm:${bookingId}:${i}`)],
     );
     buttons.push([Markup.button.callback("◀️ Back", `back:${bookingId}`)]);
 
@@ -399,7 +399,7 @@ function registerHandlers(bot: Telegraf) {
       const booking = await setBasePrice(session.bookingId, price);
       clearSession(chatId);
 
-      await ctx.reply(`✅ Base price set to €${price.toFixed(2)}`);
+      await ctx.reply(`✅ Base price set to CHF ${price.toFixed(2)}`);
 
       if (booking.telegramMessageId) {
         await editBookingMessage(bot, chatId, booking.telegramMessageId, booking);
@@ -438,7 +438,7 @@ function registerHandlers(bot: Telegraf) {
       clearSession(chatId);
 
       await ctx.reply(
-        `✅ Added extra: ${session.pendingExtraLabel} — €${price.toFixed(2)}`,
+        `✅ Added extra: ${session.pendingExtraLabel} — CHF ${price.toFixed(2)}`,
       );
 
       if (booking.telegramMessageId) {

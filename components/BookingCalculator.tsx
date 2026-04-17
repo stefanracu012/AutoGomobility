@@ -555,7 +555,7 @@ export default function BookingCalculator() {
           <div className="text-center">
             <p className="text-sm text-muted mb-1">{t.calc.estimatedPrice}</p>
             <p className="text-4xl font-bold text-accent">
-              &euro;{price.toFixed(2)}
+              CHF {price.toFixed(2)}
             </p>
             <p className="text-xs text-white/40 mt-2">{t.calc.priceNote}</p>
           </div>

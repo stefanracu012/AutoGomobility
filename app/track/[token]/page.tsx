@@ -275,14 +275,11 @@ export default function TrackPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-
-
   // Confirm / Decline
   const [actionLoading, setActionLoading] = useState<
     "confirm" | "decline" | null
   >(null);
   const [actionError, setActionError] = useState("");
-
 
   const handleConfirm = async () => {
     if (!token || actionLoading) return;

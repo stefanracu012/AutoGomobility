@@ -554,7 +554,7 @@ export default function DriverPage() {
               <Row
                 icon={<IconDiamond />}
                 label={t.driver.total}
-                value={`€${booking.totalPrice.toFixed(2)}`}
+                value={`CHF ${booking.totalPrice.toFixed(2)}`}
                 gold
               />
             )}
@@ -756,15 +756,10 @@ export default function DriverPage() {
               </h2>
             </div>
             <div style={{ height: 320 }}>
-              <TrackMap
-                lat={position.lat}
-                lon={position.lon}
-              />
+              <TrackMap lat={position.lat} lon={position.lon} />
             </div>
           </div>
         )}
-
-
       </div>
     </div>
   );
