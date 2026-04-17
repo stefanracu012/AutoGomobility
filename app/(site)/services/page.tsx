@@ -119,7 +119,9 @@ export default async function ServicesPage() {
                   </div>
                 )}
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold mb-3">{txt(service.title, locale)}</h2>
+                  <h2 className="text-2xl font-bold mb-3">
+                    {txt(service.title, locale)}
+                  </h2>
                   <p className="text-muted leading-relaxed mb-5">
                     {txt(service.description, locale)}
                   </p>

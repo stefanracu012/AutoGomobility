@@ -28,9 +28,6 @@ export async function GET(req: Request) {
     status: booking.status,
     totalPrice: booking.totalPrice,
     driverOnline: booking.driverOnline,
-    clientLat: booking.clientLat,
-    clientLon: booking.clientLon,
-    clientOnline: booking.clientOnline,
     bookingType: booking.bookingType ?? "transfer",
     hours: booking.hours ?? null,
   });

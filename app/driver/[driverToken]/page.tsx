@@ -21,9 +21,7 @@ interface BookingInfo {
   status: string;
   totalPrice: number;
   driverOnline: boolean;
-  clientLat: number | null;
-  clientLon: number | null;
-  clientOnline: boolean;
+
   bookingType: string;
   hours: number | null;
 }
@@ -756,44 +754,17 @@ export default function DriverPage() {
               <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
                 {t.driver.liveMap}
               </h2>
-              {booking.clientOnline && (
-                <div className="flex items-center gap-2 text-xs text-green-400 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  {t.driver.clientSharing}
-                </div>
-              )}
             </div>
             <div style={{ height: 320 }}>
               <TrackMap
                 lat={position.lat}
                 lon={position.lon}
-                clientLat={booking.clientOnline ? booking.clientLat : null}
-                clientLon={booking.clientOnline ? booking.clientLon : null}
               />
             </div>
           </div>
         )}
 
-        {/* Client location (when client is sharing but driver map is not visible) */}
-        {!sharing &&
-          booking.clientOnline &&
-          booking.clientLat != null &&
-          booking.clientLon != null && (
-            <div className="bg-[#111] border border-white/10 rounded-2xl overflow-hidden">
-              <div className="px-5 py-4 border-b border-white/10 flex items-center justify-between">
-                <h2 className="font-semibold text-white/80 text-sm uppercase tracking-wider">
-                  {t.driver.clientLocation}
-                </h2>
-                <div className="flex items-center gap-2 text-xs text-green-400 font-medium">
-                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                  {t.driver.live}
-                </div>
-              </div>
-              <div style={{ height: 280 }}>
-                <TrackMap lat={booking.clientLat} lon={booking.clientLon} />
-              </div>
-            </div>
-          )}
+
       </div>
     </div>
   );

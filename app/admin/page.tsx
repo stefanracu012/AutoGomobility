@@ -14,7 +14,13 @@ const LANGS: { code: Locale; flag: string }[] = [
 ];
 type I18nString = string | Partial<Record<Locale, string>>;
 /** Empty i18n object */
-const mkI18n = (): Record<Locale, string> => ({ en: "", de: "", fr: "", it: "", ru: "" });
+const mkI18n = (): Record<Locale, string> => ({
+  en: "",
+  de: "",
+  fr: "",
+  it: "",
+  ru: "",
+});
 /** Normalize legacy string or i18n object to full Record */
 function toI18nObj(val: I18nString | undefined): Record<Locale, string> {
   if (!val) return mkI18n();
@@ -28,7 +34,13 @@ function i18nDisplay(val: I18nString | undefined): string {
   return val.en || Object.values(val).find(Boolean) || "";
 }
 
-function I18nInput({ label, value, onChange, placeholder, textarea }: {
+function I18nInput({
+  label,
+  value,
+  onChange,
+  placeholder,
+  textarea,
+}: {
   label: string;
   value: Record<Locale, string>;
   onChange: (v: Record<Locale, string>) => void;
@@ -142,7 +154,6 @@ interface BookingAdmin {
   token: string;
   driverToken: string | null;
   driverOnline: boolean;
-  clientOnline: boolean;
 }
 type Tab =
   | "bookings"
@@ -295,11 +306,36 @@ function FleetFields({
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      <I18nInput label="Name" value={form.name} placeholder="Mercedes S-Class" onChange={(v) => onChange({ ...form, name: v })} />
-      <I18nInput label="Category" value={form.category} placeholder="Business" onChange={(v) => onChange({ ...form, category: v })} />
-      <I18nInput label="Price Label" value={form.priceLabel} placeholder="from 1.20/km" onChange={(v) => onChange({ ...form, priceLabel: v })} />
-      <I18nInput label="Passengers" value={form.passengers} placeholder="Up to 3" onChange={(v) => onChange({ ...form, passengers: v })} />
-      <I18nInput label="Luggage" value={form.luggage} placeholder="2 suitcases" onChange={(v) => onChange({ ...form, luggage: v })} />
+      <I18nInput
+        label="Name"
+        value={form.name}
+        placeholder="Mercedes S-Class"
+        onChange={(v) => onChange({ ...form, name: v })}
+      />
+      <I18nInput
+        label="Category"
+        value={form.category}
+        placeholder="Business"
+        onChange={(v) => onChange({ ...form, category: v })}
+      />
+      <I18nInput
+        label="Price Label"
+        value={form.priceLabel}
+        placeholder="from 1.20/km"
+        onChange={(v) => onChange({ ...form, priceLabel: v })}
+      />
+      <I18nInput
+        label="Passengers"
+        value={form.passengers}
+        placeholder="Up to 3"
+        onChange={(v) => onChange({ ...form, passengers: v })}
+      />
+      <I18nInput
+        label="Luggage"
+        value={form.luggage}
+        placeholder="2 suitcases"
+        onChange={(v) => onChange({ ...form, luggage: v })}
+      />
       <div className="col-span-2">
         <label className={LBL}>Image URL</label>
         <div className="flex gap-2">
@@ -338,7 +374,13 @@ function FleetFields({
         )}
       </div>
       <div className="col-span-2">
-        <I18nInput label="Description" value={form.description} placeholder="Description…" textarea onChange={(v) => onChange({ ...form, description: v })} />
+        <I18nInput
+          label="Description"
+          value={form.description}
+          placeholder="Description…"
+          textarea
+          onChange={(v) => onChange({ ...form, description: v })}
+        />
       </div>
       <div className="col-span-2">
         <label className={LBL}>Features (comma-separated)</label>
@@ -421,7 +463,9 @@ function FleetTab({
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="font-semibold text-sm">{i18nDisplay(item.name)}</span>
+                  <span className="font-semibold text-sm">
+                    {i18nDisplay(item.name)}
+                  </span>
                   <span className="text-[10px] uppercase tracking-widest text-[#d4af37]/70 bg-[#d4af37]/10 px-2 py-0.5 rounded-full">
                     {i18nDisplay(item.category)}
                   </span>
@@ -617,10 +661,28 @@ function ServicesTab({
           {editId === item.id ? (
             <div className="flex flex-col gap-3">
               <div className="grid grid-cols-2 gap-3">
-                <I18nInput label="Title" value={editForm.title} placeholder="Airport Transfer" onChange={(v) => setEditForm((f) => ({ ...f, title: v }))} />
-                <I18nInput label="Tag" value={editForm.tag} placeholder="Most popular" onChange={(v) => setEditForm((f) => ({ ...f, tag: v }))} />
+                <I18nInput
+                  label="Title"
+                  value={editForm.title}
+                  placeholder="Airport Transfer"
+                  onChange={(v) => setEditForm((f) => ({ ...f, title: v }))}
+                />
+                <I18nInput
+                  label="Tag"
+                  value={editForm.tag}
+                  placeholder="Most popular"
+                  onChange={(v) => setEditForm((f) => ({ ...f, tag: v }))}
+                />
                 <div className="col-span-2">
-                  <I18nInput label="Description" value={editForm.description} placeholder="Description…" textarea onChange={(v) => setEditForm((f) => ({ ...f, description: v }))} />
+                  <I18nInput
+                    label="Description"
+                    value={editForm.description}
+                    placeholder="Description…"
+                    textarea
+                    onChange={(v) =>
+                      setEditForm((f) => ({ ...f, description: v }))
+                    }
+                  />
                 </div>
                 <div className="col-span-2">
                   <label className={LBL}>Highlights (comma-separated)</label>
@@ -686,7 +748,9 @@ function ServicesTab({
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-sm">{i18nDisplay(item.title)}</span>
+                  <span className="font-semibold text-sm">
+                    {i18nDisplay(item.title)}
+                  </span>
                   <span className="text-[10px] uppercase tracking-widest text-[#d4af37]/70 bg-[#d4af37]/10 px-2 py-0.5 rounded-full">
                     {i18nDisplay(item.tag)}
                   </span>
@@ -729,10 +793,26 @@ function ServicesTab({
             New Service
           </p>
           <div className="grid grid-cols-2 gap-3">
-            <I18nInput label="Title" value={newForm.title} placeholder="VIP Service" onChange={(v) => setNewForm((f) => ({ ...f, title: v }))} />
-            <I18nInput label="Tag" value={newForm.tag} placeholder="Premium" onChange={(v) => setNewForm((f) => ({ ...f, tag: v }))} />
+            <I18nInput
+              label="Title"
+              value={newForm.title}
+              placeholder="VIP Service"
+              onChange={(v) => setNewForm((f) => ({ ...f, title: v }))}
+            />
+            <I18nInput
+              label="Tag"
+              value={newForm.tag}
+              placeholder="Premium"
+              onChange={(v) => setNewForm((f) => ({ ...f, tag: v }))}
+            />
             <div className="col-span-2">
-              <I18nInput label="Description" value={newForm.description} placeholder="Description…" textarea onChange={(v) => setNewForm((f) => ({ ...f, description: v }))} />
+              <I18nInput
+                label="Description"
+                value={newForm.description}
+                placeholder="Description…"
+                textarea
+                onChange={(v) => setNewForm((f) => ({ ...f, description: v }))}
+              />
             </div>
             <div className="col-span-2">
               <label className={LBL}>Highlights (comma-separated)</label>
@@ -914,8 +994,18 @@ function DestFields({
 }) {
   return (
     <div className="grid grid-cols-2 gap-3">
-      <I18nInput label="From" value={form.from} placeholder="Dublin Airport" onChange={(v) => onChange({ ...form, from: v })} />
-      <I18nInput label="To" value={form.to} placeholder="Cork" onChange={(v) => onChange({ ...form, to: v })} />
+      <I18nInput
+        label="From"
+        value={form.from}
+        placeholder="Dublin Airport"
+        onChange={(v) => onChange({ ...form, from: v })}
+      />
+      <I18nInput
+        label="To"
+        value={form.to}
+        placeholder="Cork"
+        onChange={(v) => onChange({ ...form, to: v })}
+      />
       <div>
         <label className={LBL}>Distance (km)</label>
         <input
@@ -1487,13 +1577,6 @@ function BookingsTab({
                     Driver live
                   </span>
                 )}
-                {b.clientOnline && (
-                  <span className="text-[10px] text-green-400 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                    Client live
-                  </span>
-                )}
-
                 <div className="flex-1" />
 
                 {/* Status actions */}

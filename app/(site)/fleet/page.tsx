@@ -57,7 +57,9 @@ export default async function FleetPage() {
                 <span className="text-xs font-medium text-accent uppercase tracking-wider">
                   {txt(car.category, locale)}
                 </span>
-                <h2 className="mt-2 text-3xl font-bold">{txt(car.name, locale)}</h2>
+                <h2 className="mt-2 text-3xl font-bold">
+                  {txt(car.name, locale)}
+                </h2>
                 <p className="mt-3 text-muted leading-relaxed">
                   {txt(car.description, locale)}
                 </p>

@@ -61,7 +61,10 @@ export default async function Destinations() {
 
             return (
               <Link
-                href={buildBookingUrl(txt(route.from, locale), txt(route.to, locale))}
+                href={buildBookingUrl(
+                  txt(route.from, locale),
+                  txt(route.to, locale),
+                )}
                 key={`${route.from}-${route.to}`}
                 className="group relative bg-white/[0.03] backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6 hover:bg-white/[0.06] hover:border-accent/30 transition-all duration-500 hover:shadow-2xl hover:shadow-accent/10 block"
               >

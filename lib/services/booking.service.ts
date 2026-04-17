@@ -179,22 +179,4 @@ export async function setDriverOffline(driverToken: string) {
   });
 }
 
-// ── Client location tracking ─────────────────────────────────────────
 
-export async function updateClientLocation(
-  token: string,
-  lat: number,
-  lon: number,
-) {
-  return prisma.booking.update({
-    where: { token },
-    data: { clientLat: lat, clientLon: lon, clientOnline: true },
-  });
-}
-
-export async function setClientOffline(token: string) {
-  return prisma.booking.update({
-    where: { token },
-    data: { clientOnline: false },
-  });
-}

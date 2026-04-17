@@ -168,35 +168,6 @@ async function editBookingMessage(
   }
 }
 
-// ── Notify driver that client started sharing location ───────────────
-
-export async function notifyClientLocationStarted(
-  clientName: string,
-  pickup: string,
-  bookingId: string,
-) {
-  const bot = getBot();
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!chatId) return;
-
-  const baseUrl =
-    process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
-
-  const text = [
-    `📍 <b>Client started sharing location</b>`,
-    ``,
-    `👤 ${clientName}`,
-    `🚖 Booking #${bookingId.slice(-6).toUpperCase()}`,
-    `📌 Pickup: ${pickup}`,
-    ``,
-    `<a href="${baseUrl}/driver/${bookingId}">Open Driver Panel →</a>`,
-  ].join("\n");
-
-  await bot.telegram.sendMessage(Number(chatId), text, {
-    parse_mode: "HTML",
-  });
-}
-
 // ── Notify driver of client response ─────────────────────────────────
 
 export async function notifyDriverStatus(
@@ -250,14 +221,12 @@ function registerHandlers(bot: Telegraf) {
   bot.action(/^vehicle:(.+)$/, async (ctx) => {
     const bookingId = ctx.match![1];
     const chatId = ctx.callbackQuery.message?.chat.id;
-    const messageId = ctx.callbackQuery.message?.message_id;
-    if (!chatId || !messageId) return;
+    if (!chatId) return;
 
     await ctx.answerCbQuery();
-    await bot.telegram.editMessageText(
+    // Send a NEW message for vehicle selection (don't edit the booking message)
+    await bot.telegram.sendMessage(
       chatId,
-      messageId,
-      undefined,
       "🚗 Select vehicle class:",
       vehicleKeyboard(bookingId),
     );
@@ -274,15 +243,15 @@ function registerHandlers(bot: Telegraf) {
     const booking = await updateVehicle(bookingId, vehicle);
     await ctx.answerCbQuery(`Vehicle set to ${vehicle}`);
 
-    // Refresh the message with booking info
-    if (booking.telegramMessageId) {
-      await editBookingMessage(bot, chatId, booking.telegramMessageId, booking);
-    }
-
     // Delete the vehicle selection message
     try {
       await bot.telegram.deleteMessage(chatId, messageId);
     } catch { /* ignore */ }
+
+    // Refresh the original booking message
+    if (booking.telegramMessageId) {
+      await editBookingMessage(bot, chatId, booking.telegramMessageId, booking);
+    }
   });
 
   // ── Add Extra ────────────────────────────────────────────────────

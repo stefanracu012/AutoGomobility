@@ -7,20 +7,15 @@ import "leaflet/dist/leaflet.css";
 interface TrackMapProps {
   lat: number | null;
   lon: number | null;
-  clientLat?: number | null;
-  clientLon?: number | null;
 }
 
 export default function TrackMap({
   lat,
   lon,
-  clientLat,
-  clientLon,
 }: TrackMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markerRef = useRef<L.Marker | null>(null);
-  const clientMarkerRef = useRef<L.Marker | null>(null);
 
   // Init map once
   useEffect(() => {
@@ -40,7 +35,6 @@ export default function TrackMap({
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
-      clientMarkerRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -66,34 +60,6 @@ export default function TrackMap({
       mapRef.current.setView([lat, lon], 15);
     }
   }, [lat, lon]);
-
-  // Update client marker whenever clientLat/clientLon changes
-  useEffect(() => {
-    if (!mapRef.current) return;
-
-    if (clientLat == null || clientLon == null) {
-      if (clientMarkerRef.current) {
-        clientMarkerRef.current.remove();
-        clientMarkerRef.current = null;
-      }
-      return;
-    }
-
-    const icon = L.divIcon({
-      html: `<span style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.8))">👤</span>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-      className: "",
-    });
-
-    if (clientMarkerRef.current) {
-      clientMarkerRef.current.setLatLng([clientLat, clientLon]);
-    } else {
-      clientMarkerRef.current = L.marker([clientLat, clientLon], { icon })
-        .addTo(mapRef.current)
-        .bindPopup("👤 Client");
-    }
-  }, [clientLat, clientLon]);
 
   return (
     <div
