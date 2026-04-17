@@ -30,7 +30,6 @@ export async function sendOfferEmail(booking: Booking) {
   const baseUrl = getBaseUrl();
   const confirmUrl = `${baseUrl}/api/bookings/confirm?token=${booking.token}`;
   const rejectUrl = `${baseUrl}/api/bookings/reject?token=${booking.token}`;
-  const trackUrl = `${baseUrl}/track/${booking.token}`;
 
   const extras = booking.extras as Extra[];
   const extrasRows = extras.length
@@ -103,9 +102,6 @@ export async function sendOfferEmail(booking: Booking) {
         <br/>
         <a href="${rejectUrl}" style="display:inline-block;background:transparent;color:#999;font-size:13px;padding:8px 24px;border:1px solid #333;border-radius:12px;text-decoration:none;margin:0 8px 8px">
           Decline
-        </a>
-        <a href="${trackUrl}" style="display:inline-block;background:transparent;color:#d4af37;font-size:13px;padding:8px 24px;border:1px solid #d4af3740;border-radius:12px;text-decoration:none;margin:0 8px 8px">
-          🚖 Track Driver
         </a>
       </div>
     </div>
