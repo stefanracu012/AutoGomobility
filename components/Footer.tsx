@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslation } from "@/components/LanguageProvider";
 
 export default function Footer() {
@@ -12,9 +13,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
-            <h3 className="text-lg font-bold tracking-tight mb-3">
-              <span className="text-accent">ELITE</span> CHAUFFEUR
-            </h3>
+            <div className="flex items-center gap-2 mb-3">
+              <Image src="/taxi1.png" alt="Logo" width={40} height={40} className="w-10 h-10 object-contain" />
+              <h3 className="text-lg font-bold tracking-tight">
+                <span className="text-accent">ELITE</span> CHAUFFEUR
+              </h3>
+            </div>
             <p className="text-sm text-muted leading-relaxed max-w-xs">
               {t.footer.description}
             </p>

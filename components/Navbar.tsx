@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { useTranslation } from "@/components/LanguageProvider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -21,9 +22,19 @@ export default function Navbar() {
       <div className="container mx-auto px-6 flex items-center justify-between h-16">
         <Link
           href="/"
-          className="text-base sm:text-xl font-bold tracking-tight"
+          className="flex items-center gap-2"
         >
-          <span className="text-accent">ELITE</span> CHAUFFEUR
+          <Image
+            src="/taxi1.png"
+            alt="Logo"
+            width={44}
+            height={44}
+            className="w-10 h-10 sm:w-11 sm:h-11 object-contain"
+            priority
+          />
+          <span className="text-base sm:text-xl font-bold tracking-tight">
+            <span className="text-accent">ELITE</span> CHAUFFEUR
+          </span>
         </Link>
 
         {/* Desktop nav */}

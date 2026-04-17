@@ -27,11 +27,20 @@ export const metadata: Metadata = {
   description:
     "Luxury private chauffeur service offering airport transfers, business travel, long-distance rides, and VIP transportation. Book your premium ride today.",
   metadataBase: new URL("https://auto-gomobility.vercel.app"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Premium Chauffeur Service | Private Driver",
     description:
       "Luxury private chauffeur service. Airport transfers, business travel, and VIP transportation.",
     type: "website",
+    images: ["/icon-512.png"],
   },
 };
 
