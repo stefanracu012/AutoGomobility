@@ -6,6 +6,7 @@ import {
   getDestinations, setDestinations,
   getPricing, setPricing,
   getLocations, setLocations,
+  getSiteConfig, setSiteConfig,
 } from "@/lib/data";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
@@ -26,6 +27,7 @@ export async function GET(req: NextRequest) {
     case "destinations": return NextResponse.json(await getDestinations());
     case "pricing":      return NextResponse.json(await getPricing());
     case "locations":    return NextResponse.json(await getLocations());
+    case "siteConfig":   return NextResponse.json(await getSiteConfig());
     default:             return NextResponse.json({ error: "Unknown entity" }, { status: 400 });
   }
 }
@@ -44,6 +46,7 @@ export async function PUT(req: NextRequest) {
     case "destinations": await setDestinations(data); break;
     case "pricing":      await setPricing(data);      break;
     case "locations":    await setLocations(data);    break;
+    case "siteConfig":   await setSiteConfig(data);   break;
     default:             return NextResponse.json({ error: "Unknown entity" }, { status: 400 });
   }
 

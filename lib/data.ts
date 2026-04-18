@@ -106,3 +106,16 @@ export const setServices = (d: ServiceItem[]): Promise<void> => writeSetting("se
 export const setDestinations = (d: DestinationItem[]): Promise<void> => writeSetting("destinations", d);
 export const setPricing = (d: Pricing): Promise<void> => writeSetting("pricing", d);
 export const setLocations = (d: LocationItem[]): Promise<void> => writeSetting("locations", d);
+
+// ── Site config (hero image, etc.) ────────────────────────────────────────────
+
+export interface SiteConfig {
+  heroImage: string;
+}
+
+const DEFAULT_HERO = "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=1920&q=80";
+
+export const getSiteConfig = async (): Promise<SiteConfig> => {
+  try { return await readSetting("siteConfig"); } catch { return { heroImage: DEFAULT_HERO }; }
+};
+export const setSiteConfig = (d: SiteConfig): Promise<void> => writeSetting("siteConfig", d);

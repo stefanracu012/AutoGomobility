@@ -2,16 +2,18 @@ import Image from "next/image";
 import BookingCalculator from "@/components/BookingCalculator";
 import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
+import { getSiteConfig } from "@/lib/data";
 
 export default async function Hero() {
   const locale = await getLocale();
   const t = getDictionary(locale);
+  const cfg = await getSiteConfig();
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background image — optimized with next/image */}
       <Image
-        src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?w=1920&q=80"
+        src={cfg.heroImage}
         alt="Luxury chauffeur service"
         fill
         sizes="100vw"
