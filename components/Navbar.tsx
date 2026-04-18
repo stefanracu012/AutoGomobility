@@ -26,7 +26,7 @@ export default function Navbar() {
             alt="Logo"
             width={44}
             height={44}
-            className="w-10 h-10 sm:w-11 sm:h-11 object-contain"
+            className="w-14 h-14 sm:w-16 sm:h-16 object-contain"
             priority
           />
           <span className="text-base sm:text-xl font-bold tracking-tight">
