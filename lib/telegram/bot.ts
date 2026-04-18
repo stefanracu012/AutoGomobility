@@ -46,7 +46,7 @@ function formatBooking(b: Booking): string {
       ? extras.map((e, i) => `  ${i + 1}. ${e.label} — CHF ${e.price.toFixed(2)}`).join("\n")
       : "  None";
 
-  const baseUrl = process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
+  const baseUrl = process.env.BASE_URL ?? "https://autogomobility.com";
   const driverUrl = `${baseUrl}/driver/${b.driverToken}`;
 
   return [

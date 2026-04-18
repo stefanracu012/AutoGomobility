@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin", "/api/", "/driver/", "/track/"],
       },
     ],
-    sitemap: "https://auto-gomobility.vercel.app/sitemap.xml",
+    sitemap: "https://autogomobility.com/sitemap.xml",
   };
 }

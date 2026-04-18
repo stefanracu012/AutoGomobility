@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE = "https://auto-gomobility.vercel.app";
+const BASE = "https://autogomobility.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = ["", "/fleet", "/services", "/booking"];

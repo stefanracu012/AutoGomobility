@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
       console.error("Failed to send rejection email:", err);
     }
 
-    const base = process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
+    const base = process.env.BASE_URL ?? "https://autogomobility.com";
     return NextResponse.redirect(`${base}/booking`, 302);
   } catch (err) {
     console.error("Error rejecting booking:", err);

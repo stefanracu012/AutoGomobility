@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
 
   if (booking.status !== "OFFER_SENT") {
     if (booking.status === "CONFIRMED") {
-      const base = process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
+      const base = process.env.BASE_URL ?? "https://autogomobility.com";
       return NextResponse.redirect(`${base}/track/${token}`, 302);
     }
     return new NextResponse(
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
       console.error("Failed to send confirmation email:", err);
     }
 
-    const base = process.env.BASE_URL ?? "https://auto-gomobility.vercel.app";
+    const base = process.env.BASE_URL ?? "https://autogomobility.com";
     return NextResponse.redirect(`${base}/track/${token}`, 302);
   } catch (err) {
     console.error("Error confirming booking:", err);
