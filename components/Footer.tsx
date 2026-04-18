@@ -14,7 +14,13 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <Image src="/taxi1.png" alt="Logo" width={40} height={40} className="w-10 h-10 object-contain" />
+              <Image
+                src="/taxi.png"
+                alt="Logo"
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain"
+              />
               <h3 className="text-lg font-bold tracking-tight">
                 <span className="text-accent">ELITE</span> CHAUFFEUR
               </h3>
