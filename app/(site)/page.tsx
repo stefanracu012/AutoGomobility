@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Hero from "@/components/Hero";
 import Fleet from "@/components/Fleet";
 import Services from "@/components/Services";
@@ -8,6 +9,19 @@ import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Premium Transfer & Taxi Service Switzerland | Luxury Chauffeur",
+  description:
+    "Elite Chauffeur — luxury transfer & taxi service in Switzerland. Airport transfers Zurich, Geneva, Basel. Mercedes fleet, professional drivers, 24/7 availability. Book your Swiss premium transfer now.",
+  keywords: [
+    "transfer Switzerland", "Swiss taxi service", "luxury chauffeur Zurich",
+    "airport transfer", "VIP transfer", "limousine service",
+    "Transfer Schweiz", "Taxi Zürich", "Luxus Chauffeur",
+    "transfert Suisse", "taxi luxe", "chauffeur privé",
+    "трансфер Швейцария", "такси Цюрих", "VIP трансфер",
+  ],
+};
 
 export default async function Home() {
   const locale = await getLocale();

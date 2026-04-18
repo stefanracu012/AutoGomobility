@@ -7,9 +7,14 @@ import { getDictionary } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Our Fleet | Elite Chauffeur",
+  title: "Our Premium Fleet | Mercedes & BMW Luxury Vehicles",
   description:
-    "Explore our premium fleet of Mercedes and BMW vehicles. From sedans to SUVs, find the perfect vehicle for your journey.",
+    "Explore our premium Swiss transfer fleet: Mercedes S-Class, E-Class, V-Class, BMW 7 Series. Economy to luxury class vehicles for airport transfers, business travel & VIP rides in Switzerland.",
+  keywords: ["Mercedes chauffeur", "BMW limousine", "luxury fleet Switzerland", "premium vehicles transfer", "Fahrzeugflotte", "flotte de véhicules", "парк автомобилей"],
+  openGraph: {
+    title: "Our Premium Fleet | Elite Chauffeur Switzerland",
+    description: "Mercedes & BMW luxury vehicles for Swiss transfers. Economy, Business & First Class.",
+  },
 };
 
 export default async function FleetPage() {

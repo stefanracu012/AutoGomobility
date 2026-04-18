@@ -5,9 +5,14 @@ import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "Book a Ride | Elite Chauffeur",
+  title: "Book Your Transfer | Instant Confirmation",
   description:
-    "Book your premium chauffeur service. Fill in your details and we will confirm your ride within minutes.",
+    "Book your premium Swiss transfer in seconds. Instant price calculation, online confirmation, professional Mercedes chauffeur. Airport transfers, city rides, long-distance travel.",
+  keywords: ["book transfer Switzerland", "taxi booking", "chauffeur reservation", "Transfer buchen Schweiz", "réserver transfert", "забронировать трансфер"],
+  openGraph: {
+    title: "Book Your Transfer | Elite Chauffeur Switzerland",
+    description: "Book premium Swiss transfers online. Instant price & confirmation.",
+  },
 };
 
 export default async function BookingPage() {

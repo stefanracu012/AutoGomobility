@@ -8,9 +8,14 @@ import { getDictionary } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Services | Elite Chauffeur",
+  title: "Transfer & Chauffeur Services | Airport, Business, VIP",
   description:
-    "Airport transfers, business chauffeur, long distance travel, and VIP services. Professional private driver for every occasion.",
+    "Professional transfer services in Switzerland: Airport transfers Zurich/Geneva/Basel, business chauffeur, long-distance travel, VIP & event transportation. Available 24/7 with premium Mercedes fleet.",
+  keywords: ["airport transfer Zurich", "business chauffeur Switzerland", "VIP transfer", "Flughafentransfer", "transfert aéroport", "трансфер аэропорт"],
+  openGraph: {
+    title: "Transfer & Chauffeur Services | Elite Chauffeur Switzerland",
+    description: "Airport transfers, business chauffeur, VIP transportation in Switzerland. Professional & reliable.",
+  },
 };
 
 // Rotating icon set — cycled by service index
