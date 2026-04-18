@@ -11,15 +11,26 @@ import { getDictionary } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Premium Transfer & Taxi Service Switzerland | Luxury Chauffeur",
+  title: "Premium Transfer & Taxi Service Switzerland | Luxury Chauffeur Zurich Geneva Basel",
   description:
-    "Elite Chauffeur — luxury transfer & taxi service in Switzerland. Airport transfers Zurich, Geneva, Basel. Mercedes fleet, professional drivers, 24/7 availability. Book your Swiss premium transfer now.",
+    "Elite Chauffeur — #1 luxury transfer & taxi service in Switzerland. Airport transfers Zurich ZRH, Geneva GVA, Basel BSL. Mercedes S-Class & V-Class fleet, professional multilingual drivers, 24/7 availability. Instant online booking, fixed prices, meet & greet. Corporate travel, VIP rides, ski resort transfers, wedding cars.",
   keywords: [
     "transfer Switzerland", "Swiss taxi service", "luxury chauffeur Zurich",
-    "airport transfer", "VIP transfer", "limousine service",
-    "Transfer Schweiz", "Taxi Zürich", "Luxus Chauffeur",
-    "transfert Suisse", "taxi luxe", "chauffeur privé",
+    "airport transfer Zurich", "airport transfer Geneva", "airport transfer Basel",
+    "VIP transfer Switzerland", "limousine service Zurich", "private driver",
+    "Mercedes S-Class chauffeur", "Mercedes V-Class transfer", "premium taxi",
+    "corporate car service", "business chauffeur Zurich", "executive transfer",
+    "ski transfer Switzerland", "hotel transfer Zurich", "wedding transfer",
+    "meet and greet Zurich airport", "door to door transfer", "fixed price taxi",
+    "Transfer Schweiz", "Taxi Zürich", "Luxus Chauffeur Zürich",
+    "Flughafentransfer", "VIP Fahrdienst", "Mercedes Chauffeur",
+    "Privater Fahrer", "Limousine Service", "Shuttle Zürich",
+    "transfert Suisse", "taxi luxe Zurich", "chauffeur privé",
+    "navette aéroport", "VIP transport", "limousine Genève",
+    "trasferimento Svizzera", "taxi lusso Zurigo", "NCC Svizzera",
+    "autista privato", "noleggio con conducente",
     "трансфер Швейцария", "такси Цюрих", "VIP трансфер",
+    "аэропорт трансфер", "частный водитель", "люкс такси",
   ],
 };
 

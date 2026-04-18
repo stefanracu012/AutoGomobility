@@ -1667,8 +1667,12 @@ function SettingsTab({
 
       {/* Hero Image */}
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">Hero Background Image</h3>
-        <p className="text-xs text-white/40">This is the main background image on the home page.</p>
+        <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider">
+          Hero Background Image
+        </h3>
+        <p className="text-xs text-white/40">
+          This is the main background image on the home page.
+        </p>
 
         {/* Preview */}
         {heroImage && (
@@ -1681,7 +1685,9 @@ function SettingsTab({
               unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
-            <span className="absolute bottom-3 left-3 text-xs text-white/60 bg-black/50 px-2 py-1 rounded">Preview</span>
+            <span className="absolute bottom-3 left-3 text-xs text-white/60 bg-black/50 px-2 py-1 rounded">
+              Preview
+            </span>
           </div>
         )}
 
@@ -1741,7 +1747,9 @@ export default function AdminPage() {
     DestinationItem[] | null
   >(null);
   const [locations, setLocationsState] = useState<LocationItem[] | null>(null);
-  const [siteConfig, setSiteConfigState] = useState<{ heroImage: string } | null>(null);
+  const [siteConfig, setSiteConfigState] = useState<{
+    heroImage: string;
+  } | null>(null);
   const [toast, setToast] = useState("");
 
   const callApi = useCallback(

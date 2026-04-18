@@ -8,13 +8,32 @@ import { getDictionary } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Transfer & Chauffeur Services | Airport, Business, VIP",
+  title: "Transfer & Chauffeur Services | Airport, Business, VIP, Ski, Wedding",
   description:
-    "Professional transfer services in Switzerland: Airport transfers Zurich/Geneva/Basel, business chauffeur, long-distance travel, VIP & event transportation. Available 24/7 with premium Mercedes fleet.",
-  keywords: ["airport transfer Zurich", "business chauffeur Switzerland", "VIP transfer", "Flughafentransfer", "transfert aéroport", "трансфер аэропорт"],
+    "Professional transfer services across Switzerland: Airport transfers ZRH/GVA/BSL with meet & greet, corporate chauffeur, long-distance travel, VIP & event transportation, ski resort shuttles, wedding cars. 24/7 availability, fixed prices, multilingual drivers, instant online booking.",
+  keywords: [
+    "airport transfer Zurich ZRH", "airport transfer Geneva GVA", "airport transfer Basel",
+    "meet and greet airport", "flight tracking transfer",
+    "business chauffeur Switzerland", "corporate car service Zurich", "executive transfer",
+    "VIP transfer Switzerland", "VIP transportation Zurich", "celebrity transfer",
+    "long distance transfer", "intercity transfer Switzerland", "cross border transfer",
+    "ski resort transfer", "Zermatt transfer", "St. Moritz transfer", "Davos transfer",
+    "wedding car Switzerland", "event transportation", "concert transfer",
+    "hourly chauffeur hire", "roadshow chauffeur", "trade fair transfer",
+    "Flughafentransfer Zürich", "Business Chauffeur Schweiz", "VIP Fahrdienst",
+    "Ski Transfer Alpen", "Hochzeitsauto Schweiz", "Langstrecken Transfer",
+    "Firmentransfer", "Messetransfer", "Stündlicher Chauffeur",
+    "transfert aéroport Zurich", "chauffeur entreprise", "VIP transport Suisse",
+    "transfert ski", "voiture mariage", "transfert longue distance",
+    "trasferimento aeroporto", "autista business", "VIP transfer",
+    "trasferimento sci", "auto matrimonio", "transfer lungo raggio",
+    "трансфер аэропорт", "бизнес трансфер", "VIP трансфер",
+    "трансфер горнолыжный", "свадебный трансфер", "междугородний трансфер",
+  ],
   openGraph: {
     title: "Transfer & Chauffeur Services | Elite Chauffeur Switzerland",
-    description: "Airport transfers, business chauffeur, VIP transportation in Switzerland. Professional & reliable.",
+    description:
+      "Airport transfers, business chauffeur, VIP transportation in Switzerland. Professional & reliable.",
   },
 };
 

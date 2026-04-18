@@ -7,13 +7,27 @@ import { getDictionary } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Our Premium Fleet | Mercedes & BMW Luxury Vehicles",
+  title: "Our Premium Fleet | Mercedes S-Class, V-Class, E-Class & BMW",
   description:
-    "Explore our premium Swiss transfer fleet: Mercedes S-Class, E-Class, V-Class, BMW 7 Series. Economy to luxury class vehicles for airport transfers, business travel & VIP rides in Switzerland.",
-  keywords: ["Mercedes chauffeur", "BMW limousine", "luxury fleet Switzerland", "premium vehicles transfer", "Fahrzeugflotte", "flotte de véhicules", "парк автомобилей"],
+    "Explore our premium Swiss transfer fleet: Mercedes S-Class, E-Class, V-Class, BMW 7 Series. Economy, Business & First Class vehicles. Leather interior, WiFi, water, child seats available. Perfect for airport transfers, business travel, weddings & VIP rides across Switzerland.",
+  keywords: [
+    "Mercedes S-Class chauffeur", "Mercedes V-Class transfer", "Mercedes E-Class hire",
+    "BMW 7 Series limousine", "luxury fleet Switzerland", "premium vehicles transfer",
+    "sedan hire Zurich", "SUV transfer Switzerland", "minivan chauffeur",
+    "first class vehicle", "business class car", "economy transfer vehicle",
+    "leather interior car service", "WiFi in car transfer", "child seat transfer",
+    "Fahrzeugflotte Schweiz", "Mercedes mieten Zürich", "Luxusauto mit Fahrer",
+    "Limousine mieten", "Premium Fahrzeuge", "S-Klasse Chauffeur",
+    "flotte de véhicules Suisse", "Mercedes avec chauffeur", "voiture de luxe",
+    "location limousine", "véhicule premium transfert",
+    "flotta veicoli Svizzera", "Mercedes con autista", "auto lusso noleggio",
+    "парк автомобилей Швейцария", "Мерседес с водителем", "люкс авто",
+    "аренда лимузина", "премиум автомобиль трансфер",
+  ],
   openGraph: {
     title: "Our Premium Fleet | Elite Chauffeur Switzerland",
-    description: "Mercedes & BMW luxury vehicles for Swiss transfers. Economy, Business & First Class.",
+    description:
+      "Mercedes & BMW luxury vehicles for Swiss transfers. Economy, Business & First Class.",
   },
 };
 

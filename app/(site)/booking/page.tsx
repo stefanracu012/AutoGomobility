@@ -5,13 +5,28 @@ import { getLocale } from "@/lib/i18n/server";
 import { getDictionary } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "Book Your Transfer | Instant Confirmation",
+  title: "Book Your Transfer Online | Instant Price & Confirmation",
   description:
-    "Book your premium Swiss transfer in seconds. Instant price calculation, online confirmation, professional Mercedes chauffeur. Airport transfers, city rides, long-distance travel.",
-  keywords: ["book transfer Switzerland", "taxi booking", "chauffeur reservation", "Transfer buchen Schweiz", "réserver transfert", "забронировать трансфер"],
+    "Book your premium Swiss transfer in seconds. Instant price calculation, real-time online confirmation, professional Mercedes chauffeur. Airport transfers, city rides, long-distance travel, ski transfers. Fixed prices, no hidden fees, free cancellation. Pay cash or card.",
+  keywords: [
+    "book transfer Switzerland", "book taxi online", "transfer booking",
+    "instant price transfer", "online taxi reservation", "book chauffeur",
+    "fixed price transfer", "no hidden fees taxi", "free cancellation transfer",
+    "book airport transfer Zurich", "reserve limousine Switzerland",
+    "quick booking taxi", "last minute transfer", "same day booking",
+    "Transfer buchen Schweiz", "Taxi online bestellen", "Chauffeur reservieren",
+    "Festpreis Transfer", "Flughafentransfer buchen", "sofort Bestätigung",
+    "réserver transfert Suisse", "réservation taxi en ligne", "prix fixe transfert",
+    "réserver chauffeur", "confirmation instantanée",
+    "prenotare trasferimento", "prenotazione taxi online", "prezzo fisso",
+    "prenotare NCC", "conferma immediata",
+    "забронировать трансфер", "заказать такси онлайн", "бронирование трансфера",
+    "фиксированная цена", "моментальное подтверждение",
+  ],
   openGraph: {
     title: "Book Your Transfer | Elite Chauffeur Switzerland",
-    description: "Book premium Swiss transfers online. Instant price & confirmation.",
+    description:
+      "Book premium Swiss transfers online. Instant price & confirmation.",
   },
 };
 
