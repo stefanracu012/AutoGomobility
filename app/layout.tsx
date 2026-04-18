@@ -97,10 +97,10 @@ export const metadata: Metadata = {
     siteName: "Elite Chauffeur Switzerland",
     images: [
       {
-        url: "/icon-512.png",
-        width: 512,
-        height: 512,
-        alt: "Elite Chauffeur Logo",
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Elite Chauffeur — Premium Transfer Service Switzerland",
       },
     ],
   },
@@ -109,7 +109,7 @@ export const metadata: Metadata = {
     title: "Premium Transfer & Taxi Service Switzerland",
     description:
       "Luxury chauffeur & transfer service in Switzerland. Airport transfers, VIP taxi, Mercedes fleet.",
-    images: ["/icon-512.png"],
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
