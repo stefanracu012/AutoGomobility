@@ -62,18 +62,28 @@ export default function Footer() {
             <ul className="flex flex-col gap-2 text-sm text-muted">
               <li>
                 <a
-                  href="tel:+37300000000"
+                  href="tel:+41766298355"
                   className="hover:text-accent transition-colors"
                 >
-                  +373 000 000 00
+                  +41 76 629 83 55
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@elitechauffeur.com"
-                  className="hover:text-accent transition-colors"
+                  href="https://wa.me/41766298355"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#25D366] transition-colors"
                 >
-                  info@elitechauffeur.com
+                  WhatsApp
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:dumbravaautogomobility@gmail.com"
+                  className="hover:text-accent transition-colors break-all"
+                >
+                  dumbravaautogomobility@gmail.com
                 </a>
               </li>
             </ul>
